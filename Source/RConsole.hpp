@@ -43,11 +43,13 @@ namespace RConsole
     static bool DrawAlphaPoint(float x, float y, ColorData color = PREVIOUS_COLOR, float opacity = 1);
     static bool DrawChar(char toDraw, float x, float y, ColorData color = PREVIOUS_COLOR);
     static void SetColor(ColorData color);
-    static void FullClear();
-    static void ClearPrevious();
     static void SetCursorVisible(bool isVisible);
     static unsigned int GetConsoleWidth();
     static unsigned int GetConsoleHeight();
+    
+    //Necessary console values
+    static void Update();
+    static void Clear();
 
   private:
     //Hidden Constructors- no instantiating publicly!
@@ -55,7 +57,10 @@ namespace RConsole
     Console(const Console &rhs) { *this = rhs; }
 
     //Variables
+    static void FullClear();
+    static void ClearPrevious();
     static Field2D<bool> modified_;
+    static Field2D<char> activeBuffer_;
     static unsigned int width_;
     static unsigned int height_;
   };

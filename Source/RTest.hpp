@@ -6,15 +6,12 @@
 #define RTest_NEAR_FLOAT  .0006
 #define RTest_NEAR_DOUBLE .00006
 #define RTest_ASSERT_ON  //Defined Asserts
-#ifdef RTest_ASSERT_ON
-  #define RTest_ASSERT(a) do{                                  \
-      if(!(a)) { throw(RTest::RException("Assert Failed!")); } \
-  } while (0)                                                  \
+#ifdef RTest_ASSERT_ON                                       
+  #define RTest_ASSERT(a) do{ if(!(a)) { throw(RTest::RException("Assert Failed!")); } } while (0)                                                  
 #endif
 
 namespace RTest
 {
-  //this is rh
   //Undefine the exception structure first to be safe.
   #undef RException
   struct RException

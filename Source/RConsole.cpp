@@ -150,6 +150,11 @@ namespace RConsole
       rlutil::showcursor();
   }
 
+  static bool Update()
+  {
+
+  }
+
   
   //Gets console dimensions.
   unsigned int Console::GetConsoleWidth() { return rlutil::tcols(); }
