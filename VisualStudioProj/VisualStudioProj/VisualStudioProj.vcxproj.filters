@@ -21,21 +21,27 @@
     <ClInclude Include="..\..\Source\Field2D.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\RConsole.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\RTest.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\External\rlutil.h">
       <Filter>External</Filter>
     </ClInclude>
+    <ClInclude Include="ConsoleRaster.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Console.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleColors.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\RConsole.cpp">
+    <ClCompile Include="..\..\Source\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
