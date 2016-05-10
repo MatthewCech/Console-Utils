@@ -110,16 +110,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\ConsoleColors.hpp" />
+    <ClInclude Include="..\..\Source\ConsoleRaster.hpp" />
     <ClInclude Include="..\..\Source\External\rlutil.h" />
     <ClInclude Include="..\..\Source\Field2D.hpp" />
     <ClInclude Include="..\..\Source\Console.hpp" />
     <ClInclude Include="..\..\Source\RTest.hpp" />
-    <ClInclude Include="ConsoleColors.hpp" />
-    <ClInclude Include="ConsoleRaster.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\main.cpp" />
     <ClCompile Include="..\..\Source\Console.cpp" />
+    <ClCompile Include="..\..\Source\RFuncs.hpp" />
+    <ClCompile Include="..\..\Source\main.cpp" />
+    <ClCompile Include="..\..\Source\ConsoleRaster.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

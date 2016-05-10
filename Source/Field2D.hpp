@@ -49,16 +49,18 @@ namespace RConsole
     ~Field2D();
 
     //Member Functions - Complex Manipulation
-    T &Get(unsigned int x, unsigned int y);
-    const T &Get(unsigned int x, unsigned int y) const;
-    void Set(const T &newItem);
-    Field2DProxy<T> operator[](unsigned int xPos);
-    const T& Peek(unsigned int x, unsigned int y) const;
-    void GoTo(unsigned int x, unsigned int y);
     void Zero();
+    void Set(const T &newItem);
+    T &Get(unsigned int x, unsigned int y);
+    Field2DProxy<T> operator[](unsigned int xPos);
+    void GoTo(unsigned int x, unsigned int y);
+    const T& Get(unsigned int x, unsigned int y) const;
+    const T& Peek(unsigned int x, unsigned int y) const;
+    const T& Peek(unsigned int index) const;
 
     //Basic Manipulation
     T &Get();
+    T* GetHead() { return data_;}
     const T &Get() const;
     void IncrementX();
     void IncrementY();
@@ -147,8 +149,8 @@ namespace RConsole
   template <typename T>
   T &Field2D<T>::Get(unsigned int x, unsigned int y)
   {
-    field_.GoTo(x, y);
-    return field_.Get();
+    GoTo(x, y);
+    return Get();
   }
 
 
@@ -156,14 +158,14 @@ namespace RConsole
   template <typename T>
   const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
   {
-    return Peek(x, y);
+    return Get(x, y);
   }
 
   //Get the first part of a 2D array operator
   template <typename T>
-  Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos)
+  Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos) 
   {
-    return peek
+    return Field2DProxy<T>(this, xPos);
   }
 
 
@@ -180,6 +182,14 @@ namespace RConsole
   const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
   {
     return data_[x + y * width_];
+  }
+
+
+  //Get the value at the specified index.
+  template <typename T>
+  const T& Field2D<T>::Peek(unsigned int index) const
+  {
+    return data_[index];
   }
 
 
@@ -203,7 +213,7 @@ namespace RConsole
 ////////////////////
   //Get the value at the current index.
   template <typename T>
-  T& Field2D<T>::Get()
+  T &Field2D<T>::Get()
   {
     return data_[index_];
   }
@@ -215,6 +225,7 @@ namespace RConsole
   {
     return data_[index_];
   }
+
 
   //Increment X location by 1 in the 2D field
   template <typename T>

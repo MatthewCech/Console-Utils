@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <ostream>
-#include "RConsole.hpp"
+#include "Console.hpp"
 #include "RTest.hpp"
 #include "Field2D.hpp"
-
+#include "External/rlutil.h"
+#include <chrono>
 
 void TestField2D();
 
@@ -11,6 +12,10 @@ void TestField2D();
 using namespace RConsole;
 int main(void)
 {
+  //Framerate for main loop
+  double samples = 0;
+  double avg = 0;
+
   try
   {
     TestField2D();
@@ -21,19 +26,60 @@ int main(void)
     system("Pause");
   }
 
-  //return 0;
+  //Setup
+  int Xstart = 0;
+  bool flip = false;
+
   Console::SetCursorVisible(false);
+
+  //Main loop
   while (1)
   {
+    //Frame start
+    std::chrono::milliseconds startTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::high_resolution_clock::now().time_since_epoch());
+
+
+
+    /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
+
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
-    for (float i = 0; i < 50; ++i)
+    for (float i = Xstart; i < 30 + Xstart; ++i)
       for (float j = 0; j < 20; ++j)
-        Console::DrawAlphaPoint(i, j, RConsole::WHITE, 1 - (j/20.0  + i/20.0)/2);
+        Console::DrawAlpha(i, j, RConsole::WHITE, 1 - j / 20.0);
+
+    //Flip if we get too far to the side.
+    if (flip)
+      Xstart--;
+    else
+      Xstart++;
+
+    //Establish going back the other direction.
+    if (Xstart >= 45 || Xstart <= 0)
+      flip = !flip;
 
     //Console::FullClear();
-    Console::ClearPrevious();
+    Console::Update();
+
+    ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
+
+
+
+    //Print cycle time in MS
+    std::chrono::milliseconds endTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::high_resolution_clock::now().time_since_epoch());
+    rlutil::locate(rlutil::tcols() - 3, 1);
+    rlutil::setColor(rlutil::MAGENTA);
+    long long current = (endTime - startTime).count();
+    printf("%3i", current);
+    rlutil::locate(rlutil::tcols() - 3, 2);
+    avg = (samples * avg + current) / static_cast<double>(samples + 1);
+    if(samples < 60)
+      samples += 1;
+    printf("%3i", (int)avg);
   }
 
+  //Return success
   return 0;
 }
 

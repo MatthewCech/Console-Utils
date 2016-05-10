@@ -1,4 +1,8 @@
 ﻿  main.cpp
-z:\floofs_inc\console utilities\source\main.cpp(31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+z:\floofs_inc\console utilities\source\main.cpp(44): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+z:\floofs_inc\console utilities\source\main.cpp(46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+z:\floofs_inc\console utilities\source\main.cpp(73): warning C4477: 'printf' : format string '%3i' requires an argument of type 'int', but variadic argument 1 has type '__int64'
+  z:\floofs_inc\console utilities\source\main.cpp(73): note: consider using '%lli' in the format string
+  z:\floofs_inc\console utilities\source\main.cpp(73): note: consider using '%I64i' in the format string
   VisualStudioProj.vcxproj -> Z:\Floofs_Inc\Console Utilities\VisualStudioProj\Debug\VisualStudioProj.exe
   VisualStudioProj.vcxproj -> Z:\Floofs_Inc\Console Utilities\VisualStudioProj\Debug\VisualStudioProj.pdb (Partial PDB)
