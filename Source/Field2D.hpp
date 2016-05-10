@@ -50,14 +50,16 @@ namespace RConsole
 
     //Member Functions - Complex Manipulation
     T &Get(unsigned int x, unsigned int y);
+    const T &Get(unsigned int x, unsigned int y) const;
     void Set(const T &newItem);
     Field2DProxy<T> operator[](unsigned int xPos);
-    const T& Peek(unsigned int x, unsigned int y);
+    const T& Peek(unsigned int x, unsigned int y) const;
     void GoTo(unsigned int x, unsigned int y);
     void Zero();
 
     //Basic Manipulation
     T &Get();
+    const T &Get() const;
     void IncrementX();
     void IncrementY();
     void DecrementX();
@@ -150,11 +152,18 @@ namespace RConsole
   }
 
 
+  //Const version of get that returns const reference.
+  template <typename T>
+  const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
+  {
+    return Peek(x, y);
+  }
+
   //Get the first part of a 2D array operator
   template <typename T>
   Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos)
   {
-    return Field2DProxy<T>(this, xPos);
+    return peek
   }
 
 
@@ -168,7 +177,7 @@ namespace RConsole
 
   //Glance at a read-only version of a specified location. Does NOT set index.
   template <typename T>
-  const T& Field2D<T>::Peek(unsigned int x, unsigned int y)
+  const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
   {
     return data_[x + y * width_];
   }
@@ -194,7 +203,15 @@ namespace RConsole
 ////////////////////
   //Get the value at the current index.
   template <typename T>
-  T &Field2D<T>::Get()
+  T& Field2D<T>::Get()
+  {
+    return data_[index_];
+  }
+
+
+  //Const get.
+  template <typename T>
+  const T& Field2D<T>::Get() const
   {
     return data_[index_];
   }

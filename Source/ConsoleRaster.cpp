@@ -1,23 +1,27 @@
 #include "ConsoleRaster.hpp"
+#include "RFuncs.hpp"
 
 
 
 namespace RConsole
 {
-  //Define static variables. I have to call the methods repeatedly because static
-  //initialization order is not guaranteed.
-  Field2D<bool> ConsoleRaster::modified_ = Field2D<bool>(rlutil::tcols(), rlutil::trows());
-  unsigned int ConsoleRaster::width_ = rlutil::tcols();
-  unsigned int ConsoleRaster::height_ = rlutil::trows();;
-
-
   //Absolute value of int.
-  int abs(int x) { if (x < 0) return -x; return x; }
-  ConsoleRaster()
-  {
 
+
+  ConsoleRaster::ConsoleRaster() 
+    : width_(rlutil::tcols())
+    , height_(rlutil::trows())
+    , data_(width_, height_)
+    , modified_(width_, height_)
+  {  }
+
+  ConsoleRaster::ConsoleRaster(const ConsoleRaster &rhs) 
+  { 
+    if (this == &rhs)
+    {
+
+    }
   }
-      ConsoleRaster(const ConsoleRaster &rhs) { *this = rhs; }
 
   //Draws a point with ASCII to attempt to represent location in a square.
   bool ConsoleRaster::DrawPartialPoint(float x, float y, Color color)
@@ -28,7 +32,7 @@ namespace RConsole
 
 
     //If Y is closer to a border, use it for placement.
-    if (abs(50 - x) < abs(50 - y))
+    if (RFuncs::Abs(50 - x) < RFuncs::Abs(50 - y))
     {
       if (x > 50)
         return DrawChar(222, x, y, color);
@@ -82,69 +86,12 @@ namespace RConsole
       return false;
 #endif
 
-    //locate on screen and set color
-    rlutil::locate(xLoc, yLoc);
-
-    //Set color of cursor
-    SetColor(color);
-
-    //Print out to the console in the preferred fashion
-    int retVal = 0;
-#ifdef RConsole_NO_THREADING
-    retVal = _putc_nolock(toDraw, stdout);
-#else
-    retVal = putc(toDraw, stdout);
-#endif
-    if (!retVal)
-      return false;
-
+    data_.GoTo(x, y);
+    data_.Set(RasterInfo(toDraw, color));
+  
     //Everything completed correctly.
     return true;
   }
-
-
-  //Set the color
-  void ConsoleRaster::SetColor(Color color)
-  {
-    if(color != PREVIOUS_COLOR)
-      rlutil::setColor(color);
-  }
-
-
-  //Explicitly clears every possible index. This is expensive! 
-  void ConsoleRaster::FullClear()
-  {
-    rlutil::cls();
-  }
-
-
-  //Clears out the screen based on the previous items written. Clear character is a space.
-  void ConsoleRaster::ClearPrevious()
-  {
-    //Walk through, write over only what was modified.
-    modified_.SetIndex(0);
-    for (int i = 0; i < width_; ++i)
-      for (int j = 0; j < height_; ++j)
-      {
-        if (modified_.Get())
-        {
-          //locate on screen and set color
-          rlutil::locate(i + 1, j + 1);
-
-        #ifdef RConsole_NO_THREADING
-          _putc_nolock(' ', stdout);
-        #else
-          retVal = putc(toDraw, stdout);
-        #endif
-        }
-        modified_.IncrementX();
-      }
-
-    //Set things back to zero.
-    modified_.Zero();
-    modified_.SetIndex(0);
-  }
-
 
   //Set visibility of cursor to specified bool.
   void ConsoleRaster::SetCursorVisible(bool isVisible)
@@ -155,13 +102,31 @@ namespace RConsole
       rlutil::showcursor();
   }
 
-  static bool Update()
-  {
 
+  //Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
+  void ConsoleRaster::Clear()
+  {
+    data_.Zero();
+  }
+  
+
+  //Get a constant reference to the existing raster.
+  const Field2D<RasterInfo>& ConsoleRaster::GetRaster() const
+  {
+    return data_;
   }
 
   
-  //Gets console dimensions.
-  unsigned int ConsoleRaster::GetConsoleWidth() { return rlutil::tcols(); }
-  unsigned int ConsoleRaster::GetConsoleHeight() { return rlutil::trows(); }
+  //Gets console width.
+  const unsigned int ConsoleRaster::GetConsoleWidth() const 
+  { 
+    return rlutil::tcols(); 
+  }  
+
+
+  //Get console height
+  const unsigned int ConsoleRaster::GetConsoleHeight() const
+  { 
+    return rlutil::trows(); 
+  } 
 }

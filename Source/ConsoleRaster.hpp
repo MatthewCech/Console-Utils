@@ -6,31 +6,39 @@
 
 namespace RConsole
 {
-  //The raster info struct, holds info on what is to be drawn at a location and if it was modified.
+  //The raster info struct, holds info on what is to be drawn at a location and the color.
   struct RasterInfo
   {
-    bool ModFlag;
+    RasterInfo(char val, Color col) : Value(val), C(col) { }
     char Value;
+    Color C;
   };
 
   class ConsoleRaster
   {
   public:
+    //Constructors
+    ConsoleRaster();
+    ConsoleRaster(const ConsoleRaster &rhs);
+
     //Method Prototypes
     bool DrawPartialPoint(float x, float y, Color color = PREVIOUS_COLOR);
     bool DrawAlphaPoint(float x, float y, Color color = PREVIOUS_COLOR, float opacity = 1);
     bool DrawChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
     void SetColor(Color color);
     void SetCursorVisible(bool isVisible);
-    unsigned int GetConsoleWidth();
-    unsigned int GetConsoleHeight();
-    void FullClear();
-    void ClearPrevious();
+    const Field2D<RasterInfo>& GetRaster() const;
+    void Clear();
+
+    //General
+    const unsigned int GetConsoleWidth() const;
+    const unsigned int GetConsoleHeight() const;
 
   private:
     //Variables
-    Field2D<RasterInfo> modified_;
     unsigned int width_;
     unsigned int height_;
+    Field2D<RasterInfo> data_;
+
   };
 }
