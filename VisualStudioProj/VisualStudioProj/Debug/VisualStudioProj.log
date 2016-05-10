@@ -1,8 +1,13 @@
-﻿  main.cpp
-z:\floofs_inc\console utilities\source\main.cpp(44): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-z:\floofs_inc\console utilities\source\main.cpp(46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-z:\floofs_inc\console utilities\source\main.cpp(73): warning C4477: 'printf' : format string '%3i' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  z:\floofs_inc\console utilities\source\main.cpp(73): note: consider using '%lli' in the format string
-  z:\floofs_inc\console utilities\source\main.cpp(73): note: consider using '%I64i' in the format string
+﻿  Console.cpp
+z:\floofs_inc\console utilities\source\console.cpp(25): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+z:\floofs_inc\console utilities\source\console.cpp(49): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(51): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(53): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(55): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(68): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+z:\floofs_inc\console utilities\source\console.cpp(71): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(72): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(78): warning C4309: 'argument': truncation of constant value
+z:\floofs_inc\console utilities\source\console.cpp(79): warning C4309: 'argument': truncation of constant value
   VisualStudioProj.vcxproj -> Z:\Floofs_Inc\Console Utilities\VisualStudioProj\Debug\VisualStudioProj.exe
   VisualStudioProj.vcxproj -> Z:\Floofs_Inc\Console Utilities\VisualStudioProj\Debug\VisualStudioProj.pdb (Partial PDB)

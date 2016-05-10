@@ -95,15 +95,8 @@ namespace RConsole
    //Private Member Functions//
   ////////////////////////////
   //Clears out the screen based on the previous items written. Clear character is a space.
-  bool first = true;
   void Console::ClearPrevious()
   {
-    if (first)
-    {
-      first = false;
-      return;
-    }
-
     //Walk through, write over only what was modified.
     modified_.SetIndex(0);
     unsigned int maxIndex = width_ * height_;
