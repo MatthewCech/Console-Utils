@@ -12,10 +12,6 @@ void TestField2D();
 using namespace RConsole;
 int main(void)
 {
-  //Framerate for main loop
-  double samples = 0;
-  double avg = 0;
-
   try
   {
     TestField2D();
@@ -35,12 +31,9 @@ int main(void)
   //Main loop
   while (1)
   {
-    //Frame start
-    std::chrono::milliseconds startTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::high_resolution_clock::now().time_since_epoch());
 
-
-
+    ///////////////////////////////////////////////////////////////////////////////////////
+    RTest::Timekeeper::StartFrame();
     /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
 
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
@@ -62,22 +55,17 @@ int main(void)
     Console::Update();
 
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
+    RTest::Timekeeper::EndFrame();
+    ///////////////////////////////////////////////////////////////////////////////////////
 
 
 
     //Print cycle time in MS
-    /*
-    std::chrono::milliseconds endTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::high_resolution_clock::now().time_since_epoch());
     rlutil::locate(rlutil::tcols() - 3, 1);
     rlutil::setColor(rlutil::MAGENTA);
-    long long current = (endTime - startTime).count();
-    printf("%3i", current);
+    printf("%3i", RTest::Timekeeper::GetLastTimeMS());
     rlutil::locate(rlutil::tcols() - 3, 2);
-    avg = (samples * avg + current) / static_cast<double>(samples + 1);
-    if(samples < 60)
-      samples += 1;
-    printf("%3i", (int)avg);*/
+    printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
   }
 
   //Return success

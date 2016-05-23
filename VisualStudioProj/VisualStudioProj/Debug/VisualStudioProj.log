@@ -1,13 +1,8 @@
-﻿  Console.cpp
-z:\floofs_inc\console utilities\source\console.cpp(25): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
-z:\floofs_inc\console utilities\source\console.cpp(49): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(51): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(53): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(55): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(68): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-z:\floofs_inc\console utilities\source\console.cpp(71): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(72): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(78): warning C4309: 'argument': truncation of constant value
-z:\floofs_inc\console utilities\source\console.cpp(79): warning C4309: 'argument': truncation of constant value
+﻿  main.cpp
+z:\floofs_inc\console utilities\source\main.cpp(40): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+z:\floofs_inc\console utilities\source\main.cpp(42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  RTest.cpp
+z:\floofs_inc\console utilities\source\rtest.cpp(79): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
+  Generating Code...
   VisualStudioProj.vcxproj -> Z:\Floofs_Inc\Console Utilities\VisualStudioProj\Debug\VisualStudioProj.exe
   VisualStudioProj.vcxproj -> Z:\Floofs_Inc\Console Utilities\VisualStudioProj\Debug\VisualStudioProj.pdb (Partial PDB)

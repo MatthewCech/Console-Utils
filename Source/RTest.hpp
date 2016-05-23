@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <ostream>
+#include <chrono>
 
 
 #define RTest_NEAR_FLOAT  .0006
@@ -30,26 +31,29 @@ namespace RTest
     unsigned int Line;
     std::string Message;
   };
-
-  //Define print formatting 
-  std::ostream &operator<<(std::ostream &os, const RException &rhs)
-  {
-    os << "!! EXCEPTION: " << rhs.File << " line " << rhs.Line << ": " << rhs.Message;
-    return os;
-  }
   #define RException(a) RException(__FILE__, __LINE__, a)
 
-  bool Near(double a, double b)
-  {
-    if (a + RTest_NEAR_DOUBLE > b && a - RTest_NEAR_DOUBLE < b)
-      return true;
-    return false;
-  }
 
-  bool Near(float a, float b)
+  //A class for timing frames.
+  class Timekeeper
   {
-    if (a + RTest_NEAR_FLOAT > b && a - RTest_NEAR_FLOAT < b)
-      return true;
-    return false;
-  }
+  public:
+    //Static member functions
+    static void StartFrame();
+    static void EndFrame();
+    static int GetLastTimeMS();
+    static int GetAvgTimeMS();
+    static void SetMaxSamples(unsigned int samples);
+
+  private:
+    //Frame time markers
+    static std::chrono::milliseconds startTime_;
+    static std::chrono::milliseconds endTime_;
+
+    //Other data for averaging
+    static double frameSamples_;
+    static double frameAvg_;
+    static long long lastTime_;
+    static unsigned int maxFrameSamples_;
+  };
 }
