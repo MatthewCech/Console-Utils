@@ -1,27 +1,21 @@
+/*!***************************************************************************
+@file    RTest.cpp
+@author  Reverie Wisp
+@par     Contact: reveriewisp@gmail.com
+@date    6/4/2016
+
+@brief
+Super casual testing and debug tools to just throw in a project and use.
+File contains implementation for basic timekeeping class and basic exception 
+structure, along with some functions to help with testing.
+*****************************************************************************/
 #include "RTest.hpp"
 #include <chrono>
 
 
+
 namespace RTest
 {
-
-
-
-
-  //////////////////////
-  //RException
-  ////////////////////
-  #undef RException
-  //Define print formatting 
-  std::ostream &operator<<(std::ostream &os, const RException &rhs)
-  {
-    os << "!! EXCEPTION: " << rhs.File << " line " << rhs.Line << ": " << rhs.Message;
-    return os;
-  }
-
-  #define RException(a) RException(__FILE__, __LINE__, a)
-
-
     /////////////////////////////////
    //Testing functions for asserts//
   /////////////////////////////////
@@ -38,6 +32,7 @@ namespace RTest
       return true;
     return false;
   }
+
 
 
     ////////////////////
@@ -93,4 +88,30 @@ namespace RTest
     maxFrameSamples_ = samples;
     frameSamples_ = 0;
   }
+
+
+
+    //////////////
+   //RException//
+  //////////////
+  //Undefine the RException macro to prevent it expanding here.
+  #undef RException
+
+  //Handle constructor
+  RException::RException(std::string file, unsigned int line, std::string message)
+  : File(file)
+  , Line(line)
+  , Message(message)
+  {  }
+
+  //Define print formatting 
+  std::ostream &operator<<(std::ostream &os, const RException &rhs)
+  {
+    os << "!! EXCEPTION: " << rhs.File << " line " << rhs.Line << ": " << rhs.Message;
+    return os;
+  }
+  
+  //Redefube macro to allow it to expand here.
+  #define RException(a) RException(__FILE__, __LINE__, a)
+
 }
