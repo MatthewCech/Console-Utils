@@ -19,7 +19,7 @@ workspace "Console_Utilities"                -- Solution Name
 	------------------------------- 
 	project "ASCII_Draw"        -- Project name
 		targetname "ascii_draw" -- Executable name
-		kind "WindowedApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
+		kind "ConsoleApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
 		language "C++"
 
 	-------------------------------
@@ -27,7 +27,7 @@ workspace "Console_Utilities"                -- Solution Name
 	-------------------------------
 	
 	-- Set compiler flags
-	flags "Fatal Warnings"  -- Warnings to 11! (all warnings on)
+	flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
 
     -- Generate filters with info provided, VS
 	filter { "platforms:*86" }
@@ -87,7 +87,7 @@ workspace "Console_Utilities"                -- Solution Name
     local output_dir_lib          = output_dir_root .. "/libs" -- Mac Specific
 
     local source_dir_root         = ROOT .. "Source"
-    local source_dir_engine       = source_dir_root .. "/Engine"
+    local source_dir_engine       = source_dir_root .. "/Code"
     local source_dir_dependencies = source_dir_root .. "/Dependencies"
 
     local source_dir_includes     = source_dir_dependencies .. "/**/Includes"
@@ -154,6 +154,7 @@ workspace "Console_Utilities"                -- Solution Name
     
     -- OS-specific Libraries - Dynamic libs will need to be copied to output
 
+    --[[
     filter { "system:windows" }  -- Currently all static libs; No copying
       links
       {
@@ -177,7 +178,7 @@ workspace "Console_Utilities"                -- Solution Name
         "OpenGL.framework",
       }
     filter {}
-
+	--]]
 
 -----------------------------------
 -- POST-BUILD CONFIGURATIONS

@@ -2,7 +2,7 @@
 #include <iostream>
 #include "RFuncs.hpp"
 #include "Console.hpp"
-#include "External/rlutil.h"
+#include <rlutil.h>
 #include "ConsoleRaster.hpp"
 
 
@@ -22,11 +22,17 @@ namespace RConsole
   //Write the specific character in a specific color to a specific location on the console.
   void Console::Draw(char toWrite, float x, float y, Color color)
   {
-    modified_.GoTo(x, y);
+    modified_.GoTo(static_cast<int>(x), static_cast<int>(y));
     modified_.Set(true);
     r_.WriteChar(toWrite, x, y, color);
   }
 
+
+  //Call previous draw with int instead.
+  void Console::Draw(char toWrite, int x, int y, Color color)
+  {
+    Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
+  }
 
   //Updates the current raster by drawing it to the screen.
   bool Console::Update()
@@ -46,13 +52,20 @@ namespace RConsole
   {
     //All characters use represent alt-codes. 
     if (opacity < .25)
-      Draw(176, x, y, color);
+      Draw(static_cast<unsigned char>(176), x, y, color);
     else if (opacity < .5)
-      Draw(177, x, y, color);
+      Draw(static_cast<unsigned char>(177), x, y, color);
     else if (opacity < .75)
-      Draw(178, x, y, color);
+      Draw(static_cast<unsigned char>(178), x, y, color);
     else
-      Draw(219, x, y, color);
+      Draw(static_cast<unsigned char>(219), x, y, color);
+  }
+
+
+  //Int version of above function
+  void Console::DrawAlpha(int x, int y, Color color, float opacity)
+  {
+    DrawAlpha(static_cast<float>(x), static_cast<float>(y), color, opacity);
   }
 
 
@@ -65,18 +78,18 @@ namespace RConsole
 
 
     //If Y is closer to a border, use it for placement.
-    if (RFuncs::Abs(50 - x) < RFuncs::Abs(50 - y))
+    if (RFuncs::Abs(50 - static_cast<int>(x)) < RFuncs::Abs(50 - static_cast<int>(y)))
     {
       if (x > 50)
-        return Draw(222, x, y, color);
-      return Draw(221, x, y, color);
+        return Draw(static_cast<unsigned char>(222), x, y, color);
+      return Draw(static_cast<unsigned char>(221), x, y, color);
     }
     //Otherwise, X is closer to a border.
     else
     {
       if (y > 50)
-        return Draw(223, x, y, color);
-      return Draw(220, x, y, color);
+        return Draw(static_cast<unsigned char>(223), x, y, color);
+      return Draw(static_cast<unsigned char>(220), x, y, color);
     }
   }
 

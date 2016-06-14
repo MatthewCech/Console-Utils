@@ -71,7 +71,7 @@ namespace RTest
   //Get the last frame time in MS as an int.
   int Timekeeper::GetLastTimeMS()
   {
-    return lastTime_;
+    return static_cast<int>(lastTime_);
   }
 
 

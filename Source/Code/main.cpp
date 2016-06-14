@@ -3,43 +3,38 @@
 #include "Console.hpp"
 #include "RTest.hpp"
 #include "Field2D.hpp"
-#include "External/rlutil.h"
+#include <rlutil.h>
 #include <chrono>
+
 
 void TestField2D();
 
+
 //Awesome.
 using namespace RConsole;
-int main(void)
+int main(void) try
 {
-  try
-  {
-    TestField2D();
-  }
-  catch(RTest::RException e)
-  {
-    std::cout << e << std::endl;
-    system("Pause");
-  }
+  //Begin with tests.
+  TestField2D();
 
-  //Setup
+  //Variables
   int Xstart = 0;
   bool flip = false;
 
+  //Setup
   Console::SetCursorVisible(false);
 
   //Main loop
   while (1)
   {
-
     ///////////////////////////////////////////////////////////////////////////////////////
     RTest::Timekeeper::StartFrame();
     /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
 
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
-    for (float i = Xstart; i < 30 + Xstart; ++i)
-      for (float j = 0; j < 20; ++j)
-        Console::DrawAlpha(i, j, RConsole::WHITE, 1 - j / 20.0);
+    for (int i = Xstart; i < 30 + Xstart; ++i)
+      for (int j = 0; j < 20; ++j)
+        Console::DrawAlpha(i, j, RConsole::WHITE, 1 - j / 20.0f);
 
     //Flip if we get too far to the side.
     if (flip)
@@ -51,15 +46,12 @@ int main(void)
     if (Xstart >= 45 || Xstart <= 0)
       flip = !flip;
 
-    //Console::FullClear();
+    //Clear
     Console::Update();
 
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
     RTest::Timekeeper::EndFrame();
     ///////////////////////////////////////////////////////////////////////////////////////
-
-
-
     //Print cycle time in MS
     rlutil::locate(rlutil::tcols() - 3, 1);
     rlutil::setColor(rlutil::MAGENTA);
@@ -70,6 +62,12 @@ int main(void)
 
   //Return success
   return 0;
+}
+//Catch any exceptions from main.
+catch (RTest::RException e)
+{
+  std::cout << e << std::endl;
+  system("Pause");
 }
 
 

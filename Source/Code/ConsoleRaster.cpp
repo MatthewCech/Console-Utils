@@ -15,7 +15,7 @@ namespace RConsole
   //Draws a character to the screen. Returns if it was successful or not.
   bool ConsoleRaster::WriteChar(char toDraw, float x, float y, Color color)
   {
-    data_.GoTo(x, y);
+    data_.GoTo(static_cast<int>(x), static_cast<int>(y));
     data_.Set(RasterInfo(toDraw, color));
   
     //Everything completed correctly.

@@ -16,7 +16,9 @@ namespace RConsole
     //Basic drawing calls
     static void Clear();
     static bool Update();
+    static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
     static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
+    static void DrawAlpha(int x, int y, Color color, float opacity);
     static void DrawAlpha(float x, float y, Color color, float opacity);
 
     //Advanced drawing calls
