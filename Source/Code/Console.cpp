@@ -134,7 +134,7 @@ namespace RConsole
         #ifdef RConsole_NO_THREADING
           _putc_nolock(' ', stdout);
         #else
-          retVal = putc(' ', stdout);
+          putc(' ', stdout);
         #endif
         }
         modified_.IncrementX();
