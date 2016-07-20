@@ -34,6 +34,21 @@ namespace RConsole
     Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
   }
 
+  //Draw a string
+  void Console::DrawString(const char* toDraw, float xStart, float yStart, Color color)
+  {
+	  size_t len = strlen(toDraw);
+	  if (len <= 0) return;
+
+	  //Set the memory we are using to modified.
+	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
+	  unsigned int index = modified_.GetIndex();
+	  memset(modified_.GetHead() + index, true, len);
+
+	  //Write string
+	  r_.WriteString(toDraw, len, xStart, yStart, color);
+  }
+
   //Updates the current raster by drawing it to the screen.
   bool Console::Update()
   {

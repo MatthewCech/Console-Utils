@@ -36,7 +36,10 @@ int main(void) try
       for (int j = 0; j < 20; ++j)
         Console::DrawAlpha(i, j, RConsole::WHITE, 1 - j / 20.0f);
 
-    //Flip if we get too far to the side.
+	//Console text.
+	Console::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
+	
+	//Flip if we get too far to the side.
     if (flip)
       Xstart--;
     else

@@ -48,6 +48,10 @@ namespace RConsole
     Field2D(unsigned int w, unsigned int h, const T& defaultVal);
     ~Field2D();
 
+	//Structure Info
+	unsigned int Width() const;
+	unsigned int Height() const;
+
     //Member Functions - Complex Manipulation
     void Zero();
     void Set(const T &newItem);
@@ -103,6 +107,20 @@ namespace RConsole
     return field_->Get();
   }
 
+  //////////////////
+ //Structure Info//
+//////////////////
+  template <typename T>
+  unsigned int Field2D<T>::Width() const
+  {
+	  return width_;
+  }
+
+  template <typename T>
+  unsigned int Field2D<T>::Height() const
+  {
+	  return height_;
+  }
 
   ///////////////////////////
  //Field2D Methods and Co.//

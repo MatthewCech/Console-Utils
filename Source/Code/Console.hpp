@@ -18,6 +18,7 @@ namespace RConsole
     static bool Update();
     static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
     static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
+	static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
     static void DrawAlpha(int x, int y, Color color, float opacity);
     static void DrawAlpha(float x, float y, Color color, float opacity);
 
