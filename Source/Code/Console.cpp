@@ -137,7 +137,7 @@ namespace RConsole
     while (index < maxIndex)
     {
       index = modified_.GetIndex();
-      char curr = r_.GetRasterData().Peek(index).Value;
+      unsigned char curr = r_.GetRasterData().Peek(index).Value;
       if (curr == 176)
         index++;
       char prev = prev_.GetRasterData().Peek(index).Value;
