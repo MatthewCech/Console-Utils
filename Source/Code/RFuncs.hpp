@@ -28,7 +28,7 @@ namespace RFuncs
 
 #ifdef COMPILER_VS
 // restore VS warning
-#pragma warning(enable: 4505) //Unreferenced local function has been removed
+#pragma warning(default: 4505) //Unreferenced local function has been removed
 #else
 // restore g++/glang warnings
 #pragma GCC diagnostic pop
