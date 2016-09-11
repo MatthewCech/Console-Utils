@@ -196,16 +196,11 @@ namespace RConsole
         //Handle clipping the console if we define that tag.
       #ifdef RConsole_CLIP_CONSOLE
         //Handle X
-
         if (xLoc > width_)
-          return false;
-        else if (xLoc < 0)
           return false;
 
         //Handle Y
         if (yLoc > height_)
-          return false;
-        else if (yLoc < 0)
           return false;
       #endif
 
