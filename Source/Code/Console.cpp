@@ -20,7 +20,7 @@ namespace RConsole
   bool Console::isDrawing_         = true;
   unsigned int Console::width_     = rlutil::tcols();
   unsigned int Console::height_    = rlutil::trows();
-  Field2D<bool> Console::modified_ = Field2D<bool>(rlutil::tcols(), rlutil::trows());
+  Field2D<bool> Console::modified_ = Field2D<bool>(rlutil::tcols(), rlutil::trows(), false);
 
     /////////////////////////////
    // Public Member Functions //
@@ -166,12 +166,13 @@ namespace RConsole
     while (index < maxIndex)
     {
       index = modified_.GetIndex();
-      unsigned char curr = r_.GetRasterData().Peek(index).Value;
-      if (curr == 176)
-        index++;
-      char prev = prev_.GetRasterData().Peek(index).Value;
-      // If we modified this one...
-      if (!modified_.Get() && prev != curr)
+      const RasterInfo &curr = r_.GetRasterData().Peek(index);
+      const RasterInfo &prev = prev_.GetRasterData().Peek(index);
+
+      // If we have not modified the space,
+      // and we don't have the same character as last time,
+      // and we don't have the same color.
+      if (!modified_.Get() && curr != prev)
       {
         // Compute X and Y location
         unsigned int xLoc = (index % width_) + 1;
@@ -217,7 +218,7 @@ namespace RConsole
       index = r.GetRasterData().GetIndex();
       const RasterInfo& ri = r.GetRasterData().Get();
 
-      if (ri.Value != 0 && prev_.GetRasterData().Peek(index).Value != ri.Value)
+      if (ri.Value != 0 && prev_.GetRasterData().Peek(index) != ri)
       {
         unsigned int xLoc = (index % width_) + 1;
         unsigned int yLoc = (index / width_) + 1;
