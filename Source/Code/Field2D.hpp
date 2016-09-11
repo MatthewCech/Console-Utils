@@ -145,9 +145,12 @@ namespace RConsole
     , height_(h)
   {
     data_ = new T[w * h];
-    for (int i = 0; i < w; ++i)
-      for (int j = 0; j < h; ++j)
-        Set(i, j, defaultVal);
+    for (unsigned int i = 0; i < w; ++i)
+      for (unsigned int j = 0; j < h; ++j)
+      {
+        Set(defaultVal);
+        IncrementX();
+      }
     index_ = 0;
   }
 
