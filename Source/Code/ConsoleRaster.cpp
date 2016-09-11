@@ -5,14 +5,31 @@
 
 namespace RConsole
 {
-  //Default constructor for the ConsoleRaster- Zeros data and gets width and height.
+  RasterInfo::RasterInfo() : Value(0), C(Color::PREVIOUS_COLOR) 
+  {  }
+  RasterInfo::RasterInfo(const char val, Color col) : Value(val), C(col) 
+  {  }
+  bool RasterInfo::operator ==(const RasterInfo &rhs) const
+  {
+    if (rhs.C == C && rhs.Value == Value)
+      return true;
+    return false;
+  }
+  bool RasterInfo::operator !=(const RasterInfo &rhs) const
+  {
+    return !(*this == rhs);
+  }
+
+
+
+  // Default constructor for the ConsoleRaster- Zeros data and gets width and height.
   ConsoleRaster::ConsoleRaster() 
     : width_(rlutil::tcols())
     , height_(rlutil::trows())
     , data_(width_, height_)
   {  }
 
-  //Draws a character to the screen. Returns if it was successful or not.
+  // Draws a character to the screen. Returns if it was successful or not.
   bool ConsoleRaster::WriteChar(char toDraw, float x, float y, Color color)
   {
     data_.GoTo(static_cast<int>(x), static_cast<int>(y));
@@ -22,7 +39,7 @@ namespace RConsole
     return true;
   }
 
-  //Writes a string to the field
+  // Writes a string to the field
   bool ConsoleRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
   {
 	  //Establish and check for a string of a usable size.
@@ -37,34 +54,35 @@ namespace RConsole
 	  return true;
   }
 
-  //Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
+  // Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
   void ConsoleRaster::Clear()
   {
     data_.Zero();
   }
   
 
-  //Get a constant reference to the existing raster.
+  // Get a constant reference to the existing raster.
   const Field2D<RasterInfo>& ConsoleRaster::GetRasterData() const
   {
     return data_;
   }
 
 
-  //Underlying raster exposing.
+  // Underlying raster exposing.
   Field2D<RasterInfo>& ConsoleRaster::GetRasterData()
   {
     return data_;
   }
   
-  //Gets console width.
+
+  // Gets console width.
   unsigned int ConsoleRaster::GetConsoleWidth() const 
   { 
     return rlutil::tcols(); 
   }  
 
 
-  //Get console height
+  // Get console height
   unsigned int ConsoleRaster::GetConsoleHeight() const
   { 
     return rlutil::trows(); 
