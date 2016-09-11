@@ -36,6 +36,7 @@ namespace RConsole
     static void FullClear();
     static void SetColor(const Color &color);
     static bool WriteRaster(ConsoleRaster &r);
+    static int  PutC(int character, FILE * stream );
 
     //Any rasters we have. Could be expanded to have two, so you could "swap" them,
     //Although practicality of that is limited given the clearing technique.

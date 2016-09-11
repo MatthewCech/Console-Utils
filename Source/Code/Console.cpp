@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <iostream>
+#include "Definitions.hpp"
 #include "RFuncs.hpp"
 #include "Console.hpp"
 #include <rlutil.h>
@@ -92,6 +93,10 @@ namespace RConsole
     int yDec = static_cast<int>(x * 100) % 100;
 
 
+    UNUSED(xDec);
+    UNUSED(yDec);
+
+
     //If Y is closer to a border, use it for placement.
     if (RFuncs::Abs(50 - static_cast<int>(x)) < RFuncs::Abs(50 - static_cast<int>(y)))
     {
@@ -146,13 +151,9 @@ namespace RConsole
         //locate on screen and set color
         rlutil::locate(xLoc, yLoc);
 
-        #ifdef RConsole_NO_THREADING
-          _putc_nolock(' ', stdout);
-        #else
-          putc(' ', stdout);
-        #endif
-        }
-        modified_.IncrementX();
+        PutC(' ', stdout);
+      }
+      modified_.IncrementX();
     }
 
     //Set things back to zero.
@@ -217,11 +218,9 @@ namespace RConsole
 
         //Print out to the console in the preferred fashion
         int retVal = 0;
-      #ifdef RConsole_NO_THREADING
-        retVal = _putc_nolock(ri.Value, stdout);
-      #else
-        retVal = putc(ri.Value, stdout);
-      #endif
+
+        retVal = PutC(ri.Value, stdout);
+
         if (!retVal)
           return false;
       }
@@ -232,6 +231,16 @@ namespace RConsole
 
     //Return we successfully printed the raster!
     return true;
+  }
+
+  // Cross-platform putc
+  int Console::PutC(int character, FILE * stream )
+  {
+    #if defined(RConsole_NO_THREADING) && defined(OS_WINDOWS)
+      return _putc_nolock(character, stream);
+    #else
+      return putc(character, stream);
+    #endif
   }
 
 
