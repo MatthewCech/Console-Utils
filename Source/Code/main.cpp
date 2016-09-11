@@ -13,7 +13,7 @@ void TestField2D();
 
 // Awesome.
 using namespace RConsole;
-int main(void) try
+int main(int argc, char** argv) try
 {
   // Begin with tests.
   TestField2D();
@@ -21,11 +21,18 @@ int main(void) try
   // Variables
   int Xstart = 0;
   bool flip = false;
+  char letter = 'a';
+  bool displayFPS = false;
+  if (argc == 2)
+    if (strcmp(argv[1], "-fps") || strcmp(argv[1], "/fps") || strcmp(argv[1], "fps"))
+      displayFPS = true;
 
   // Setup
   Console::SetCursorVisible(false);
   srand(0);
-  char letter = 'a';
+
+
+
   // Main loop
   while (1)
   {
@@ -65,12 +72,16 @@ int main(void) try
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
     RTest::Timekeeper::EndFrame();
     ///////////////////////////////////////////////////////////////////////////////////////
-    // Print cycle time in MS
-    rlutil::locate(rlutil::tcols() - 3, 1);
-    rlutil::setColor(rlutil::MAGENTA);
-    printf("%3i", RTest::Timekeeper::GetLastTimeMS());
-    rlutil::locate(rlutil::tcols() - 3, 2);
-    printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
+    // Print cycle time in MS.
+    // If you use CTRL-C, you will get a block of garbage if this is running.
+    if (displayFPS)
+    {
+      rlutil::locate(rlutil::tcols() - 3, 1);
+      rlutil::setColor(rlutil::MAGENTA);
+      printf("%3i", RTest::Timekeeper::GetLastTimeMS());
+      rlutil::locate(rlutil::tcols() - 3, 2);
+      printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
+    }
   }
   
   // Return success
