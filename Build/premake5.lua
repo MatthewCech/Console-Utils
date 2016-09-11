@@ -12,7 +12,16 @@ local ROOT = "../"   -- Path to project root
 workspace "Console_Utilities"                -- Solution Name
 	configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
 	platforms { "x64", "x86"}                -- Dropdown platforms section in VS
-	location (ROOT .. "project_" .. _ACTION) -- Note: _ACTION is the argument passed to premake.
+	
+  local proj_action = "UNDEFINED"
+
+  -- _ACTION is the argument passed into premake5 when you run it.
+  if _ACTION ~= nill then
+    proj_action = _ACTION
+  end
+
+  location (ROOT .. "project_" .. proj_action)
+
 
 	-------------------------------
 	-- [ PROJECT CONFIGURATION ] --
@@ -22,26 +31,18 @@ workspace "Console_Utilities"                -- Solution Name
 		kind "ConsoleApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
 		language "C++"
 
-	-------------------------------
-	-- [ COMPILER/LINKER CONFIG] --
-	-------------------------------
-	
-	-- Set compiler flags
-	flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
+  	-------------------------------
+  	-- [ COMPILER/LINKER CONFIG] --
+  	-------------------------------
+    
+    flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
+    warnings "Extra"       -- Extra warnings, such as unused variables
 
-    -- Generate filters with info provided, VS
-	filter { "platforms:*86" }
-      architecture "x86"
-    filter { "platforms:*64" }
-      architecture "x64"
+  	filter { "platforms:*86" } architecture "x86"
+    filter { "platforms:*64" } architecture "x64"
 
-    -- Generate configs dropdown info, VS
-    filter { "configurations:Debug" }
-      defines { "DEBUG" }  -- Actively defined in code, can be checked for.
-      flags { "Symbols" }
-    filter { "configurations:Release" }
-      defines { "NDEBUG" } -- Actively defined in code, can be checked for.
-      optimize "On"
+    filter "configurations:Debug"    defines { "DEBUG" }  symbols  "On"
+    filter "configurations:Release"  defines { "NDEBUG" } optimize "On"
 
     -- Reset filter.
     filter {}
@@ -50,39 +51,28 @@ workspace "Console_Utilities"                -- Solution Name
 	------------------------------
 	-- [ BUILD CONFIGURATIONS ] --
 	------------------------------
-    local cur_toolset = "default" -- workaround for premake issue #257
 
-    filter {"system:macosx" }           -- Mac uses clang.
-      toolset "clang"
-      cur_toolset = "clang"
-   
     filter { "action:gmake" }
+      toolset "clang"
       buildoptions { "-std=c++14" }
 
     -- Set the rpath on the executable, to allow for relative path for dynamic lib
-    filter { "system:macosx" }
-      if cur_toolset == "clang" or cur_toolset == "gcc" then  -- issue #257
-        linkoptions { "-rpath @executable_path/lib" }
-      end
+    filter { "system:macosx", "action:gmake" }
+      linkoptions { "-rpath @executable_path/lib" }
     
-    filter {"system:windows", "action:vs*"}
+    -- when building any visual studio project
+    filter { "system:windows", "action:vs*"}
+      flags         { "MultiProcessorCompile", "NoMinimalRebuild" }
       linkoptions   { "/ignore:4099" }      -- Ignore library pdb warnings when running in debug
 
     filter {} -- clear filter 	
 
 
 
-
-
-
-
-
-
-
     ----------------------------------
     -- [ FILE PATH CONFIGURATIONS ] --
     ----------------------------------
-    local output_dir_root         = ROOT .. "bin_%{cfg.platform}_%{cfg.buildcfg}_" .. _ACTION
+    local output_dir_root         = ROOT .. "bin_%{cfg.platform}_%{cfg.buildcfg}_" .. proj_action
     targetdir(output_dir_root )    -- Where all output files are stored
     local output_dir_lib          = output_dir_root .. "/libs" -- Mac Specific
 
@@ -100,14 +90,15 @@ workspace "Console_Utilities"                -- Solution Name
     -- Files to be compiled (cpp) or added to project (visual studio)
     files
     {
+      source_dir_engine .. "/**.c",
       source_dir_engine .. "/**.cpp",
+      source_dir_engine .. "/**.h",
       source_dir_engine .. "/**.hpp",
       source_dir_engine .. "/**.tpp",
     }
 
     filter { "files:**.tpp" }
       flags {"ExcludeFromBuild"}
-    filter {}
 
     -- Ignore files for other operating systems (not necessary in this project)
     filter { "system:macosx" } removefiles { source_dir_engine .. "/**_windows.*" }
