@@ -1,26 +1,39 @@
 #include <cstdio>
 #include <iostream>
+#include <csignal>          // Signal termination.
+#include <rlutil.h>         // Console drawing 
+#include <chrono>           // Time related info for sleeping.
+#include <thread>           // Sleep on exit to allow for update to finish.
 #include "Definitions.hpp"
 #include "RFuncs.hpp"
 #include "Console.hpp"
-#include <rlutil.h>
 #include "ConsoleRaster.hpp"
+
 
 
 namespace RConsole
 {
-  //Static initialization in non-guaranteed order.
-  ConsoleRaster Console::r_           = ConsoleRaster();
-  ConsoleRaster Console::prev_        = ConsoleRaster();
-  unsigned int Console::width_        = rlutil::tcols();
-  unsigned int Console::height_       = rlutil::trows();;
-  Field2D<bool> Console::modified_    = Field2D<bool>(rlutil::tcols(), rlutil::trows());
+  // Static initialization in non-guaranteed order.
+  ConsoleRaster Console::r_        = ConsoleRaster();
+  ConsoleRaster Console::prev_     = ConsoleRaster();
+  bool Console::hasLazyInit_       = false;
+  bool Console::isDrawing_         = true;
+  unsigned int Console::width_     = rlutil::tcols();
+  unsigned int Console::height_    = rlutil::trows();
+  Field2D<bool> Console::modified_ = Field2D<bool>(rlutil::tcols(), rlutil::trows());
 
+    /////////////////////////////
+   // Public Member Functions //
+  /////////////////////////////
+  // Clear out the screen that the user sees.
+  // Note: More expensive than clearing just the previous spaces
+  // but less expensive than clearing entire buffer with command.
+  void Console::Clear()
+  {
+    r_.Clear();
+  }
 
-    ///////////////////////////
-   //Public Member Functions//
-  ///////////////////////////
-  //Write the specific character in a specific color to a specific location on the console.
+  // Write the specific character in a specific color to a specific location on the console.
   void Console::Draw(char toWrite, float x, float y, Color color)
   {
     modified_.GoTo(static_cast<int>(x), static_cast<int>(y));
@@ -29,44 +42,53 @@ namespace RConsole
   }
 
 
-  //Call previous draw with int instead.
+  // Call previous draw with int instead.
   void Console::Draw(char toWrite, int x, int y, Color color)
   {
     Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
   }
 
-  //Draw a string
+  // Draw a string
   void Console::DrawString(const char* toDraw, float xStart, float yStart, Color color)
   {
 	  size_t len = strlen(toDraw);
 	  if (len <= 0) return;
 
-	  //Set the memory we are using to modified.
+	  // Set the memory we are using to modified.
 	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
 	  unsigned int index = modified_.GetIndex();
 	  memset(modified_.GetHead() + index, true, len);
 
-	  //Write string
+	  // Write string
 	  r_.WriteString(toDraw, len, xStart, yStart, color);
   }
 
-  //Updates the current raster by drawing it to the screen.
+  // Updates the current raster by drawing it to the screen.
   bool Console::Update()
   {
+    if (!isDrawing_) return false;
+    
+    if (!hasLazyInit_)
+    {
+      setCloseHandler();
+      hasLazyInit_ = true;
+    }
 
-    ClearPrevious();
-    WriteRaster(r_);
-    //Write and reset the raster.
+    clearPrevious();
+    writeRaster(r_);
+    
+    // Write and reset the raster.
     memcpy(prev_.GetRasterData().GetHead(), r_.GetRasterData().GetHead(), width_ * height_ * sizeof(RasterInfo));
     r_.Clear();
+
     return true;
   }
 
 
-  //Draws a point with ASCII to attempt to represent alpha values in 4 steps.
+  // Draws a point with ASCII to attempt to represent alpha values in 4 steps.
   void Console::DrawAlpha(float x, float y, Color color, float opacity)
   {
-    //All characters use represent alt-codes. 
+    // All characters use represent alt-codes. 
     if (opacity < .25)
       Draw(static_cast<unsigned char>(176), x, y, color);
     else if (opacity < .5)
@@ -78,17 +100,24 @@ namespace RConsole
   }
 
 
-  //Int version of above function
+  // Int version of above function
   void Console::DrawAlpha(int x, int y, Color color, float opacity)
   {
     DrawAlpha(static_cast<float>(x), static_cast<float>(y), color, opacity);
   }
 
 
-  //Draws a point with ASCII to attempt to represent location in a square.
+  // Stops the update loop.
+  void Console::StopDrawing()
+  {
+    isDrawing_ = false;
+  }
+
+
+  // Draws a point with ASCII to attempt to represent location in a square.
   void Console::DrawPartialPoint(float x, float y, Color color)
   {
-    //Get first two decimal places from location.
+    // Get first two decimal places from location.
     int xDec = static_cast<int>(x * 100) % 100;
     int yDec = static_cast<int>(x * 100) % 100;
 
@@ -124,13 +153,13 @@ namespace RConsole
   }
 
 
-    ////////////////////////////
-   //Private Member Functions//
-  ////////////////////////////
-  //Clears out the screen based on the previous items written. Clear character is a space.
-  void Console::ClearPrevious()
+    //////////////////////////////
+   // Private Member Functions //
+  //////////////////////////////
+  // Clears out the screen based on the previous items written. Clear character is a space.
+  void Console::clearPrevious()
   {
-    //Walk through, write over only what was modified.
+    // Walk through, write over only what was modified.
     modified_.SetIndex(0);
     unsigned int maxIndex = width_ * height_;
     unsigned int index = 0;
@@ -141,45 +170,45 @@ namespace RConsole
       if (curr == 176)
         index++;
       char prev = prev_.GetRasterData().Peek(index).Value;
-      //If we modified this one...
+      // If we modified this one...
       if (!modified_.Get() && prev != curr)
       {
-        //Compute X and Y location
+        // Compute X and Y location
         unsigned int xLoc = (index % width_) + 1;
         unsigned int yLoc = (index / width_) + 1;
 
-        //locate on screen and set color
+        // locate on screen and set color
         rlutil::locate(xLoc, yLoc);
 
-        PutC(' ', stdout);
+        putC(' ', stdout);
       }
       modified_.IncrementX();
     }
 
-    //Set things back to zero.
+    // Set things back to zero.
     modified_.Zero();
   }
 
 
-  //Explicitly clears every possible index. This is expensive! 
-  void Console::FullClear()
+  // Explicitly clears every possible index. This is expensive! 
+  void Console::fullClear()
   {
     rlutil::cls();
   }
 
   
-  //Set the color in the console using utility, if applicable.
-  void Console::SetColor(const Color &color)
+  // Set the color in the console using utility, if applicable.
+  void Console::setColor(const Color &color)
   {
     if (color != PREVIOUS_COLOR)
       rlutil::setColor(color);
   }
 
 
-  //Write the raster we were attempting to write.
-  bool Console::WriteRaster(ConsoleRaster &r)
+  // Write the raster we were attempting to write.
+  bool Console::writeRaster(ConsoleRaster &r)
   {
-    //Set initial position.
+    // Set initial position.
     unsigned int maxIndex = width_ * height_;
     r.GetRasterData().SetIndex(0);
     unsigned int index = 0;
@@ -193,43 +222,43 @@ namespace RConsole
         unsigned int xLoc = (index % width_) + 1;
         unsigned int yLoc = (index / width_) + 1;
 
-        //Handle clipping the console if we define that tag.
+        // Handle clipping the console if we define that tag.
       #ifdef RConsole_CLIP_CONSOLE
-        //Handle X
+        // Handle X
         if (xLoc > width_)
           return false;
 
-        //Handle Y
+        // Handle Y
         if (yLoc > height_)
           return false;
       #endif
 
 
-        //locate on screen and set color
+        // locate on screen and set color
         rlutil::locate(xLoc, yLoc);
 
-        //Set color of cursor
-        SetColor(ri.C);
+        // Set color of cursor
+        setColor(ri.C);
 
-        //Print out to the console in the preferred fashion
+        // Print out to the console in the preferred fashion
         int retVal = 0;
 
-        retVal = PutC(ri.Value, stdout);
+        retVal = putC(ri.Value, stdout);
 
         if (!retVal)
           return false;
       }
 
-      //Increment X location
+      // Increment X location
       r.GetRasterData().IncrementX();
     }
 
-    //Return we successfully printed the raster!
+    // Return we successfully printed the raster!
     return true;
   }
 
   // Cross-platform putc
-  int Console::PutC(int character, FILE * stream )
+  int Console::putC(int character, FILE * stream )
   {
     #if defined(RConsole_NO_THREADING) && defined(OS_WINDOWS)
       return _putc_nolock(character, stream);
@@ -238,12 +267,21 @@ namespace RConsole
     #endif
   }
 
-
-  //Clear out the screen that the user sees.
-  //Note: More expensive than clearing just the previous spaces
-  //but less expensive than clearing entire buffer with command.
-  void Console::Clear()
+  // Handle closing the window
+  static void signalHandler(int signalNum)
   {
-    r_.Clear();
+    Console::StopDrawing();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    int height = rlutil::trows();
+    rlutil::locate(0, height);
+    rlutil::setColor(WHITE);
+    std::cout << std::endl;
+    std::cout << "KILLED MERCILESSLY BY SIGNAL NUM: " << signalNum << std::endl;
+    exit(signalNum);
+  }
+  void Console::setCloseHandler()
+  {
+    signal(SIGTERM, signalHandler);
+    signal(SIGINT, signalHandler);
   }
 }
