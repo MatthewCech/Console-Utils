@@ -24,7 +24,8 @@ int main(void) try
 
   // Setup
   Console::SetCursorVisible(false);
-
+  srand(0);
+  char letter = 'a';
   // Main loop
   while (1)
   {
@@ -34,8 +35,16 @@ int main(void) try
 
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
     for (int i = Xstart; i < 30 + Xstart; ++i)
+    //for (int i = 0; i < 30; ++i)
       for (int j = 0; j < 20; ++j)
-        Console::DrawAlpha(i, j, RConsole::WHITE, 1 - j / 20.0f);
+      {
+        if (letter > 'z')
+          letter = 'a';
+
+        int rnd = rand() % RConsole::PREVIOUS_COLOR;
+        //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
+        Console::Draw('a', i, j, static_cast<RConsole::Color>(rnd));
+      }
 
 	  // Console text.
 	  Console::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
@@ -56,12 +65,12 @@ int main(void) try
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
     RTest::Timekeeper::EndFrame();
     ///////////////////////////////////////////////////////////////////////////////////////
-    //// Print cycle time in MS
-    //rlutil::locate(rlutil::tcols() - 3, 1);
-    //rlutil::setColor(rlutil::MAGENTA);
-    //printf("%3i", RTest::Timekeeper::GetLastTimeMS());
-    //rlutil::locate(rlutil::tcols() - 3, 2);
-    //printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
+    // Print cycle time in MS
+    rlutil::locate(rlutil::tcols() - 3, 1);
+    rlutil::setColor(rlutil::MAGENTA);
+    printf("%3i", RTest::Timekeeper::GetLastTimeMS());
+    rlutil::locate(rlutil::tcols() - 3, 2);
+    printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
   }
   
   // Return success
