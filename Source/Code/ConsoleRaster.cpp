@@ -3,25 +3,41 @@
 
 
 
+
 namespace RConsole
 {
+   /////////////////////////
+   // Raster info object //
+  ////////////////////////
+  // Default constructor, no character and just the previous color.
   RasterInfo::RasterInfo() : Value(0), C(Color::PREVIOUS_COLOR) 
   {  }
+
+  
+  // Non-Default constructor, specifies const character and color.
   RasterInfo::RasterInfo(const char val, Color col) : Value(val), C(col) 
   {  }
+
+
+  // Overloaded comparision operator that checks all fields.
   bool RasterInfo::operator ==(const RasterInfo &rhs) const
   {
     if (rhs.C == C && rhs.Value == Value)
       return true;
     return false;
   }
+
+
+  // Overloaded comparison operator that checks all fields.
   bool RasterInfo::operator !=(const RasterInfo &rhs) const
   {
     return !(*this == rhs);
   }
 
 
-
+    ///////////////////////////
+   // Console Raster object //
+  ///////////////////////////
   // Default constructor for the ConsoleRaster- Zeros data and gets width and height.
   ConsoleRaster::ConsoleRaster() 
     : width_(rlutil::tcols())

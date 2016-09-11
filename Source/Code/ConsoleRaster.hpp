@@ -6,7 +6,7 @@
 
 namespace RConsole
 {
-  //The raster info struct, holds info on what is to be drawn at a location and the color.
+  // The raster info struct, holds info on what is to be drawn at a location and the color.
   struct RasterInfo
   {
     RasterInfo();
@@ -17,31 +17,31 @@ namespace RConsole
     Color C;
   };
 
-  //Console raster class
+  // Console raster class
   class Console;
   class ConsoleRaster
   {
     friend Console;
 
   public:
-    //Constructors
+    // Constructors
     ConsoleRaster();
 
-    //Method Prototypes
+    // Method Prototypes
     bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
 	  bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
     const Field2D<RasterInfo>& GetRasterData() const;
     void Clear();
 
-    //General
+    // General
     unsigned int GetConsoleWidth() const;
     unsigned int GetConsoleHeight() const;
 
   private:
-    //private member functions
+    // Private member functions
     Field2D<RasterInfo>& GetRasterData();
 
-    //Variables
+    // Variables
     unsigned int width_;
     unsigned int height_;
     Field2D<RasterInfo> data_;
