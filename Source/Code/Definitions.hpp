@@ -6,7 +6,6 @@
 
 /////// OS DEFINES /////////
 
-
 // Windows
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
   #define OS_WINDOWS
@@ -26,4 +25,10 @@
   #define OS_POSIX
 #endif
 
+
+/////// COMPILER DEFINES /////////
+
+#if defined(_MSC_VER)
+  #define COMPILER_VS
+#endif
 
