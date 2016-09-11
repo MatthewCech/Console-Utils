@@ -58,14 +58,14 @@ namespace RConsole
   }
   
   //Gets console width.
-  const unsigned int ConsoleRaster::GetConsoleWidth() const 
+  unsigned int ConsoleRaster::GetConsoleWidth() const 
   { 
     return rlutil::tcols(); 
   }  
 
 
   //Get console height
-  const unsigned int ConsoleRaster::GetConsoleHeight() const
+  unsigned int ConsoleRaster::GetConsoleHeight() const
   { 
     return rlutil::trows(); 
   } 

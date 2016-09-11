@@ -32,8 +32,8 @@ namespace RConsole
     void Clear();
 
     //General
-    const unsigned int GetConsoleWidth() const;
-    const unsigned int GetConsoleHeight() const;
+    unsigned int GetConsoleWidth() const;
+    unsigned int GetConsoleHeight() const;
 
   private:
     //private member functions
