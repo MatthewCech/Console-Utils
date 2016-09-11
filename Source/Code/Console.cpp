@@ -1,5 +1,5 @@
-#include <cstdio>
-#include <iostream>
+#include <cstdio>           // PutC
+#include <iostream>         // ostream access
 #include <csignal>          // Signal termination.
 #include <rlutil.h>         // Console drawing 
 #include <chrono>           // Time related info for sleeping.
@@ -277,7 +277,6 @@ namespace RConsole
     rlutil::locate(0, height);
     rlutil::setColor(WHITE);
     std::cout << std::endl;
-    std::cout << "KILLED MERCILESSLY BY SIGNAL NUM: " << signalNum << std::endl;
     exit(signalNum);
   }
   void Console::setCloseHandler()
