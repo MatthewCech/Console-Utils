@@ -193,19 +193,27 @@ workspace "Console_Utilities"                  -- Solution Name
 -- POST-BUILD CONFIGURATIONS
 -----------------------------------
 
+-- temporary line for debugging
 local copyline = "{COPY} " .. ROOT .. "Console-Utils.hpp " .. output_dir_includes .. "Console-Utils.hpp "
 
 -- printed during `premake5 gmake`
 -- printf("copyline is: \"%s\"", copyline)
 
 -- run during `make config=lib_x64"
-filter{"configurations:Lib"}
+filter{"configurations:Lib, system:windows"}
   postbuildcommands 
   {
     "{RMDIR} " .. output_dir_includes,
-    "{MKDIR} " .. output_dir_includes,
-    copyline
+    "{MKDIR} " .. output_dir_includes
+	-- copyline
   }
+  
+filter{"configurations:Lib, system:not windows"}
+  postbuildcommands
+  {
+    "{MKDIR} " .. output_dir_includes
+    copyline
+  }  
 
 filter {} -- clear filter
 
