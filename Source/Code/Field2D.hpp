@@ -4,56 +4,56 @@
 
 namespace RConsole
 {
-  //Forward declare Field2D for use later.
+  // Forward declare Field2D for use later.
   template <typename T>
   class Field2D;
 
 
-  //A proxy class for the [] operator, allowing you to use the [] operator
-  //again 
+  // A proxy class for the [] operator, allowing you to use the [] operator
   template <typename T>
   class Field2DProxy
   {
-    //Mark the Field2D as my friend!
+    // Mark the Field2D as my friend!
     friend Field2D<T>;
 
   public:
-    //Operator Overload
+    // Operator Overload
     T &operator[](unsigned int y);
 
   private:
-    //Private constructor, friends only!
+    // Private constructor, friends only!
     Field2DProxy(Field2D<T> *parentField, unsigned int xPos);
 
-    //Variables
+    // Variables
     Field2D<T> *field_;
     const int x_;
   };
 
 
-  //A 2D way to represent a 1D line of continuous memory.
-  //The 2D Field keeps track of the current index you are at in memory, allowing really
-  //cheap O(K) reading if you have the spot selected, with a single add.
-  //Note that this is not guarded- if you reach the "end" of the width, it will
-  //let you freely step onto the next row of the 2D array you have set up.
+  // A 2D way to represent a 1D line of continuous memory.
+  // The 2D Field keeps track of the current index you are at in memory, allowing really
+  // cheap O(K) reading if you have the spot selected, with a single add.
+  // Note that this is not guarded- if you reach the "end" of the width, it will
+  // let you freely step onto the next row of the 2D array you have set up.
   template <typename T>
   class Field2D
   {
-    //Friensd can see ALL!
+    // Friensd can see ALL!
     friend Field2DProxy<T>;
 
   public:
-    //Constructor
+    // Constructor
     Field2D(unsigned int w, unsigned int h);
     Field2D(unsigned int w, unsigned int h, const T& defaultVal);
     ~Field2D();
 
-	//Structure Info
-	unsigned int Width() const;
-	unsigned int Height() const;
+	  // Structure Info
+	  unsigned int Width() const;
+	  unsigned int Height() const;
 
-    //Member Functions - Complex Manipulation
+    // Member Functions - Complex Manipulation
     void Zero();
+    void Fill(const T &objToUse);
     void Set(const T &newItem);
     T &Get(unsigned int x, unsigned int y);
     Field2DProxy<T> operator[](unsigned int xPos);
@@ -62,7 +62,7 @@ namespace RConsole
     const T& Peek(unsigned int x, unsigned int y) const;
     const T& Peek(unsigned int index) const;
 
-    //Basic Manipulation
+    // Basic Manipulation
     T &Get();
     T* GetHead() { return data_;}
     const T &Get() const;
@@ -74,7 +74,7 @@ namespace RConsole
     void SetIndex(unsigned int index);
 
   private:
-    //Variables
+    // Variables
     unsigned int index_;
     unsigned int width_;
     unsigned int height_;
@@ -83,14 +83,12 @@ namespace RConsole
 }
 
 
-//Template implementations: Place in separate file:
+// Template implementations: Place in separate file:
 namespace RConsole
 {
-
-
-  /////////////////////////////////
- //Field2DProxy Methods and Co.//
-////////////////////////////////
+    //////////////////////////////////
+   // Field2DProxy Methods and Co. //
+  //////////////////////////////////
   template <typename T>
   Field2DProxy<T>::Field2DProxy(Field2D<T> *parentField, unsigned int xPos)
     : field_(parentField)
@@ -98,8 +96,8 @@ namespace RConsole
   {  }
 
 
-  //[] Operator Overload.
-  //Note- This sets the current index!
+  // [] Operator Overload.
+  // Note- This sets the current index!
   template <typename T>
   T &Field2DProxy<T>::operator[](unsigned int y)
   {
@@ -107,26 +105,29 @@ namespace RConsole
     return field_->Get();
   }
 
-  //////////////////
- //Structure Info//
-//////////////////
+    ////////////////////
+   // Structure Info //
+  ////////////////////
+  // Gets the width of the Field2D
   template <typename T>
   unsigned int Field2D<T>::Width() const
   {
 	  return width_;
   }
 
+  // Gets the height of the Field2D
   template <typename T>
   unsigned int Field2D<T>::Height() const
   {
 	  return height_;
   }
 
-  ///////////////////////////
- //Field2D Methods and Co.//
-///////////////////////////
-  //Constructor
-  //Defaults by setting everything to 0.
+
+    /////////////////////////////
+   // Field2D Methods and Co. //
+  /////////////////////////////
+  // Constructor
+  // Defaults by setting everything to 0.
   template <typename T>
   Field2D<T>::Field2D(unsigned int w, unsigned int h)
     : index_(0)
@@ -137,7 +138,8 @@ namespace RConsole
     Zero();
   };
 
-  //Sets all values to given default.
+
+  // Sets all values to given default.
   template <typename T>
   Field2D<T>::Field2D(unsigned int w, unsigned int h, const T& defaultVal)
     : index_(0)
@@ -154,7 +156,8 @@ namespace RConsole
     index_ = 0;
   }
 
-  //Destructor
+
+  // Destructor
   template <typename T>
   Field2D<T>::~Field2D()
   {
@@ -162,11 +165,11 @@ namespace RConsole
   }
 
 
-  //////////////////////
- //Complex Operations//
-//////////////////////
-  //Get the item at the position X, Y.
-  //Does not set the actual index of the Field!
+    ////////////////////////
+   // Complex Operations //
+  ////////////////////////
+  // Get the item at the position X, Y.
+  // Does not set the actual index of the Field!
   template <typename T>
   T &Field2D<T>::Get(unsigned int x, unsigned int y)
   {
@@ -175,14 +178,15 @@ namespace RConsole
   }
 
 
-  //Const version of get that returns const reference.
+  // Const version of get that returns const reference.
   template <typename T>
   const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
   {
     return Get(x, y);
   }
 
-  //Get the first part of a 2D array operator
+
+  // Get the first part of a 2D array operator
   template <typename T>
   Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos) 
   {
@@ -190,7 +194,7 @@ namespace RConsole
   }
 
 
-  //Set the value at the current index
+  // Set the value at the current index
   template <typename T>
   void Field2D<T>::Set(const T &newItem)
   {
@@ -198,7 +202,7 @@ namespace RConsole
   }
 
 
-  //Glance at a read-only version of a specified location. Does NOT set index.
+  // Glance at a read-only version of a specified location. Does NOT set index.
   template <typename T>
   const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
   {
@@ -206,7 +210,7 @@ namespace RConsole
   }
 
 
-  //Get the value at the specified index.
+  // Get the value at the specified index.
   template <typename T>
   const T& Field2D<T>::Peek(unsigned int index) const
   {
@@ -214,7 +218,7 @@ namespace RConsole
   }
 
 
-  //Chance selected index to specified point.
+  // Chance selected index to specified point.
   template <typename T>
   void Field2D<T>::GoTo(unsigned int x, unsigned int y)
   {
@@ -222,17 +226,34 @@ namespace RConsole
   }
 
 
-  //Sets all memory to 0. Does NOT modify index!
+  // Sets all memory to 0. Does NOT modify index!
   template <typename T>
   void Field2D<T>::Zero()
   {
     memset(data_, 0, sizeof(T) * width_ * height_);
   }
 
-  ////////////////////
- //Cheap operations//
-////////////////////
-  //Get the value at the current index.
+
+  // Sets all memory to whatever you want.
+  template <typename T>
+  void Field2D<T>::Fill(const T &objToUse)
+  {
+    unsigned int prevIndex = index_;
+    index_ = 0;
+    for (unsigned int i = 0; i < width_; ++i)
+      for (unsigned int j = 0; j < height_; ++j)
+      {
+        Set(objToUse);
+        IncrementX();
+      }
+    index_ = prevIndex;
+  }
+
+
+    //////////////////////
+   // Cheap operations //
+  //////////////////////
+  // Get the value at the current index.
   template <typename T>
   T &Field2D<T>::Get()
   {
@@ -240,7 +261,7 @@ namespace RConsole
   }
 
 
-  //Const get.
+  // Const get.
   template <typename T>
   const T& Field2D<T>::Get() const
   {
@@ -248,7 +269,7 @@ namespace RConsole
   }
 
 
-  //Increment X location by 1 in the 2D field
+  // Increment X location by 1 in the 2D field
   template <typename T>
   void Field2D<T>::IncrementX()
   {
@@ -256,7 +277,7 @@ namespace RConsole
   }
 
 
-  //Increment Y location by 1 in the 2D field
+  // Increment Y location by 1 in the 2D field
   template <typename T>
   void Field2D<T>::IncrementY()
   {
@@ -264,7 +285,7 @@ namespace RConsole
   }
 
 
-  //Decrement X location by 1 in the 2D field
+  // Decrement X location by 1 in the 2D field
   template <typename T>
   void Field2D<T>::DecrementX()
   {
@@ -272,7 +293,7 @@ namespace RConsole
   }
 
 
-  //Decrement Y location by 1 in the 2D Field
+  // Decrement Y location by 1 in the 2D Field
   template <typename T>
   void Field2D<T>::DecrementY()
   {
@@ -280,7 +301,7 @@ namespace RConsole
   }
 
 
-  //Gets the index that the 2D Field currently has.
+  // Gets the index that the 2D Field currently has.
   template <typename T>
   unsigned int Field2D<T>::GetIndex()
   {
@@ -288,7 +309,7 @@ namespace RConsole
   }
 
 
-  //Gets the index that the 2D Field currently has.
+  // Gets the index that the 2D Field currently has.
   template <typename T>
   void Field2D<T>::SetIndex(unsigned int index)
   {

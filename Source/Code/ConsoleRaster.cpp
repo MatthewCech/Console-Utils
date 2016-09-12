@@ -45,6 +45,7 @@ namespace RConsole
     , data_(width_, height_, RasterInfo(' ', RConsole::WHITE))
   {  }
 
+
   // Draws a character to the screen. Returns if it was successful or not.
   bool ConsoleRaster::WriteChar(char toDraw, float x, float y, Color color)
   {
@@ -54,6 +55,7 @@ namespace RConsole
     //Everything completed correctly.
     return true;
   }
+
 
   // Writes a string to the field
   bool ConsoleRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
@@ -70,12 +72,20 @@ namespace RConsole
 	  return true;
   }
 
+
+  // Writes a mass of spaces to the screen.
+  void ConsoleRaster::Fill(const RasterInfo &ri)
+  {
+    data_.Fill(ri);
+  }
+  
+
   // Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
-  void ConsoleRaster::Clear()
+  void ConsoleRaster::Zero()
   {
     data_.Zero();
   }
-  
+
 
   // Get a constant reference to the existing raster.
   const Field2D<RasterInfo>& ConsoleRaster::GetRasterData() const

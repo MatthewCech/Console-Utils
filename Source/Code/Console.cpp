@@ -29,9 +29,9 @@ namespace RConsole
   // Clear out the screen that the user sees.
   // Note: More expensive than clearing just the previous spaces
   // but less expensive than clearing entire buffer with command.
-  void Console::Clear()
+  void Console::FillCanvas(const RasterInfo &ri)
   {
-    r_.Clear();
+    r_.Fill(ri);
   }
 
   // Write the specific character in a specific color to a specific location on the console.
@@ -80,7 +80,7 @@ namespace RConsole
     
     // Write and reset the raster.
     memcpy(prev_.GetRasterData().GetHead(), r_.GetRasterData().GetHead(), width_ * height_ * sizeof(RasterInfo));
-    r_.Clear();
+    r_.Zero();
 
     return true;
   }
