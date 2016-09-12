@@ -40,8 +40,8 @@ namespace RConsole
   ///////////////////////////
   // Default constructor for the ConsoleRaster- Zeros data and gets width and height.
   ConsoleRaster::ConsoleRaster()
-    : width_(rlutil::tcols())
-    , height_(rlutil::trows())
+    : width_(CONSOLE_WIDTH)
+    , height_(CONSOLE_HEIGHT)
     , data_(width_, height_, RasterInfo(' ', RConsole::WHITE))
   {  }
 
