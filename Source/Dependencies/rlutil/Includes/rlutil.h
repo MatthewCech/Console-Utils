@@ -10,8 +10,10 @@
  * About: Copyright
  * (C) 2010 Tapio Vierros
  *
- * About: Licensing
- * See <License>
+ * About: Licensing (DWTFYW)
+ * See <License>    (DWTFYW)
+ *
+ * Minor tweaks to this specific file: 2016 Reverie Wisp
  */
 
 
@@ -186,7 +188,8 @@ enum {
 	LIGHTRED,
 	LIGHTMAGENTA,
 	YELLOW,
-	WHITE
+	WHITE,
+  DEFAULT
 };
 
 /**
@@ -227,6 +230,7 @@ const RLUTIL_STRING_T ANSI_LIGHTBLUE = "\033[01;34m";
 const RLUTIL_STRING_T ANSI_LIGHTMAGENTA = "\033[01;35m";
 const RLUTIL_STRING_T ANSI_LIGHTCYAN = "\033[01;36m";
 const RLUTIL_STRING_T ANSI_WHITE = "\033[01;37m";
+const RLUTIL_STRING_T ANSI_DEFAULT = "\x1b[0m";
 
 /**
  * Consts: Key codes for keyhit()
@@ -402,6 +406,7 @@ RLUTIL_INLINE RLUTIL_STRING_T getANSIColor(const int c) {
 		case 13: return ANSI_LIGHTMAGENTA;
 		case 14: return ANSI_YELLOW; // non-ANSI
 		case 15: return ANSI_WHITE;
+    case 16: return ANSI_DEFAULT;
 		default: return "";
 	}
 }
