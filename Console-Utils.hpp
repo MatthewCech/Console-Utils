@@ -1,11 +1,11 @@
 #pragma once
-#include <cstdio>
-#include <iostream>
 
 
-
-
-//////////////////////////////////////////////////
+/* 0: Canvas.hpp START */
+/* 1: CanvasRaster.hpp START */
+/* 2: Colors.hpp START */
+/* 3: rlutil.h START */
+#pragma once
 /**
  * File: rlutil.h
  *
@@ -17,8 +17,10 @@
  * About: Copyright
  * (C) 2010 Tapio Vierros
  *
- * About: Licensing
- * See <License>
+ * About: Licensing (DWTFYW)
+ * See <License>    (DWTFYW)
+ *
+ * Minor tweaks to this specific file: 2016 Reverie Wisp
  */
 
 
@@ -193,7 +195,8 @@ enum {
   LIGHTRED,
   LIGHTMAGENTA,
   YELLOW,
-  WHITE
+  WHITE,
+  DEFAULT
 };
 
 /**
@@ -234,6 +237,7 @@ const RLUTIL_STRING_T ANSI_LIGHTBLUE = "\033[01;34m";
 const RLUTIL_STRING_T ANSI_LIGHTMAGENTA = "\033[01;35m";
 const RLUTIL_STRING_T ANSI_LIGHTCYAN = "\033[01;36m";
 const RLUTIL_STRING_T ANSI_WHITE = "\033[01;37m";
+const RLUTIL_STRING_T ANSI_DEFAULT = "\x1b[0m";
 
 /**
  * Consts: Key codes for keyhit()
@@ -409,6 +413,7 @@ RLUTIL_INLINE RLUTIL_STRING_T getANSIColor(const int c) {
     case 13: return ANSI_LIGHTMAGENTA;
     case 14: return ANSI_YELLOW; // non-ANSI
     case 15: return ANSI_WHITE;
+    case 16: return ANSI_DEFAULT;
     default: return "";
   }
 }
@@ -592,402 +597,8 @@ struct CursorHider {
 
 } // namespace rlutil
 #endif
+/* 3: rlutil.h STOP */
 
-
-namespace RConsole
-{
-  //Forward declare Field2D for use later.
-  template <typename T>
-  class Field2D;
-
-
-  //A proxy class for the [] operator, allowing you to use the [] operator
-  //again 
-  template <typename T>
-  class Field2DProxy
-  {
-    //Mark the Field2D as my friend!
-    friend Field2D<T>;
-
-  public:
-    //Operator Overload
-    T &operator[](unsigned int y);
-
-  private:
-    //Private constructor, friends only!
-    Field2DProxy(Field2D<T> *parentField, unsigned int xPos);
-
-    //Variables
-    Field2D<T> *field_;
-    const int x_;
-  };
-
-
-  //A 2D way to represent a 1D line of continuous memory.
-  //The 2D Field keeps track of the current index you are at in memory, allowing really
-  //cheap O(K) reading if you have the spot selected, with a single add.
-  //Note that this is not guarded- if you reach the "end" of the width, it will
-  //let you freely step onto the next row of the 2D array you have set up.
-  template <typename T>
-  class Field2D
-  {
-    //Friensd can see ALL!
-    friend Field2DProxy<T>;
-
-  public:
-    //Constructor
-    Field2D(unsigned int w, unsigned int h);
-    Field2D(unsigned int w, unsigned int h, const T& defaultVal);
-    ~Field2D();
-
-	//Structure Info
-	unsigned int Width() const;
-	unsigned int Height() const;
-
-    //Member Functions - Complex Manipulation
-    void Zero();
-    void Set(const T &newItem);
-    T &Get(unsigned int x, unsigned int y);
-    Field2DProxy<T> operator[](unsigned int xPos);
-    void GoTo(unsigned int x, unsigned int y);
-    const T& Get(unsigned int x, unsigned int y) const;
-    const T& Peek(unsigned int x, unsigned int y) const;
-    const T& Peek(unsigned int index) const;
-
-    //Basic Manipulation
-    T &Get();
-    T* GetHead() { return data_;}
-    const T &Get() const;
-    void IncrementX();
-    void IncrementY();
-    void DecrementX();
-    void DecrementY();
-    unsigned int GetIndex();
-    void SetIndex(unsigned int index);
-
-  private:
-    //Variables
-    unsigned int index_;
-    unsigned int width_;
-    unsigned int height_;
-    T *data_;
-  };
-}
-
-
-
-
-///////////////// Field2D.hpp ////////////////
-//Template implementations: Place in separate file:
-namespace RConsole
-{
-
-
-  /////////////////////////////////
- //Field2DProxy Methods and Co.//
-////////////////////////////////
-  template <typename T>
-  Field2DProxy<T>::Field2DProxy(Field2D<T> *parentField, unsigned int xPos)
-    : field_(parentField)
-    , x_(xPos)
-  {  }
-
-
-  //[] Operator Overload.
-  //Note- This sets the current index!
-  template <typename T>
-  T &Field2DProxy<T>::operator[](unsigned int y)
-  {
-    field_->GoTo(x_, y);
-    return field_->Get();
-  }
-
-  //////////////////
- //Structure Info//
-//////////////////
-  template <typename T>
-  unsigned int Field2D<T>::Width() const
-  {
-	  return width_;
-  }
-
-  template <typename T>
-  unsigned int Field2D<T>::Height() const
-  {
-	  return height_;
-  }
-
-  ///////////////////////////
- //Field2D Methods and Co.//
-///////////////////////////
-  //Constructor
-  //Defaults by setting everything to 0.
-  template <typename T>
-  Field2D<T>::Field2D(unsigned int w, unsigned int h)
-    : index_(0)
-    , width_(w)
-    , height_(h)
-  {
-    data_ = new T[w * h];
-    Zero();
-  };
-
-  //Sets all values to given default.
-  template <typename T>
-  Field2D<T>::Field2D(unsigned int w, unsigned int h, const T& defaultVal)
-    : index_(0)
-    , width_(w)
-    , height_(h)
-  {
-    data_ = new T[w * h];
-    for (int i = 0; i < w; ++i)
-      for (int j = 0; j < h; ++j)
-        Set(i, j, defaultVal);
-    index_ = 0;
-  }
-
-  //Destructor
-  template <typename T>
-  Field2D<T>::~Field2D()
-  {
-    delete[] data_;
-  }
-
-
-  //////////////////////
- //Complex Operations//
-//////////////////////
-  //Get the item at the position X, Y.
-  //Does not set the actual index of the Field!
-  template <typename T>
-  T &Field2D<T>::Get(unsigned int x, unsigned int y)
-  {
-    GoTo(x, y);
-    return Get();
-  }
-
-
-  //Const version of get that returns const reference.
-  template <typename T>
-  const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
-  {
-    return Get(x, y);
-  }
-
-  //Get the first part of a 2D array operator
-  template <typename T>
-  Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos) 
-  {
-    return Field2DProxy<T>(this, xPos);
-  }
-
-
-  //Set the value at the current index
-  template <typename T>
-  void Field2D<T>::Set(const T &newItem)
-  {
-    data_[index_] = newItem;
-  }
-
-
-  //Glance at a read-only version of a specified location. Does NOT set index.
-  template <typename T>
-  const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
-  {
-    return data_[x + y * width_];
-  }
-
-
-  //Get the value at the specified index.
-  template <typename T>
-  const T& Field2D<T>::Peek(unsigned int index) const
-  {
-    return data_[index];
-  }
-
-
-  //Chance selected index to specified point.
-  template <typename T>
-  void Field2D<T>::GoTo(unsigned int x, unsigned int y)
-  {
-    index_ = x + y * width_;
-  }
-
-
-  //Sets all memory to 0. Does NOT modify index!
-  template <typename T>
-  void Field2D<T>::Zero()
-  {
-    memset(data_, 0, sizeof(T) * width_ * height_);
-  }
-
-  ////////////////////
- //Cheap operations//
-////////////////////
-  //Get the value at the current index.
-  template <typename T>
-  T &Field2D<T>::Get()
-  {
-    return data_[index_];
-  }
-
-
-  //Const get.
-  template <typename T>
-  const T& Field2D<T>::Get() const
-  {
-    return data_[index_];
-  }
-
-
-  //Increment X location by 1 in the 2D field
-  template <typename T>
-  void Field2D<T>::IncrementX()
-  {
-    ++index_;
-  }
-
-
-  //Increment Y location by 1 in the 2D field
-  template <typename T>
-  void Field2D<T>::IncrementY()
-  {
-    index_ += width_;
-  }
-
-
-  //Decrement X location by 1 in the 2D field
-  template <typename T>
-  void Field2D<T>::DecrementX()
-  {
-    --index_;
-  }
-
-
-  //Decrement Y location by 1 in the 2D Field
-  template <typename T>
-  void Field2D<T>::DecrementY()
-  {
-    index_ -= width_;
-  }
-
-
-  //Gets the index that the 2D Field currently has.
-  template <typename T>
-  unsigned int Field2D<T>::GetIndex()
-  {
-    return index_;
-  }
-
-
-  //Gets the index that the 2D Field currently has.
-  template <typename T>
-  void Field2D<T>::SetIndex(unsigned int index)
-  {
-    index_ = index;
-  }
-}
-
-
-
-
-////////////////////// Console.hpp ////////////////
-#define RConsole_CLIP_CONSOLE //Define we want console clipping
-#define RConsole_NO_THREADING //Define we aren't threading- printf becomes unsafe, but faster.
-
-
-namespace RConsole
-{
-  class Console
-  {
-  public:
-    //Basic drawing calls
-    static void Clear();
-    static bool Update();
-    static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
-    static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
-  static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
-    static void DrawAlpha(int x, int y, Color color, float opacity);
-    static void DrawAlpha(float x, float y, Color color, float opacity);
-
-    //Advanced drawing calls
-    static void DrawPartialPoint(float x, float y, Color color);
-    static void SetCursorVisible(bool isVisible);
-
-  private:
-    //Hidden Constructors- no instantiating publicly!
-    Console() { };
-    Console(const Console &rhs) { *this = rhs; }
-    
-    //Private methods.
-    static void ClearPrevious();
-    static void FullClear();
-    static void SetColor(const Color &color);
-    static bool WriteRaster(ConsoleRaster &r);
-
-    //Any rasters we have. Could be expanded to have two, so you could "swap" them,
-    //Although practicality of that is limited given the clearing technique.
-    static ConsoleRaster r_;
-    static ConsoleRaster prev_;
-
-    //The tabs on what was last modified. This is important, because we will only update
-    //what we care about.
-    static unsigned int width_;
-    static unsigned int height_;
-    static Field2D<bool> modified_;
-  };
-}
-
-
-
-
-////////////////// ConsoleRaster.hpp //////////////////
-namespace RConsole
-{
-  //The raster info struct, holds info on what is to be drawn at a location and the color.
-  struct RasterInfo
-  {
-    RasterInfo() : Value(0), C(Color::PREVIOUS_COLOR) { }
-    RasterInfo(const char val, Color col) : Value(val), C(col) { }
-    char Value;
-    Color C;
-  };
-
-  //Console raster class
-  class Console;
-  class ConsoleRaster
-  {
-    friend Console;
-
-  public:
-    //Constructors
-    ConsoleRaster();
-
-    //Method Prototypes
-    bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
-  bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
-    const Field2D<RasterInfo>& GetRasterData() const;
-    void Clear();
-
-    //General
-    const unsigned int GetConsoleWidth() const;
-    const unsigned int GetConsoleHeight() const;
-
-  private:
-    //private member functions
-    Field2D<RasterInfo>& GetRasterData();
-
-    //Variables
-    unsigned int width_;
-    unsigned int height_;
-    Field2D<RasterInfo> data_;
-
-  };
-}
-
-
-
-////////////////// ConsoleColors.hpp ///////////////
 namespace RConsole
 {
   //Colors!
@@ -1011,335 +622,426 @@ namespace RConsole
     YELLOW = rlutil::YELLOW,
     WHITE = rlutil::WHITE,
 
-    //Add custom values
+    // Add custom values
+    //DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
     PREVIOUS_COLOR
+  };
+}
+/* 2: Colors.hpp STOP */
+/* 2: Field2D.hpp START */
+namespace RConsole
+{
+  // Forward declare Field2D for use later.
+  template <typename T>
+  class Field2D;
+
+
+  // A proxy class for the [] operator, allowing you to use the [] operator
+  template <typename T>
+  class Field2DProxy
+  {
+    // Mark the Field2D as my friend!
+    friend Field2D<T>;
+
+  public:
+    // Operator Overload
+    T &operator[](unsigned int y);
+
+  private:
+    // Private constructor, friends only!
+    Field2DProxy(Field2D<T> *parentField, unsigned int xPos);
+
+    // Variables
+    Field2D<T> *field_;
+    const int x_;
+  };
+
+
+  // A 2D way to represent a 1D line of continuous memory.
+  // The 2D Field keeps track of the current index you are at in memory, allowing really
+  // cheap O(K) reading if you have the spot selected, with a single add.
+  // Note that this is not guarded- if you reach the "end" of the width, it will
+  // let you freely step onto the next row of the 2D array you have set up.
+  template <typename T>
+  class Field2D
+  {
+    // Friensd can see ALL!
+    friend Field2DProxy<T>;
+
+  public:
+    // Constructor
+    Field2D(unsigned int w, unsigned int h);
+    Field2D(unsigned int w, unsigned int h, const T& defaultVal);
+    ~Field2D();
+
+    // Structure Info
+    unsigned int Width() const;
+    unsigned int Height() const;
+
+    // Member Functions - Complex Manipulation
+    void Zero();
+    void Fill(const T &objToUse);
+    void Set(const T &newItem);
+    T &Get(unsigned int x, unsigned int y);
+    Field2DProxy<T> operator[](unsigned int xPos);
+    void GoTo(unsigned int x, unsigned int y);
+    const T& Get(unsigned int x, unsigned int y) const;
+    const T& Peek(unsigned int x, unsigned int y) const;
+    const T& Peek(unsigned int index) const;
+
+    // Basic Manipulation
+    T &Get();
+    T* GetHead() { return data_;}
+    const T &Get() const;
+    void IncrementX();
+    void IncrementY();
+    void DecrementX();
+    void DecrementY();
+    unsigned int GetIndex();
+    void SetIndex(unsigned int index);
+
+  private:
+    // Variables
+    unsigned int index_;
+    unsigned int width_;
+    unsigned int height_;
+    T *data_;
   };
 }
 
 
-
-
-////////////////// RFunc.hpp ///////////////
-namespace RFuncs
-{
-  //Absolute value of int.
-  static int Abs(int x)
-  {
-    if (x < 0) 
-      return -x; 
-    return x;
-  }
-}
-
-
-
-
-////////////////// ConsoleRaster.cpp ///////////////
+// Template implementations: Place in separate file:
 namespace RConsole
 {
-  //Default constructor for the ConsoleRaster- Zeros data and gets width and height.
-  ConsoleRaster::ConsoleRaster() 
-    : width_(rlutil::tcols())
-    , height_(rlutil::trows())
-    , data_(width_, height_)
+    //////////////////////////////////
+   // Field2DProxy Methods and Co. //
+  //////////////////////////////////
+  template <typename T>
+  Field2DProxy<T>::Field2DProxy(Field2D<T> *parentField, unsigned int xPos)
+    : field_(parentField)
+    , x_(xPos)
   {  }
 
-  //Draws a character to the screen. Returns if it was successful or not.
-  bool ConsoleRaster::WriteChar(char toDraw, float x, float y, Color color)
+
+  // [] Operator Overload.
+  // Note- This sets the current index!
+  template <typename T>
+  T &Field2DProxy<T>::operator[](unsigned int y)
   {
-    data_.GoTo(static_cast<int>(x), static_cast<int>(y));
-    data_.Set(RasterInfo(toDraw, color));
-  
-    //Everything completed correctly.
-    return true;
+    field_->GoTo(x_, y);
+    return field_->Get();
   }
 
-  //Writes a string to the field
-  bool ConsoleRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
+    ////////////////////
+   // Structure Info //
+  ////////////////////
+  // Gets the width of the Field2D
+  template <typename T>
+  unsigned int Field2D<T>::Width() const
   {
-    //Establish and check for a string of a usable size.
-    data_.GoTo(static_cast<int>(x), static_cast<int>(y));
-    for (unsigned int i = 0; i < len; ++i)
-    {
-      data_.Set(RasterInfo(toWrite[i], color));
-      data_.IncrementX();
-    }
-
-    //Return success.
-    return true;
+    return width_;
   }
 
-  //Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
-  void ConsoleRaster::Clear()
+  // Gets the height of the Field2D
+  template <typename T>
+  unsigned int Field2D<T>::Height() const
   {
-    data_.Zero();
-  }
-  
-
-  //Get a constant reference to the existing raster.
-  const Field2D<RasterInfo>& ConsoleRaster::GetRasterData() const
-  {
-    return data_;
+    return height_;
   }
 
 
-  //Underlying raster exposing.
-  Field2D<RasterInfo>& ConsoleRaster::GetRasterData()
+    /////////////////////////////
+   // Field2D Methods and Co. //
+  /////////////////////////////
+  // Constructor
+  // Defaults by setting everything to 0.
+  template <typename T>
+  Field2D<T>::Field2D(unsigned int w, unsigned int h)
+    : index_(0)
+    , width_(w)
+    , height_(h)
   {
-    return data_;
+    data_ = new T[w * h];
+    Zero();
+  };
+
+
+  // Sets all values to given default.
+  template <typename T>
+  Field2D<T>::Field2D(unsigned int w, unsigned int h, const T& defaultVal)
+    : index_(0)
+    , width_(w)
+    , height_(h)
+  {
+    data_ = new T[w * h];
+    for (unsigned int i = 0; i < w; ++i)
+      for (unsigned int j = 0; j < h; ++j)
+      {
+        Set(defaultVal);
+        IncrementX();
+      }
+    index_ = 0;
   }
-  
-  //Gets console width.
-  const unsigned int ConsoleRaster::GetConsoleWidth() const 
-  { 
-    return rlutil::tcols(); 
-  }  
 
 
-  //Get console height
-  const unsigned int ConsoleRaster::GetConsoleHeight() const
-  { 
-    return rlutil::trows(); 
-  } 
+  // Destructor
+  template <typename T>
+  Field2D<T>::~Field2D()
+  {
+    delete[] data_;
+  }
+
+
+    ////////////////////////
+   // Complex Operations //
+  ////////////////////////
+  // Get the item at the position X, Y.
+  // Does not set the actual index of the Field!
+  template <typename T>
+  T &Field2D<T>::Get(unsigned int x, unsigned int y)
+  {
+    GoTo(x, y);
+    return Get();
+  }
+
+
+  // Const version of get that returns const reference.
+  template <typename T>
+  const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
+  {
+    return Get(x, y);
+  }
+
+
+  // Get the first part of a 2D array operator
+  template <typename T>
+  Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos) 
+  {
+    return Field2DProxy<T>(this, xPos);
+  }
+
+
+  // Set the value at the current index
+  template <typename T>
+  void Field2D<T>::Set(const T &newItem)
+  {
+    data_[index_] = newItem;
+  }
+
+
+  // Glance at a read-only version of a specified location. Does NOT set index.
+  template <typename T>
+  const T& Field2D<T>::Peek(unsigned int x, unsigned int y) const
+  {
+    return data_[x + y * width_];
+  }
+
+
+  // Get the value at the specified index.
+  template <typename T>
+  const T& Field2D<T>::Peek(unsigned int index) const
+  {
+    return data_[index];
+  }
+
+
+  // Chance selected index to specified point.
+  template <typename T>
+  void Field2D<T>::GoTo(unsigned int x, unsigned int y)
+  {
+    index_ = x + y * width_;
+  }
+
+
+  // Sets all memory to 0. Does NOT modify index!
+  template <typename T>
+  void Field2D<T>::Zero()
+  {
+    memset(data_, 0, sizeof(T) * width_ * height_);
+  }
+
+
+  // Sets all memory to whatever you want.
+  template <typename T>
+  void Field2D<T>::Fill(const T &objToUse)
+  {
+    unsigned int prevIndex = index_;
+    index_ = 0;
+    for (unsigned int i = 0; i < width_; ++i)
+      for (unsigned int j = 0; j < height_; ++j)
+      {
+        Set(objToUse);
+        IncrementX();
+      }
+    index_ = prevIndex;
+  }
+
+
+    //////////////////////
+   // Cheap operations //
+  //////////////////////
+  // Get the value at the current index.
+  template <typename T>
+  T &Field2D<T>::Get()
+  {
+    return data_[index_];
+  }
+
+
+  // Const get.
+  template <typename T>
+  const T& Field2D<T>::Get() const
+  {
+    return data_[index_];
+  }
+
+
+  // Increment X location by 1 in the 2D field
+  template <typename T>
+  void Field2D<T>::IncrementX()
+  {
+    ++index_;
+  }
+
+
+  // Increment Y location by 1 in the 2D field
+  template <typename T>
+  void Field2D<T>::IncrementY()
+  {
+    index_ += width_;
+  }
+
+
+  // Decrement X location by 1 in the 2D field
+  template <typename T>
+  void Field2D<T>::DecrementX()
+  {
+    --index_;
+  }
+
+
+  // Decrement Y location by 1 in the 2D Field
+  template <typename T>
+  void Field2D<T>::DecrementY()
+  {
+    index_ -= width_;
+  }
+
+
+  // Gets the index that the 2D Field currently has.
+  template <typename T>
+  unsigned int Field2D<T>::GetIndex()
+  {
+    return index_;
+  }
+
+
+  // Gets the index that the 2D Field currently has.
+  template <typename T>
+  void Field2D<T>::SetIndex(unsigned int index)
+  {
+    index_ = index;
+  }
 }
+/* 2: Field2D.hpp STOP */
 
 
-
-////////////////// Console.cpp ///////////////
 namespace RConsole
 {
-  //Static initialization in non-guaranteed order.
-  ConsoleRaster Console::r_           = ConsoleRaster();
-  ConsoleRaster Console::prev_        = ConsoleRaster();
-  unsigned int Console::width_        = rlutil::tcols();
-  unsigned int Console::height_       = rlutil::trows();;
-  Field2D<bool> Console::modified_    = Field2D<bool>(rlutil::tcols(), rlutil::trows());
-
-
-    ///////////////////////////
-   //Public Member Functions//
-  ///////////////////////////
-  //Write the specific character in a specific color to a specific location on the console.
-  void Console::Draw(char toWrite, float x, float y, Color color)
+  // The raster info struct, holds info on what is to be drawn at a location and the color.
+  struct RasterInfo
   {
-    modified_.GoTo(static_cast<int>(x), static_cast<int>(y));
-    modified_.Set(true);
-    r_.WriteChar(toWrite, x, y, color);
-  }
+    RasterInfo();
+    RasterInfo(const char val, Color col);
+    bool operator ==(const RasterInfo &rhs) const;
+    bool operator !=(const RasterInfo &rhs) const;
+    char Value;
+    Color C;
+  };
 
-
-  //Call previous draw with int instead.
-  void Console::Draw(char toWrite, int x, int y, Color color)
+  // Console raster class
+  class Canvas;
+  class CanvasRaster
   {
-    Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
-  }
+    friend Canvas;
 
-  //Draw a string
-  void Console::DrawString(const char* toDraw, float xStart, float yStart, Color color)
-  {
-    size_t len = strlen(toDraw);
-    if (len <= 0) return;
+  public:
+    // Constructors
+    CanvasRaster();
 
-    //Set the memory we are using to modified.
-    modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
-    unsigned int index = modified_.GetIndex();
-    memset(modified_.GetHead() + index, true, len);
+    // Method Prototypes
+    bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
+    bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
+    const Field2D<RasterInfo>& GetRasterData() const;
+    void Fill(const RasterInfo &ri);
+    void Zero();
 
-    //Write string
-    r_.WriteString(toDraw, len, xStart, yStart, color);
-  }
+    // General
+    unsigned int GetConsoleWidth() const;
+    unsigned int GetConsoleHeight() const;
 
-  //Updates the current raster by drawing it to the screen.
-  bool Console::Update()
-  {
+  private:
+    // Private member functions
+    Field2D<RasterInfo>& GetRasterData();
 
-    ClearPrevious();
-    WriteRaster(r_);
-    //Write and reset the raster.
-    memcpy(prev_.GetRasterData().GetHead(), r_.GetRasterData().GetHead(), width_ * height_ * sizeof(RasterInfo));
-    r_.Clear();
-    return true;
-  }
+    // Variables
+    unsigned int width_;
+    unsigned int height_;
+    Field2D<RasterInfo> data_;
 
-
-  //Draws a point with ASCII to attempt to represent alpha values in 4 steps.
-  void Console::DrawAlpha(float x, float y, Color color, float opacity)
-  {
-    //All characters use represent alt-codes. 
-    if (opacity < .25)
-      Draw(static_cast<unsigned char>(176), x, y, color);
-    else if (opacity < .5)
-      Draw(static_cast<unsigned char>(177), x, y, color);
-    else if (opacity < .75)
-      Draw(static_cast<unsigned char>(178), x, y, color);
-    else
-      Draw(static_cast<unsigned char>(219), x, y, color);
-  }
-
-
-  //Int version of above function
-  void Console::DrawAlpha(int x, int y, Color color, float opacity)
-  {
-    DrawAlpha(static_cast<float>(x), static_cast<float>(y), color, opacity);
-  }
-
-
-  //Draws a point with ASCII to attempt to represent location in a square.
-  void Console::DrawPartialPoint(float x, float y, Color color)
-  {
-    //Get first two decimal places from location.
-    int xDec = static_cast<int>(x * 100) % 100;
-    int yDec = static_cast<int>(x * 100) % 100;
-
-
-    //If Y is closer to a border, use it for placement.
-    if (RFuncs::Abs(50 - static_cast<int>(x)) < RFuncs::Abs(50 - static_cast<int>(y)))
-    {
-      if (x > 50)
-        return Draw(static_cast<unsigned char>(222), x, y, color);
-      return Draw(static_cast<unsigned char>(221), x, y, color);
-    }
-    //Otherwise, X is closer to a border.
-    else
-    {
-      if (y > 50)
-        return Draw(static_cast<unsigned char>(223), x, y, color);
-      return Draw(static_cast<unsigned char>(220), x, y, color);
-    }
-  }
-
-
-  //Set visibility of cursor to specified bool.
-  void Console::SetCursorVisible(bool isVisible)
-  {
-    if (!isVisible)
-      rlutil::hidecursor();
-    else
-      rlutil::showcursor();
-  }
-
-
-    ////////////////////////////
-   //Private Member Functions//
-  ////////////////////////////
-  //Clears out the screen based on the previous items written. Clear character is a space.
-  void Console::ClearPrevious()
-  {
-    //Walk through, write over only what was modified.
-    modified_.SetIndex(0);
-    unsigned int maxIndex = width_ * height_;
-    unsigned int index = 0;
-    while (index < maxIndex)
-    {
-      index = modified_.GetIndex();
-      char curr = r_.GetRasterData().Peek(index).Value;
-      if (curr == 176)
-        index++;
-      char prev = prev_.GetRasterData().Peek(index).Value;
-      //If we modified this one...
-      if (!modified_.Get() && prev != curr)
-      {
-        //Compute X and Y location
-        unsigned int xLoc = (index % width_) + 1;
-        unsigned int yLoc = (index / width_) + 1;
-
-        //locate on screen and set color
-        rlutil::locate(xLoc, yLoc);
-
-        #ifdef RConsole_NO_THREADING
-          _putc_nolock(' ', stdout);
-        #else
-          putc(' ', stdout);
-        #endif
-        }
-        modified_.IncrementX();
-    }
-
-    //Set things back to zero.
-    modified_.Zero();
-  }
-
-
-  //Explicitly clears every possible index. This is expensive! 
-  void Console::FullClear()
-  {
-    rlutil::cls();
-  }
-
-  
-  //Set the color in the console using utility, if applicable.
-  void Console::SetColor(const Color &color)
-  {
-    if (color != PREVIOUS_COLOR)
-      rlutil::setColor(color);
-  }
-
-
-  //Write the raster we were attempting to write.
-  bool Console::WriteRaster(ConsoleRaster &r)
-  {
-    //Set initial position.
-    unsigned int maxIndex = width_ * height_;
-    r.GetRasterData().SetIndex(0);
-    unsigned int index = 0;
-    while(index < maxIndex)
-    {
-      index = r.GetRasterData().GetIndex();
-      const RasterInfo& ri = r.GetRasterData().Get();
-
-      if (ri.Value != 0 && prev_.GetRasterData().Peek(index).Value != ri.Value)
-      {
-        unsigned int xLoc = (index % width_) + 1;
-        unsigned int yLoc = (index / width_) + 1;
-
-        //Handle clipping the console if we define that tag.
-      #ifdef RConsole_CLIP_CONSOLE
-        //Handle X
-
-        if (xLoc > width_)
-          return false;
-        else if (xLoc < 0)
-          return false;
-
-        //Handle Y
-        if (yLoc > height_)
-          return false;
-        else if (yLoc < 0)
-          return false;
-      #endif
-
-
-        //locate on screen and set color
-        rlutil::locate(xLoc, yLoc);
-
-        //Set color of cursor
-        SetColor(ri.C);
-
-        //Print out to the console in the preferred fashion
-        int retVal = 0;
-      #ifdef RConsole_NO_THREADING
-        retVal = _putc_nolock(ri.Value, stdout);
-      #else
-        retVal = putc(ri.Value, stdout);
-      #endif
-        if (!retVal)
-          return false;
-      }
-
-      //Increment X location
-      r.GetRasterData().IncrementX();
-    }
-
-    //Return we successfully printed the raster!
-    return true;
-  }
-
-
-  //Clear out the screen that the user sees.
-  //Note: More expensive than clearing just the previous spaces
-  //but less expensive than clearing entire buffer with command.
-  void Console::Clear()
-  {
-    r_.Clear();
-  }
+  };
 }
+
+/* 1: CanvasRaster.hpp STOP */
+/* #include "Field2D.hpp" WAS ALREADY INCLUDED! */
+
+
+namespace RConsole
+{
+  class Canvas
+  {
+  public:
+    // Basic drawing calls
+    static bool Update();
+    static void FillCanvas(const RasterInfo &ri = RasterInfo(' ', WHITE));
+    static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
+    static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
+    static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
+    static void DrawAlpha(int x, int y, Color color, float opacity);
+    static void DrawAlpha(float x, float y, Color color, float opacity);
+    static void Shutdown();
+
+    // Advanced drawing calls
+    static void DrawPartialPoint(float x, float y, Color color);
+    static void DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color);
+    static void SetCursorVisible(bool isVisible);
+    static void DumpRaster(FILE * fp = stdout);
+
+  private:
+    // Hidden Constructors- no instantiating publicly!
+    Canvas() { };
+    Canvas(const Canvas &rhs) { *this = rhs; }
+    
+    // Private methods.
+    static void clearPrevious();
+    static void fullClear();
+    static void setColor(const Color &color);
+    static bool writeRaster(CanvasRaster &r);
+    static int  putC(int character, FILE * stream );
+    static void setCloseHandler();
+
+    // Any rasters we have. Could be expanded to have two, so you could "swap" them,
+    // Although practicality of that is limited given the clearing technique.
+    static CanvasRaster r_;
+    static CanvasRaster prev_;
+
+    // The tabs on what was last modified. This is important, because we will only update
+    // what we care about.
+    static bool hasLazyInit_;
+    static bool isDrawing_;
+    static unsigned int width_;
+    static unsigned int height_;
+    static Field2D<bool> modified_;
+  };
+}
+/* 0: Canvas.hpp STOP */
