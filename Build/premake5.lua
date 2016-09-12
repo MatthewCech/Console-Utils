@@ -200,7 +200,7 @@ local copyline = "{COPY} " .. ROOT .. "Console-Utils.hpp " .. output_dir_include
 -- printf("copyline is: \"%s\"", copyline)
 
 -- run during `make config=lib_x64"
-filter{"configurations:Lib, system:windows"}
+filter{"configurations:Lib", "system:windows"}
   postbuildcommands 
   {
     "{RMDIR} " .. output_dir_includes,
@@ -208,10 +208,10 @@ filter{"configurations:Lib, system:windows"}
 	-- copyline
   }
   
-filter{"configurations:Lib, system:not windows"}
+filter{"configurations:Lib", "system:not windows"}
   postbuildcommands
   {
-    "{MKDIR} " .. output_dir_includes
+    "{MKDIR} " .. output_dir_includes,
     copyline
   }  
 
