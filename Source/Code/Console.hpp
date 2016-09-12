@@ -21,11 +21,12 @@ namespace RConsole
 	  static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
     static void DrawAlpha(int x, int y, Color color, float opacity);
     static void DrawAlpha(float x, float y, Color color, float opacity);
-    static void StopDrawing();
+    static void Shutdown();
 
     // Advanced drawing calls
     static void DrawPartialPoint(float x, float y, Color color);
     static void SetCursorVisible(bool isVisible);
+    static void DumpRaster(FILE * fp = stdout);
 
   private:
     // Hidden Constructors- no instantiating publicly!

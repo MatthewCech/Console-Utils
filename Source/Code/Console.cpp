@@ -108,7 +108,7 @@ namespace RConsole
 
 
   // Stops the update loop.
-  void Console::StopDrawing()
+  void Console::Shutdown()
   {
     isDrawing_ = false;
   }
@@ -268,10 +268,62 @@ namespace RConsole
     #endif
   }
 
+
+  // print out the formatted raster.
+  // Note that because of console color formatting, we use the RLUTIL coloring option when
+  // we are printing to the console, or have no file output specified.
+  void Console::DumpRaster(FILE * fp)
+  {
+    for (unsigned int i = 0; i < r_.height_; ++i)
+    {
+      // Assemble raw line.
+      std::string beingTrimmed = "";
+      for (unsigned int j = 0; j < r_.width_; ++j)
+      {
+        const RasterInfo &ri = r_.GetRasterData().Get(j, i);
+        beingTrimmed += ri.Value;
+      }
+
+      // Strip trailing spaces agressively.
+      unsigned int trimmedLen = beingTrimmed.length();
+      for (;;)
+      {
+        if (beingTrimmed[trimmedLen - 1] == ' ')
+        {
+          if (trimmedLen > 1)
+            --trimmedLen;
+          else
+            break;
+        }
+        else
+          break;
+      }
+
+
+      // Construct full line with colors.
+      for (unsigned int j = 0; j < trimmedLen; ++j)
+      {
+        const RasterInfo &ri = r_.GetRasterData().Get(j, i);
+        if (fp == stdout)
+        {
+          rlutil::setColor(ri.C);
+          fprintf(fp, "%c", ri.Value);
+        }
+        else
+        {
+          std::string line = rlutil::getANSIColor(ri.C) + ri.Value;
+          fprintf(fp, "%s", line.c_str());
+        }
+      }
+      fprintf(fp, "\n");
+    }
+  }
+
+
   // Handle closing the window
   static void signalHandler(int signalNum)
   {
-    Console::StopDrawing();
+    Console::Shutdown();
     std::this_thread::sleep_for(std::chrono::seconds(1));
     int height = rlutil::trows();
     rlutil::locate(0, height);
