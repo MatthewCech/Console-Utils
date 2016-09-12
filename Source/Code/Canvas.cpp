@@ -6,8 +6,8 @@
 #include <thread>           // Sleep on exit to allow for update to finish.
 #include "Definitions.hpp"
 #include "RFuncs.hpp"
-#include "Console.hpp"
-#include "ConsoleRaster.hpp"
+#include "Canvas.hpp"
+#include "CanvasRaster.hpp"
 #include "Definitions.hpp"
 
 
@@ -15,13 +15,13 @@
 namespace RConsole
 {
   // Static initialization in non-guaranteed order.
-  ConsoleRaster Console::r_        = ConsoleRaster();
-  ConsoleRaster Console::prev_     = ConsoleRaster();
-  bool Console::hasLazyInit_       = false;
-  bool Console::isDrawing_         = true;
-  unsigned int Console::width_     = CONSOLE_WIDTH;
-  unsigned int Console::height_    = CONSOLE_HEIGHT;
-  Field2D<bool> Console::modified_ = Field2D<bool>(CONSOLE_WIDTH, CONSOLE_HEIGHT);
+  CanvasRaster Canvas::r_        = CanvasRaster();
+  CanvasRaster Canvas::prev_     = CanvasRaster();
+  bool Canvas::hasLazyInit_       = false;
+  bool Canvas::isDrawing_         = true;
+  unsigned int Canvas::width_     = CONSOLE_WIDTH;
+  unsigned int Canvas::height_    = CONSOLE_HEIGHT;
+  Field2D<bool> Canvas::modified_ = Field2D<bool>(CONSOLE_WIDTH, CONSOLE_HEIGHT);
 
     /////////////////////////////
    // Public Member Functions //
@@ -29,13 +29,13 @@ namespace RConsole
   // Clear out the screen that the user sees.
   // Note: More expensive than clearing just the previous spaces
   // but less expensive than clearing entire buffer with command.
-  void Console::FillCanvas(const RasterInfo &ri)
+  void Canvas::FillCanvas(const RasterInfo &ri)
   {
     r_.Fill(ri);
   }
 
   // Write the specific character in a specific color to a specific location on the console.
-  void Console::Draw(char toWrite, float x, float y, Color color)
+  void Canvas::Draw(char toWrite, float x, float y, Color color)
   {
     modified_.GoTo(static_cast<int>(x), static_cast<int>(y));
     modified_.Set(true);
@@ -44,13 +44,13 @@ namespace RConsole
 
 
   // Call previous draw with int instead.
-  void Console::Draw(char toWrite, int x, int y, Color color)
+  void Canvas::Draw(char toWrite, int x, int y, Color color)
   {
     Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
   }
 
   // Draw a string
-  void Console::DrawString(const char* toDraw, float xStart, float yStart, Color color)
+  void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
   {
 	  size_t len = strlen(toDraw);
 	  if (len <= 0) return;
@@ -65,7 +65,7 @@ namespace RConsole
   }
 
   // Updates the current raster by drawing it to the screen.
-  bool Console::Update()
+  bool Canvas::Update()
   {
     if (!isDrawing_) return false;
     
@@ -87,7 +87,7 @@ namespace RConsole
 
 
   // Draws a point with ASCII to attempt to represent alpha values in 4 steps.
-  void Console::DrawAlpha(float x, float y, Color color, float opacity)
+  void Canvas::DrawAlpha(float x, float y, Color color, float opacity)
   {
     // All characters use represent alt-codes. 
     if (opacity < .25)
@@ -102,21 +102,21 @@ namespace RConsole
 
 
   // Int version of above function
-  void Console::DrawAlpha(int x, int y, Color color, float opacity)
+  void Canvas::DrawAlpha(int x, int y, Color color, float opacity)
   {
     DrawAlpha(static_cast<float>(x), static_cast<float>(y), color, opacity);
   }
 
 
   // Stops the update loop.
-  void Console::Shutdown()
+  void Canvas::Shutdown()
   {
     isDrawing_ = false;
   }
 
 
   // Draws a point with ASCII to attempt to represent location in a square.
-  void Console::DrawPartialPoint(float x, float y, Color color)
+  void Canvas::DrawPartialPoint(float x, float y, Color color)
   {
     // Get first two decimal places from location.
     int xDec = static_cast<int>(x * 100) % 100;
@@ -144,7 +144,7 @@ namespace RConsole
   }
 
   // Drawing box
-  void Console::DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color)
+  void Canvas::DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color)
   {
     
     if(x1 > x2)
@@ -174,7 +174,7 @@ namespace RConsole
 
 
   //Set visibility of cursor to specified bool.
-  void Console::SetCursorVisible(bool isVisible)
+  void Canvas::SetCursorVisible(bool isVisible)
   {
     if (!isVisible)
       rlutil::hidecursor();
@@ -187,7 +187,7 @@ namespace RConsole
    // Private Member Functions //
   //////////////////////////////
   // Clears out the screen based on the previous items written. Clear character is a space.
-  void Console::clearPrevious()
+  void Canvas::clearPrevious()
   {
     // Walk through, write over only what was modified.
     modified_.SetIndex(0);
@@ -222,14 +222,14 @@ namespace RConsole
 
 
   // Explicitly clears every possible index. This is expensive! 
-  void Console::fullClear()
+  void Canvas::fullClear()
   {
     rlutil::cls();
   }
 
   
   // Set the color in the console using utility, if applicable.
-  void Console::setColor(const Color &color)
+  void Canvas::setColor(const Color &color)
   {
     if (color != PREVIOUS_COLOR)
       rlutil::setColor(color);
@@ -237,7 +237,7 @@ namespace RConsole
 
 
   // Write the raster we were attempting to write.
-  bool Console::writeRaster(ConsoleRaster &r)
+  bool Canvas::writeRaster(CanvasRaster &r)
   {
     // Set initial position.
     unsigned int maxIndex = width_ * height_;
@@ -289,7 +289,7 @@ namespace RConsole
   }
 
   // Cross-platform putc
-  int Console::putC(int character, FILE * stream )
+  int Canvas::putC(int character, FILE * stream )
   {
     #if defined(RConsole_NO_THREADING) && defined(OS_WINDOWS)
       return _putc_nolock(character, stream);
@@ -302,7 +302,7 @@ namespace RConsole
   // print out the formatted raster.
   // Note that because of console color formatting, we use the RLUTIL coloring option when
   // we are printing to the console, or have no file output specified.
-  void Console::DumpRaster(FILE * fp)
+  void Canvas::DumpRaster(FILE * fp)
   {
     for (unsigned int i = 0; i < r_.height_; ++i)
     {
@@ -355,7 +355,7 @@ namespace RConsole
   // Handle closing the window
   static void signalHandler(int signalNum)
   {
-    Console::Shutdown();
+    Canvas::Shutdown();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     int height = rlutil::trows();
     rlutil::locate(0, height);
@@ -363,7 +363,7 @@ namespace RConsole
     std::cout << std::endl;
     exit(signalNum);
   }
-  void Console::setCloseHandler()
+  void Canvas::setCloseHandler()
   {
     signal(SIGTERM, signalHandler);
     signal(SIGINT, signalHandler);

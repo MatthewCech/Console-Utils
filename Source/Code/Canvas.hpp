@@ -1,12 +1,12 @@
 #pragma once
-#include "ConsoleRaster.hpp"
+#include "CanvasRaster.hpp"
 #include "Field2D.hpp"
 
 
 
 namespace RConsole
 {
-  class Console
+  class Canvas
   {
   public:
     // Basic drawing calls
@@ -27,21 +27,21 @@ namespace RConsole
 
   private:
     // Hidden Constructors- no instantiating publicly!
-    Console() { };
-    Console(const Console &rhs) { *this = rhs; }
+    Canvas() { };
+    Canvas(const Canvas &rhs) { *this = rhs; }
     
     // Private methods.
     static void clearPrevious();
     static void fullClear();
     static void setColor(const Color &color);
-    static bool writeRaster(ConsoleRaster &r);
+    static bool writeRaster(CanvasRaster &r);
     static int  putC(int character, FILE * stream );
     static void setCloseHandler();
 
     // Any rasters we have. Could be expanded to have two, so you could "swap" them,
     // Although practicality of that is limited given the clearing technique.
-    static ConsoleRaster r_;
-    static ConsoleRaster prev_;
+    static CanvasRaster r_;
+    static CanvasRaster prev_;
 
     // The tabs on what was last modified. This is important, because we will only update
     // what we care about.

@@ -1,4 +1,4 @@
-#include "ConsoleRaster.hpp"
+#include "CanvasRaster.hpp"
 #include "RFuncs.hpp"
 
 
@@ -38,8 +38,8 @@ namespace RConsole
     ///////////////////////////
    // Console Raster object //
   ///////////////////////////
-  // Default constructor for the ConsoleRaster- Zeros data and gets width and height.
-  ConsoleRaster::ConsoleRaster()
+  // Default constructor for the CanvasRaster- Zeros data and gets width and height.
+  CanvasRaster::CanvasRaster()
     : width_(CONSOLE_WIDTH)
     , height_(CONSOLE_HEIGHT)
     , data_(width_, height_, RasterInfo(' ', RConsole::WHITE))
@@ -47,7 +47,7 @@ namespace RConsole
 
 
   // Draws a character to the screen. Returns if it was successful or not.
-  bool ConsoleRaster::WriteChar(char toDraw, float x, float y, Color color)
+  bool CanvasRaster::WriteChar(char toDraw, float x, float y, Color color)
   {
     data_.GoTo(static_cast<int>(x), static_cast<int>(y));
     data_.Set(RasterInfo(toDraw, color));
@@ -58,7 +58,7 @@ namespace RConsole
 
 
   // Writes a string to the field
-  bool ConsoleRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
+  bool CanvasRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
   {
 	  //Establish and check for a string of a usable size.
 	  data_.GoTo(static_cast<int>(x), static_cast<int>(y));
@@ -74,42 +74,42 @@ namespace RConsole
 
 
   // Writes a mass of spaces to the screen.
-  void ConsoleRaster::Fill(const RasterInfo &ri)
+  void CanvasRaster::Fill(const RasterInfo &ri)
   {
     data_.Fill(ri);
   }
   
 
   // Clears out all of the data written to the raster. Does NOT move cursor to 0,0.
-  void ConsoleRaster::Zero()
+  void CanvasRaster::Zero()
   {
     data_.Zero();
   }
 
 
   // Get a constant reference to the existing raster.
-  const Field2D<RasterInfo>& ConsoleRaster::GetRasterData() const
+  const Field2D<RasterInfo>& CanvasRaster::GetRasterData() const
   {
     return data_;
   }
 
 
   // Underlying raster exposing.
-  Field2D<RasterInfo>& ConsoleRaster::GetRasterData()
+  Field2D<RasterInfo>& CanvasRaster::GetRasterData()
   {
     return data_;
   }
   
 
   // Gets console width.
-  unsigned int ConsoleRaster::GetConsoleWidth() const 
+  unsigned int CanvasRaster::GetConsoleWidth() const 
   { 
     return rlutil::tcols(); 
   }  
 
 
   // Get console height
-  unsigned int ConsoleRaster::GetConsoleHeight() const
+  unsigned int CanvasRaster::GetConsoleHeight() const
   { 
     return rlutil::trows(); 
   } 

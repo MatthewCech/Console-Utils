@@ -1,5 +1,5 @@
 #pragma once
-#include "ConsoleColors.hpp"
+#include "Colors.hpp"
 #include "Field2D.hpp"
 
 
@@ -18,14 +18,14 @@ namespace RConsole
   };
 
   // Console raster class
-  class Console;
-  class ConsoleRaster
+  class Canvas;
+  class CanvasRaster
   {
-    friend Console;
+    friend Canvas;
 
   public:
     // Constructors
-    ConsoleRaster();
+    CanvasRaster();
 
     // Method Prototypes
     bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
