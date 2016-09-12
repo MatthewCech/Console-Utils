@@ -8,6 +8,7 @@
 #include "RFuncs.hpp"
 #include "Console.hpp"
 #include "ConsoleRaster.hpp"
+#include "Definitions.hpp"
 
 
 
@@ -18,9 +19,9 @@ namespace RConsole
   ConsoleRaster Console::prev_     = ConsoleRaster();
   bool Console::hasLazyInit_       = false;
   bool Console::isDrawing_         = true;
-  unsigned int Console::width_     = rlutil::tcols();
-  unsigned int Console::height_    = rlutil::trows();
-  Field2D<bool> Console::modified_ = Field2D<bool>(rlutil::tcols(), rlutil::trows(), false);
+  unsigned int Console::width_     = CONSOLE_WIDTH;
+  unsigned int Console::height_    = CONSOLE_HEIGHT;
+  Field2D<bool> Console::modified_ = Field2D<bool>(CONSOLE_WIDTH, CONSOLE_HEIGHT);
 
     /////////////////////////////
    // Public Member Functions //
@@ -316,6 +317,8 @@ namespace RConsole
         }
       }
       fprintf(fp, "\n");
+      if(fp == stdout)
+        rlutil::setColor(WHITE);
     }
   }
 
@@ -324,7 +327,7 @@ namespace RConsole
   static void signalHandler(int signalNum)
   {
     Console::Shutdown();
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     int height = rlutil::trows();
     rlutil::locate(0, height);
     rlutil::setColor(WHITE);
