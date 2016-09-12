@@ -9,9 +9,9 @@ local ROOT = "../"   -- Path to project root
 ---------------------------------
 -- [ WORKSPACE CONFIGURATION   --
 ---------------------------------
-workspace "Console_Utilities"                -- Solution Name
-  configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
-  platforms { "x64", "x86"}                -- Dropdown platforms section in VS
+workspace "Console_Utilities"                  -- Solution Name
+  configurations { "Debug", "Release", "Lib"}  -- Optimization/General config mode in VS
+  platforms { "x64", "x86"}                    -- Dropdown platforms section in VS
   
   local proj_action = "UNDEFINED"
 
@@ -22,39 +22,46 @@ workspace "Console_Utilities"                -- Solution Name
 
   location (ROOT .. "project_" .. proj_action)
 
+  -------------------------------
+  -- [ COMPILER/LINKER CONFIG] --
+  -------------------------------
+  
+  flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
+  warnings "Extra"       -- Extra warnings, such as unused variables
+
+  filter { "platforms:*86" } architecture "x86"
+  filter { "platforms:*64" } architecture "x64"
+
+  filter "configurations:Debug"    defines { "DEBUG" }  symbols  "On"
+  filter "configurations:Release"  defines { "NDEBUG" } optimize "On"
+  filter "configurations:Lib"      defines { "NDEBUG", "STATIC_LIB" } optimize "On"
+
+  filter { "action:gmake" }
+    toolset "clang"
+    buildoptions { "-std=c++14" }
+    
+  filter {} -- clear filter
+  language "C++"
+
 
   -------------------------------
   -- [ PROJECT CONFIGURATION ] --
   ------------------------------- 
   project "ASCII_Draw"        -- Project name
-    targetname "ascii_draw" -- Executable name
-    kind "ConsoleApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
-    language "C++"
-
-    -------------------------------
-    -- [ COMPILER/LINKER CONFIG] --
-    -------------------------------
+    filter "configurations:not Lib"
+      targetname "ascii_draw" -- Executable name
+      kind "ConsoleApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
     
-    flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
-    warnings "Extra"       -- Extra warnings, such as unused variables
+    filter "configurations:Lib"
+      targetname "canvas"
+      kind "StaticLib"
 
-    filter { "platforms:*86" } architecture "x86"
-    filter { "platforms:*64" } architecture "x64"
-
-    filter "configurations:Debug"    defines { "DEBUG" }  symbols  "On"
-    filter "configurations:Release"  defines { "NDEBUG" } optimize "On"
-
-    -- Reset filter.
-    filter {}
+    filter {} -- clear filter
 
 
   ------------------------------
   -- [ BUILD CONFIGURATIONS ] --
   ------------------------------
-
-    filter { "action:gmake" }
-      toolset "clang"
-      buildoptions { "-std=c++14" }
 
     -- Set the rpath on the executable, to allow for relative path for dynamic lib
     filter { "system:macosx", "action:gmake" }
@@ -76,39 +83,46 @@ workspace "Console_Utilities"                -- Solution Name
     ----------------------------------
     -- [ FILE PATH CONFIGURATIONS ] --
     ----------------------------------
-    local output_dir_root         = ROOT .. "bin_%{cfg.platform}_%{cfg.buildcfg}_" .. proj_action
-    targetdir(output_dir_root )    -- Where all output files are stored
-    local output_dir_lib          = output_dir_root .. "/libs" -- Mac Specific
+    local output_dir_root         = ROOT .. "bin_%{cfg.platform}_%{cfg.buildcfg}_" .. proj_action .. "/"
+    filter {"configurations:not Lib"} targetdir(output_dir_root) -- Where all output files are stored
+    filter {"configurations:Lib"}     targetdir(output_dir_root .. "/lib_%{cfg.platform}")
+    filter {} -- clear filter
+    
+    local output_dir_lib          = output_dir_root .. "libs/" -- Mac Specific
+    local output_dir_includes     = output_dir_root .. "includes/"
 
-    local source_dir_root         = ROOT .. "Source"
-    local source_dir_engine       = source_dir_root .. "/Code"
-    local source_dir_dependencies = source_dir_root .. "/Dependencies"
+    local source_dir_root         = ROOT .. "Source/"
+    local source_dir_engine       = source_dir_root .. "Code/"
+    local source_dir_dependencies = source_dir_root .. "Dependencies/"
 
-    local source_dir_includes     = source_dir_dependencies .. "/**/Includes"
-    local source_dir_libs         = source_dir_dependencies .. "/**/" .. "Libs_" .. os.get()
+    local source_dir_includes     = source_dir_dependencies .. "**/Includes/"
+    local source_dir_libs         = source_dir_dependencies .. "**/" .. "Libs_" .. os.get() .. "/"
     -- optional for libs that are 32 or 64 bit specific
-    local source_dir_libs32       = source_dir_libs .. "/lib_x32"
-    local source_dir_libs64       = source_dir_libs .. "/lib_x64"
+    local source_dir_libs32       = source_dir_libs .. "lib_x32/"
+    local source_dir_libs64       = source_dir_libs .. "lib_x64/"
 
 
     -- Files to be compiled (cpp) or added to project (visual studio)
     files
     {
-      source_dir_engine .. "/**.c",
-      source_dir_engine .. "/**.cpp",
-      source_dir_engine .. "/**.h",
-      source_dir_engine .. "/**.hpp",
-      source_dir_engine .. "/**.tpp",
+      source_dir_engine .. "**.c",
+      source_dir_engine .. "**.cpp",
+      source_dir_engine .. "**.h",
+      source_dir_engine .. "**.hpp",
+      source_dir_engine .. "**.tpp",
     }
 
     filter { "files:**.tpp" }
       flags {"ExcludeFromBuild"}
 
     -- Ignore files for other operating systems (not necessary in this project)
-    filter { "system:macosx" } removefiles { source_dir_engine .. "/**_windows.*" }
-    filter { "system:windows" } removefiles { source_dir_engine .. "/**_macosx.*"  }
-    filter {} -- reset filter
+    filter { "system:macosx" } removefiles { source_dir_engine .. "**_windows.*" }
+    filter { "system:windows" } removefiles { source_dir_engine .. "**_macosx.*"  }
+    
+    filter { "configurations:Lib"} removefiles { source_dir_engine .. "main.cpp" }
+    filter {} -- clear filter
 
+    -- Handle 
 
     -- TODO: add 'vpaths' to organize filters in visual studio.
 
@@ -140,10 +154,10 @@ workspace "Console_Utilities"                -- Solution Name
     libdirs
     {
       source_dir_libs,                                           -- default: look for any libs here (does not recurse)
-      source_dir_libs .. "/lib_%{cfg.platform}",                 -- libs with ONLY x32/x64 (no Release/Debug) versions
-      source_dir_libs .. "/%{cfg.buildcfg}",                     -- libs with ONLY Release/Debug (no x32/x64) versions
-      source_dir_libs .. "/%{cfg.buildcfg}/lib_%{cfg.platform}", -- libs with BOTH Release/Debug AND x32/x64 versions
-      source_dir_libs .. "/lib_%{cfg.platform}/%{cfg.buildcfg}"  -- libs with BOTH x32/x64 AND Release/Debug versions (order reversed)
+      source_dir_libs .. "lib_%{cfg.platform}/",                 -- libs with ONLY x32/x64 (no Release/Debug) versions
+      source_dir_libs .. "%{cfg.buildcfg}/",                     -- libs with ONLY Release/Debug (no x32/x64) versions
+      source_dir_libs .. "%{cfg.buildcfg}/lib_%{cfg.platform}/", -- libs with BOTH Release/Debug AND x32/x64 versions
+      source_dir_libs .. "lib_%{cfg.platform}/%{cfg.buildcfg}/"  -- libs with BOTH x32/x64 AND Release/Debug versions (order reversed)
     }
 
     
@@ -172,45 +186,26 @@ workspace "Console_Utilities"                -- Solution Name
         "CoreVideo.framework",   -- Mac-specific for GLFW
         "OpenGL.framework",
       }
-    filter {}
+    filter {} -- clear filter
   --]]
 
 -----------------------------------
 -- POST-BUILD CONFIGURATIONS
 -----------------------------------
-    -- Setting up cross-platform file manipulation commands
-    -- NOTE: this is what premake5's tokens -should- before, but see issue #280
-    local CWD       = "cd " .. os.getcwd() .. "; " -- We are in current working directory
-    local MKDIR     = "mkdir -p "
-    local COPY      = "cp -rf "
 
-    local SEPARATOR = "/"
+local copyline = "{COPY} " .. ROOT .. "Console-Utils.hpp " .. output_dir_includes .. "Console-Utils.hpp "
 
-    if(os.get() == "windows") then
-      CWD      = "chdir " .. os.getcwd() .. " && "
-      MKDIR     = "mkdir "
-      COPY      = "xcopy /Q /E /Y /I "
-      SEPARATOR = "\\"
-    end
+-- printed during `premake5 gmake`
+-- printf("copyline is: \"%s\"", copyline)
 
-    -- mac copies dylibs to output dir
-    filter { "system:macosx" }
-      postbuildcommands
-      {
-        -- path.translate ( CWD .. MKDIR .. output_dir_lib, SEPARATOR ),
-        -- path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_macosx/*.dylib " .. output_dir_lib, SEPARATOR )
-      }
+-- run during `make config=lib_x64"
+filter{"configurations:Lib"}
+  postbuildcommands 
+  {
+    "{RMDIR} " .. output_dir_includes,
+    "{MKDIR} " .. output_dir_includes,
+    copyline
+  }
 
-    -- windows copies dll's to output dir (currently not used)
-    filter { "system:windows" }
-      postbuildcommands
-      {
-      -- TODO: need  to re-write for wildcard file selection on windows...
-        -- path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_windows/*.dll " .. output_dir_root , SEPARATOR )
-      }
+filter {} -- clear filter
 
-    -- Copying resource files to output dir (currently not used)
-    -- postbuildcommands
-    -- {
-    --   path.translate ( CWD .. COPY .. <RESOURCE_PATH> .. "/* " .. output_dir_root , SEPARATOR )
-    -- }
