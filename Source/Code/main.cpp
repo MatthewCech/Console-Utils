@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <ostream>
-#include "Console.hpp"
+#include "Canvas.hpp"
 #include "RTest.hpp"
 #include "Field2D.hpp"
 #include <rlutil.h>
@@ -30,7 +30,7 @@ int main(int argc, char** argv) try
       displayFPS = true;
 
   // Setup
-  Console::SetCursorVisible(false);
+  Canvas::SetCursorVisible(false);
   srand(0);
 
 
@@ -52,11 +52,11 @@ int main(int argc, char** argv) try
 
         int rnd = rand() % RConsole::PREVIOUS_COLOR;
         //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
-        Console::Draw('a', i, j, static_cast<RConsole::Color>(rnd));
+        Canvas::Draw('a', i, j, static_cast<RConsole::Color>(rnd));
       }
 
 	  // Console text.
-	  Console::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
+    Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
 	
 	  // Flip if we get too far to the side.
     if (flip)
@@ -69,7 +69,7 @@ int main(int argc, char** argv) try
       flip = !flip;
 
     // Clear
-    Console::Update();
+    Canvas::Update();
 
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
     RTest::Timekeeper::EndFrame();
