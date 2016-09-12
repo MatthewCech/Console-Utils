@@ -39,10 +39,10 @@ namespace RConsole
    // Console Raster object //
   ///////////////////////////
   // Default constructor for the ConsoleRaster- Zeros data and gets width and height.
-  ConsoleRaster::ConsoleRaster() 
+  ConsoleRaster::ConsoleRaster()
     : width_(rlutil::tcols())
     , height_(rlutil::trows())
-    , data_(width_, height_)
+    , data_(width_, height_, RasterInfo(' ', RConsole::WHITE))
   {  }
 
   // Draws a character to the screen. Returns if it was successful or not.
