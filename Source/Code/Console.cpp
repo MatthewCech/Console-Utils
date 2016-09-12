@@ -143,6 +143,35 @@ namespace RConsole
     }
   }
 
+  // Drawing box
+  void Console::DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color)
+  {
+    
+    if(x1 > x2)
+    {
+      float temp = x1;
+      x2 = x1;
+      temp = x2;
+    }
+    if(y1 > y2)
+    {
+      float temp = y1;
+      y2 = y1;
+      temp = y2;
+    }
+
+    // At this point it can be assumed that x1 and y1 and lower than x2 and y2 respectively.
+
+    for(int x = static_cast<int>(x1); x < x2; ++x)
+    {
+      for(int y = static_cast<int>(x1); y < y2; ++y)
+      {
+        Draw(toWrite, x, y, color);
+      }
+    }
+  }
+
+
 
   //Set visibility of cursor to specified bool.
   void Console::SetCursorVisible(bool isVisible)
