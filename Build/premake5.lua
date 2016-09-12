@@ -10,9 +10,9 @@ local ROOT = "../"   -- Path to project root
 -- [ WORKSPACE CONFIGURATION   --
 ---------------------------------
 workspace "Console_Utilities"                -- Solution Name
-	configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
-	platforms { "x64", "x86"}                -- Dropdown platforms section in VS
-	
+  configurations { "Debug", "Release"}     -- Optimization/General config mode in VS
+  platforms { "x64", "x86"}                -- Dropdown platforms section in VS
+  
   local proj_action = "UNDEFINED"
 
   -- _ACTION is the argument passed into premake5 when you run it.
@@ -23,22 +23,22 @@ workspace "Console_Utilities"                -- Solution Name
   location (ROOT .. "project_" .. proj_action)
 
 
-	-------------------------------
-	-- [ PROJECT CONFIGURATION ] --
-	------------------------------- 
-	project "ASCII_Draw"        -- Project name
-		targetname "ascii_draw" -- Executable name
-		kind "ConsoleApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
-		language "C++"
+  -------------------------------
+  -- [ PROJECT CONFIGURATION ] --
+  ------------------------------- 
+  project "ASCII_Draw"        -- Project name
+    targetname "ascii_draw" -- Executable name
+    kind "ConsoleApp"      -- Style of app in project- WindowedApp, ConsoleApp, etc.
+    language "C++"
 
-  	-------------------------------
-  	-- [ COMPILER/LINKER CONFIG] --
-  	-------------------------------
+    -------------------------------
+    -- [ COMPILER/LINKER CONFIG] --
+    -------------------------------
     
     flags "FatalWarnings"  -- Warnings to 11! (all warnings on)
     warnings "Extra"       -- Extra warnings, such as unused variables
 
-  	filter { "platforms:*86" } architecture "x86"
+    filter { "platforms:*86" } architecture "x86"
     filter { "platforms:*64" } architecture "x64"
 
     filter "configurations:Debug"    defines { "DEBUG" }  symbols  "On"
@@ -48,9 +48,9 @@ workspace "Console_Utilities"                -- Solution Name
     filter {}
 
 
-	------------------------------
-	-- [ BUILD CONFIGURATIONS ] --
-	------------------------------
+  ------------------------------
+  -- [ BUILD CONFIGURATIONS ] --
+  ------------------------------
 
     filter { "action:gmake" }
       toolset "clang"
@@ -69,7 +69,7 @@ workspace "Console_Utilities"                -- Solution Name
       flags         { "MultiProcessorCompile", "NoMinimalRebuild" }
       linkoptions   { "/ignore:4099" }      -- Ignore library pdb warnings when running in debug
 
-    filter {} -- clear filter 	
+    filter {} -- clear filter   
 
 
 
@@ -173,7 +173,7 @@ workspace "Console_Utilities"                -- Solution Name
         "OpenGL.framework",
       }
     filter {}
-	--]]
+  --]]
 
 -----------------------------------
 -- POST-BUILD CONFIGURATIONS
@@ -197,15 +197,15 @@ workspace "Console_Utilities"                -- Solution Name
     filter { "system:macosx" }
       postbuildcommands
       {
-        path.translate ( CWD .. MKDIR .. output_dir_lib, SEPARATOR ),
-        path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_macosx/*.dylib " .. output_dir_lib, SEPARATOR )
+        -- path.translate ( CWD .. MKDIR .. output_dir_lib, SEPARATOR ),
+        -- path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_macosx/*.dylib " .. output_dir_lib, SEPARATOR )
       }
 
     -- windows copies dll's to output dir (currently not used)
     filter { "system:windows" }
       postbuildcommands
       {
-	    -- TODO: need  to re-write for wildcard file selection on windows...
+      -- TODO: need  to re-write for wildcard file selection on windows...
         -- path.translate ( CWD .. COPY .. source_dir_dependencies .. "/*/Libs_windows/*.dll " .. output_dir_root , SEPARATOR )
       }
 
