@@ -16,8 +16,8 @@
 namespace RConsole
 {
   // Static initialization in non-guaranteed order.
-  CanvasRaster Canvas::r_        = CanvasRaster();
-  CanvasRaster Canvas::prev_     = CanvasRaster();
+  CanvasRaster Canvas::r_         = CanvasRaster();
+  CanvasRaster Canvas::prev_      = CanvasRaster();
   bool Canvas::hasLazyInit_       = false;
   bool Canvas::isDrawing_         = true;
   unsigned int Canvas::width_     = CONSOLE_WIDTH;
@@ -137,13 +137,6 @@ namespace RConsole
   void Canvas::DrawAlpha(int x, int y, Color color, float opacity)
   {
     DrawAlpha(static_cast<float>(x), static_cast<float>(y), color, opacity);
-  }
-
-
-  // Stops the update loop.
-  void Canvas::Shutdown()
-  {
-    isDrawing_ = false;
   }
 
 
@@ -280,7 +273,7 @@ namespace RConsole
       index = r.GetRasterData().GetIndex();
       const RasterInfo& ri = r.GetRasterData().Get();
 
-      if (ri.Value != 0 && prev_.GetRasterData().Peek(index) != ri)
+      if (ri.Value != 0 && ri.Value != ' ' && prev_.GetRasterData().Peek(index) != ri)
       {
         unsigned int xLoc = (index % width_) + 1;
         unsigned int yLoc = (index / width_) + 1;
@@ -399,5 +392,26 @@ namespace RConsole
   {
     signal(SIGTERM, signalHandler);
     signal(SIGINT, signalHandler);
+  }
+
+
+    ///////////////////////
+   // Canvas Management //
+  ///////////////////////
+  // Shuts down the canvas, preventing further drawing.
+  void Canvas::Shutdown()
+  {
+    isDrawing_ = false;
+  }
+
+
+  // Sets the size of the canvas, wiping everything and initalizing all data structures again.
+  void Canvas::SetSize(int width, int height)
+  {
+    width_ = width;
+    height_ = height;
+    modified_ = Field2D<bool>(width, height);
+    r_.ForceResize(width, height);
+    prev_.ForceResize(width, height);
   }
 }

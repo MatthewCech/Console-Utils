@@ -15,9 +15,6 @@ namespace RConsole
     static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
     static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
 	  static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
-    static void DrawAlpha(int x, int y, Color color, float opacity);
-    static void DrawAlpha(float x, float y, Color color, float opacity);
-    static void Shutdown();
 
     // Advanced drawing calls
     static void DrawPartialPoint(float x, float y, Color color);
@@ -25,11 +22,19 @@ namespace RConsole
     static void SetCursorVisible(bool isVisible);
     static void DumpRaster(FILE * fp = stdout);
 
+    // Canvas Management
+    static void Shutdown();
+    static void SetSize(int width = rlutil::tcols(), int height = rlutil::trows());
+
   private:
     // Hidden Constructors- no instantiating publicly!
     Canvas() { };
     Canvas(const Canvas &rhs) { *this = rhs; }
-    
+
+    // Temporarily removed functions
+    static void DrawAlpha(int x, int y, Color color, float opacity);
+    static void DrawAlpha(float x, float y, Color color, float opacity);
+
     // Private methods.
     static void clearPrevious();
     static void fullClear();

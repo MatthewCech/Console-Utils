@@ -35,7 +35,11 @@
 
 /////// CONSOLE SETTINGS /////////
 
+// Efficiency settings
 #define RConsole_CLIP_CONSOLE // Define we want console clipping
 #define RConsole_NO_THREADING // Define we aren't threading- printf becomes unsafe, but faster.
-#define CONSOLE_WIDTH rlutil::tcols()
-#define CONSOLE_HEIGHT rlutil::trows()
+
+// Defaults
+#define CONSOLE_WIDTH rlutil::tcols()                       // Default Canvas width
+#define CONSOLE_HEIGHT rlutil::trows()                      // Default Canvas height
+#define RASTERINFO_DEFAULT RasterInfo(' ', RConsole::WHITE) // Default raster info object.
