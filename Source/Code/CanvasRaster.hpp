@@ -28,6 +28,7 @@ namespace RConsole
     CanvasRaster();
 
     // Method Prototypes
+    void ForceResize(int newWidth, int newHeight);
     bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
 	  bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
     const Field2D<RasterInfo>& GetRasterData() const;

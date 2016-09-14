@@ -42,9 +42,17 @@ namespace RConsole
   CanvasRaster::CanvasRaster()
     : width_(CONSOLE_WIDTH)
     , height_(CONSOLE_HEIGHT)
-    , data_(width_, height_, RasterInfo(' ', RConsole::WHITE))
+    , data_(width_, height_, RASTERINFO_DEFAULT)
   {  }
 
+
+  // Forces the canvas raster to re-initalize with the new size.
+  void CanvasRaster::ForceResize(int newWidth, int newHeight)
+  {
+    data_ = Field2D<RasterInfo>(width_, height_, RASTERINFO_DEFAULT);
+    width_ = newWidth;
+    height_ = newHeight;
+  }
 
   // Draws a character to the screen. Returns if it was successful or not.
   bool CanvasRaster::WriteChar(char toDraw, float x, float y, Color color)
