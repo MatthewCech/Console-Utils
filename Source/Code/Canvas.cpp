@@ -355,7 +355,10 @@ namespace RConsole
           if (trimmedLen > 1)
             --trimmedLen;
           else
+          {
+            --trimmedLen;
             break;
+          }
         }
         else
           break;
@@ -377,7 +380,8 @@ namespace RConsole
           fprintf(fp, "%s", line.c_str());
         }
       }
-      fprintf(fp, "\n");
+      if(trimmedLen > 0)
+        fprintf(fp, "\n");
       if(fp == stdout)
         rlutil::setColor(WHITE);
     }
