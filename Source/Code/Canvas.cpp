@@ -273,7 +273,7 @@ namespace RConsole
       index = r.GetRasterData().GetIndex();
       const RasterInfo& ri = r.GetRasterData().Get();
 
-      if (ri.Value != 0 && ri.Value != ' ' && prev_.GetRasterData().Peek(index) != ri)
+      if (ri.Value != 0 && prev_.GetRasterData().Peek(index) != ri)
       {
         unsigned int xLoc = (index % width_) + 1;
         unsigned int yLoc = (index / width_) + 1;
@@ -411,7 +411,7 @@ namespace RConsole
     width_ = width;
     height_ = height;
     modified_ = Field2D<bool>(width, height);
-    r_.ForceResize(width, height);
-    prev_.ForceResize(width, height);
+    r_ = CanvasRaster(width, height);
+    prev_ = CanvasRaster(width, height);
   }
 }

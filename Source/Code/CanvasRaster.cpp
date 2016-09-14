@@ -45,9 +45,16 @@ namespace RConsole
     , data_(width_, height_, RASTERINFO_DEFAULT)
   {  }
 
+  
+  // Non-default constructor for canvas raster.
+  CanvasRaster::CanvasRaster(unsigned int width, unsigned int height, const RasterInfo &r)
+    : width_(width)
+    , height_(height)
+    , data_(width, height, r)
+  {  }
 
   // Forces the canvas raster to re-initalize with the new size.
-  void CanvasRaster::ForceResize(int newWidth, int newHeight)
+  void CanvasRaster::ForceResize(unsigned int newWidth, unsigned int newHeight)
   {
     data_ = Field2D<RasterInfo>(width_, height_, RASTERINFO_DEFAULT);
     width_ = newWidth;
