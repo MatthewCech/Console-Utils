@@ -50,10 +50,10 @@ namespace RConsole
 	  // Structure Info
 	  unsigned int Width() const;
 	  unsigned int Height() const;
+    unsigned int Length() const;
 
     // Member Functions - Complex Manipulation
     void Zero();
-    void Fill(const T &objToUse);
     void Set(const T &newItem);
     T &Get(unsigned int x, unsigned int y);
     Field2DProxy<T> operator[](unsigned int xPos);
@@ -61,6 +61,8 @@ namespace RConsole
     const T& Get(unsigned int x, unsigned int y) const;
     const T& Peek(unsigned int x, unsigned int y) const;
     const T& Peek(unsigned int index) const;
+    void Fill(const T &objToUse);
+    void Fill(const T &objToUse, unsigned int startIndex, unsigned int endIndex);
 
     // Basic Manipulation
     T &Get();
@@ -120,6 +122,12 @@ namespace RConsole
   unsigned int Field2D<T>::Height() const
   {
 	  return height_;
+  }
+
+  template <typename T>
+  unsigned int Field2D<T>::Length() const
+  {
+    return width_ * height_;
   }
 
 
@@ -238,17 +246,24 @@ namespace RConsole
   template <typename T>
   void Field2D<T>::Fill(const T &objToUse)
   {
+    Fill(objToUse, 0, Length());
+  }
+  
+
+  // Fills a specific range to whatever I want, inclusive for start index and
+  // excludes end index.
+  template <typename T>
+  void Field2D<T>::Fill(const T &objToUse, unsigned int startIndex, unsigned int endIndex)
+  {
     unsigned int prevIndex = index_;
-    index_ = 0;
-    for (unsigned int i = 0; i < width_; ++i)
-      for (unsigned int j = 0; j < height_; ++j)
-      {
-        Set(objToUse);
-        IncrementX();
-      }
+    index_ = startIndex;
+    for (unsigned int i = startIndex; i < endIndex; ++i)
+    {
+      Set(objToUse);
+      IncrementX();
+    }
     index_ = prevIndex;
   }
-
 
     //////////////////////
    // Cheap operations //

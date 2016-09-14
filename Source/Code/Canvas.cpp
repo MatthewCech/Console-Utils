@@ -4,6 +4,7 @@
 #include <rlutil.h>         // Console drawing 
 #include <chrono>           // Time related info for sleeping.
 #include <thread>           // Sleep on exit to allow for update to finish.
+#include <string>           // String for parsing.
 #include "Definitions.hpp"
 #include "RFuncs.hpp"
 #include "Canvas.hpp"
@@ -37,6 +38,13 @@ namespace RConsole
   // Write the specific character in a specific color to a specific location on the console.
   void Canvas::Draw(char toWrite, float x, float y, Color color)
   {
+    #ifdef RConsole_CLIP_CONSOLE
+
+    if (x > width_) return;
+    if (y > height_) return;
+
+    #endif // RConsole_CLIP_CONSOLE
+
     modified_.GoTo(static_cast<int>(x), static_cast<int>(y));
     modified_.Set(true);
     r_.WriteChar(toWrite, x, y, color);
@@ -55,10 +63,34 @@ namespace RConsole
 	  size_t len = strlen(toDraw);
 	  if (len <= 0) return;
 
+    #ifdef RConsole_CLIP_CONSOLE
+
+    // Bounds check.
+    if (xStart > width_) return;
+    if (yStart > height_) return;
+
 	  // Set the memory we are using to modified.
 	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
 	  unsigned int index = modified_.GetIndex();
+    if (xStart > width_) return;
+
+    // Checks the length and adjusts if it will be past.
+    int writeLen = len;
+    if (writeLen + index > modified_.Length())
+      writeLen = modified_.Length() - index;
+
+    // If our length plus the index we are at exceeds the end of the buffer,
+    memset(modified_.GetHead() + index, true, writeLen);
+
+    #else
+
+    // Just blindly set modified for the length.
+    modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
+    unsigned int index = modified_.GetIndex();
 	  memset(modified_.GetHead() + index, true, len);
+
+    #endif
+
 
 	  // Write string
 	  r_.WriteString(toDraw, len, xStart, yStart, color);

@@ -57,8 +57,13 @@ int main(int argc, char** argv) try
 
 	  // Console text.
     Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
-	
-	  // Flip if we get too far to the side.
+    Canvas::DrawBox('a', 1, 1, 20, 200, WHITE);
+    //Canvas::Draw('a', 20, 200, WHITE);
+    Canvas::DumpRaster();
+    Canvas::DrawBox('X', 1, 1, 20, 200, WHITE);
+    //Canvas::Draw('X', 20, 200, GREEN);
+    Canvas::DumpRaster();
+    // Flip if we get too far to the side.
     if (flip)
       Xstart--;
     else
