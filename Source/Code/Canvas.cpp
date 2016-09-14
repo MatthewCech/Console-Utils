@@ -334,7 +334,7 @@ namespace RConsole
   // print out the formatted raster.
   // Note that because of console color formatting, we use the RLUTIL coloring option when
   // we are printing to the console, or have no file output specified.
-  void Canvas::DumpRaster(FILE * fp)
+  void Canvas::DumpRaster(FILE * fp, char toTrim)
   {
     for (unsigned int i = 0; i < r_.height_; ++i)
     {
@@ -350,7 +350,7 @@ namespace RConsole
       unsigned int trimmedLen = beingTrimmed.length();
       for (;;)
       {
-        if (beingTrimmed[trimmedLen - 1] == ' ')
+        if (beingTrimmed[trimmedLen - 1] == toTrim)
         {
           if (trimmedLen > 1)
             --trimmedLen;
