@@ -57,6 +57,7 @@ namespace RConsole
     void Set(const T &newItem);
     T &Get(unsigned int x, unsigned int y);
     Field2DProxy<T> operator[](unsigned int xPos);
+    Field2D<T> &operator=(const Field2D<T> &rhs);
     void GoTo(unsigned int x, unsigned int y);
     const T& Get(unsigned int x, unsigned int y) const;
     const T& Peek(unsigned int x, unsigned int y) const;
@@ -199,6 +200,29 @@ namespace RConsole
   Field2DProxy<T> Field2D<T>::operator[](unsigned int xPos) 
   {
     return Field2DProxy<T>(this, xPos);
+  }
+
+
+  // assignment operator.
+  template <typename T>
+  Field2D<T> &Field2D<T>::operator=(const Field2D<T> &rhs)
+  {
+    if (&rhs != this)
+    {
+      delete[] data_;
+      index_ = 0;
+      width_ = rhs.width_;
+      height_ = rhs.height_;
+
+      for (unsigned int i = 0; i < rhs.Width(); ++i)
+      {
+        Set(*(rhs.data_ + i));
+        IncrementX();
+      }
+      index_ = rhs.index_;
+    }
+
+    return *this;
   }
 
 
