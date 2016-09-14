@@ -23,7 +23,7 @@ int main(int argc, char** argv) try
   // Variables
   int Xstart = 0;
   bool flip = false;
-  char letter = 'a';
+  //char letter = 'a';
   bool displayFPS = false;
   if (argc == 2)
     if (strcmp(argv[1], "-fps") || strcmp(argv[1], "/fps") || strcmp(argv[1], "fps"))
@@ -34,7 +34,7 @@ int main(int argc, char** argv) try
   srand(0);
 
 
-
+  //Canvas::SetSize(20, 20);
   // Main loop
   while (1)
   {
@@ -43,26 +43,27 @@ int main(int argc, char** argv) try
     /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
 
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
-    for (int i = Xstart; i < 30 + Xstart; ++i)
-    //for (int i = 0; i < 30; ++i)
-      for (int j = 0; j < 20; ++j)
-      {
-        if (letter > 'z')
-          letter = 'a';
+    //for (int i = Xstart; i < 30 + Xstart; ++i)
+    ////for (int i = 0; i < 30; ++i)
+    //  for (int j = 0; j < 20; ++j)
+    //  {
+    //    if (letter > 'z')
+    //      letter = 'a';
 
-        int rnd = rand() % RConsole::PREVIOUS_COLOR;
-        //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
-        Canvas::Draw('a', i, j, static_cast<RConsole::Color>(rnd));
-      }
+    //    int rnd = rand() % RConsole::PREVIOUS_COLOR;
+    //    //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
+    //    Canvas::Draw('a', i, j, static_cast<RConsole::Color>(rnd));
+    //  }
 
 	  // Console text.
+    
     Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
-    Canvas::DrawBox('a', 1, 1, 20, 200, WHITE);
-    //Canvas::Draw('a', 20, 200, WHITE);
-    Canvas::DumpRaster();
-    Canvas::DrawBox('X', 1, 1, 20, 200, WHITE);
+    Canvas::DrawBox('a', 1, 1, 20, 30, WHITE);
+    Canvas::Draw('a', 0, 1, YELLOW);
+    //Canvas::DumpRaster();
+    //Canvas::DrawBox('X', 1, 1, 20, 20, WHITE);
     //Canvas::Draw('X', 20, 200, GREEN);
-    Canvas::DumpRaster();
+    //Canvas::DumpRaster();
     // Flip if we get too far to the side.
     if (flip)
       Xstart--;
@@ -89,6 +90,7 @@ int main(int argc, char** argv) try
       rlutil::locate(rlutil::tcols() - 3, 2);
       printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
     }
+
   }
   
   // Return success
