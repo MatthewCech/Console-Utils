@@ -34,7 +34,7 @@ int main(int argc, char** argv) try
   srand(0);
 
 
-  //Canvas::SetSize(20, 20);
+  Canvas::SetSize(20, 20);
   // Main loop
   while (1)
   {
@@ -58,8 +58,8 @@ int main(int argc, char** argv) try
 	  // Console text.
     
     Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
-    Canvas::DrawBox('a', 1, 1, 20, 30, WHITE);
-    Canvas::Draw('a', 0, 1, YELLOW);
+    //Canvas::DrawBox('a', 1, 1, 20, 30, WHITE);
+    Canvas::Draw('a', 0, 0, YELLOW);
     //Canvas::DumpRaster();
     //Canvas::DrawBox('X', 1, 1, 20, 20, WHITE);
     //Canvas::Draw('X', 20, 200, GREEN);
