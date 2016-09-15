@@ -108,6 +108,8 @@ namespace RConsole
     memcpy(prev_.GetRasterData().GetHead(), r_.GetRasterData().GetHead(), width_ * height_ * sizeof(RasterInfo));
     r_.Zero();
 
+    rlutil::setColor(DEFAULT);
+
     return true;
   }
 
@@ -346,7 +348,7 @@ namespace RConsole
 
     // Set end color to white when we're done.
     if (fp == stdout)
-      rlutil::setColor(WHITE);
+      rlutil::setColor(DEFAULT);
   }
 
 
@@ -400,7 +402,7 @@ namespace RConsole
 
     // Set end color to white when we're done.
     if (fp == stdout)
-      rlutil::setColor(WHITE);
+      rlutil::setColor(DEFAULT);
   }
 
 
