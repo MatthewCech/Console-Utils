@@ -51,12 +51,6 @@ namespace RConsole
   }
 
 
-  // Call previous draw with int instead.
-  void Canvas::Draw(char toWrite, int x, int y, Color color)
-  {
-    Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
-  }
-
   // Draw a string
   void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
   {
@@ -133,13 +127,6 @@ namespace RConsole
   }
 
 
-  // Int version of above function
-  void Canvas::DrawAlpha(int x, int y, Color color, float opacity)
-  {
-    DrawAlpha(static_cast<float>(x), static_cast<float>(y), color, opacity);
-  }
-
-
   // Stops the update loop.
   void Canvas::Shutdown()
   {
@@ -194,9 +181,9 @@ namespace RConsole
 
     // At this point it can be assumed that x1 and y1 and lower than x2 and y2 respectively.
 
-    for(int x = static_cast<int>(x1); x < x2; ++x)
+    for(unsigned int x = static_cast<unsigned int>(x1); x < x2; ++x)
     {
-      for(int y = static_cast<int>(x1); y < y2; ++y)
+      for(unsigned int y = static_cast<unsigned int>(x1); y < y2; ++y)
       {
         Draw(toWrite, x, y, color);
       }
