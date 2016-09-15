@@ -15,12 +15,12 @@ File contains basic timekeeping class and basic exception structure.
 
 
 
-//Defines for asserts doing floating point math
+// Defines for asserts doing floating point math
 #define RTest_NEAR_FLOAT  .0006
 #define RTest_NEAR_DOUBLE .00006
 
-//Turns on or off an assert. If there is an assert that fails, a custom exception type is thrown. 
-//Place the following line in your project or compile with the following defined: #define RTest_ASSERT_ON
+// Turns on or off an assert. If there is an assert that fails, a custom exception type is thrown. 
+// Place the following line in your project or compile with the following defined: #define RTest_ASSERT_ON
 #ifndef RTest_ASSERT_OFF                                       
   #define RTest_ASSERT(a) do{ if(!(a)) { throw(RTest::RException("Assert Failed!")); } } while (0)                                                  
 #endif
@@ -28,11 +28,11 @@ File contains basic timekeeping class and basic exception structure.
 
 namespace RTest
 {
-  //A class for timing frames.
+  // A class for timing frames.
   class Timekeeper
   {
   public:
-    //Static member functions
+    // Static member functions
     static void StartFrame();
     static void EndFrame();
     static int GetLastTimeMS();
@@ -40,11 +40,11 @@ namespace RTest
     static void SetMaxSamples(unsigned int samples);
 
   private:
-    //Frame time markers
+    // Frame time markers
     static std::chrono::milliseconds startTime_;
     static std::chrono::milliseconds endTime_;
 
-    //Other data for averaging
+    // Other data for averaging
     static double frameSamples_;
     static double frameAvg_;
     static long long lastTime_;
@@ -52,21 +52,21 @@ namespace RTest
   };
 
 
-  //Undefine the exception structure first to avoid expanding the macro.
+  // Undefine the exception structure first to avoid expanding the macro.
   #undef RException
   struct RException
   {
-    //Constructor
+    // Constructor
     RException(std::string file, unsigned int line, std::string message);
 
-    //Member functions and Friends
+    // Member functions and Friends
     friend std::ostream &operator<<(std::ostream &os, const RException &rhs);
 
-    //Data
+    // Data
     std::string File;
     unsigned int Line;
     std::string Message;
   };
-  //Redefine macro for the exception
+  // Redefine macro for the exception
   #define RException(a) RException(__FILE__, __LINE__, a)
 }

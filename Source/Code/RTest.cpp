@@ -16,9 +16,9 @@ structure, along with some functions to help with testing.
 
 namespace RTest
 {
-    /////////////////////////////////
-   //Testing functions for asserts//
-  /////////////////////////////////
+    ///////////////////////////////////
+   // Testing functions for asserts //
+  ///////////////////////////////////
   bool Near(double a, double b)
   {
     if (a + RTest_NEAR_DOUBLE > b && a - RTest_NEAR_DOUBLE < b)
@@ -35,10 +35,10 @@ namespace RTest
 
 
 
-    ////////////////////
-   //Timekeeper Class//
-  ////////////////////
-  //Static time initialization
+    //////////////////////
+   // Timekeeper Class //
+  //////////////////////
+  // Static time initialization
   std::chrono::milliseconds Timekeeper::startTime_ = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
   std::chrono::milliseconds Timekeeper::endTime_ = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch());
   double Timekeeper::frameSamples_ = 0;
@@ -47,7 +47,7 @@ namespace RTest
   unsigned int Timekeeper::maxFrameSamples_ = 50;
 
 
-  //Start frame marker. Should be called at the start of a single cycle of the program.
+  // Start frame marker. Should be called at the start of a single cycle of the program.
   void Timekeeper::StartFrame()
   {
     startTime_ = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -55,7 +55,7 @@ namespace RTest
   }
 
 
-  //End frame marker. Should be called at the end of a single cycle of the program.
+  // End frame marker. Should be called at the end of a single cycle of the program.
   void Timekeeper::EndFrame()
   {
     endTime_ = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -68,21 +68,21 @@ namespace RTest
   }
 
 
-  //Get the last frame time in MS as an int.
+  // Get the last frame time in MS as an int.
   int Timekeeper::GetLastTimeMS()
   {
     return static_cast<int>(lastTime_);
   }
 
 
-  //Returns the average frame time that has been calculated.
+  // Returns the average frame time that has been calculated.
   int Timekeeper::GetAvgTimeMS()
   {
     return static_cast<int>(frameAvg_);
   }
 
 
-  //Sets the total number of previous frames to take into account when averaging.
+  // Sets the total number of previous frames to take into account when averaging.
   void Timekeeper::SetMaxSamples(unsigned int samples)
   {
     maxFrameSamples_ = samples;
@@ -91,10 +91,10 @@ namespace RTest
 
 
 
-    //////////////
-   //RException//
-  //////////////
-  //Undefine the RException macro to prevent it expanding here.
+    ////////////////
+   // RException //
+  ////////////////
+  // Undefine the RException macro to prevent it expanding here.
   #undef RException
 
   //Handle constructor
@@ -104,14 +104,14 @@ namespace RTest
   , Message(message)
   {  }
 
-  //Define print formatting 
+  // Define print formatting 
   std::ostream &operator<<(std::ostream &os, const RException &rhs)
   {
     os << "!! EXCEPTION: " << rhs.File << " line " << rhs.Line << ": " << rhs.Message;
     return os;
   }
   
-  //Redefube macro to allow it to expand here.
+  // Redefube macro to allow it to expand here.
   #define RException(a) RException(__FILE__, __LINE__, a)
 
 }

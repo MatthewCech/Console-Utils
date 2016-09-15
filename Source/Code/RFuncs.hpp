@@ -15,7 +15,7 @@
 namespace RFuncs
 {
 
-  //Absolute value of int.
+  // Absolute value of int.
   static int Abs(int x)
   {
     if (x < 0) 
