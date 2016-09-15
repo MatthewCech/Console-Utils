@@ -1,10 +1,7 @@
-#pragma once
 
-
-/* 0: Canvas.hpp START */
-/* 1: CanvasRaster.hpp START */
-/* 2: Colors.hpp START */
-/* 3: rlutil.h START */
+///////////////////////////////////////////////////////////////////////
+//rlutil.h
+///////////////////////////////////////////////////////////////////////
 #pragma once
 /**
  * File: rlutil.h
@@ -40,82 +37,82 @@
 #endif
 
 #ifdef __cplusplus
-  /// Common C++ headers
-  #include <iostream>
-  #include <string>
-  #include <sstream>
-  /// Namespace forward declarations
-  namespace rlutil {
-    void locate(int x, int y);
-  }
+	/// Common C++ headers
+	#include <iostream>
+	#include <string>
+	#include <sstream>
+	/// Namespace forward declarations
+	namespace rlutil {
+		void locate(int x, int y);
+	}
 #else
-  void locate(int x, int y); // Forward declare for C to avoid warnings
+	void locate(int x, int y); // Forward declare for C to avoid warnings
 #endif // __cplusplus
 
 #ifndef RLUTIL_INLINE
-  #ifdef _MSC_VER
-    #define RLUTIL_INLINE __inline
-  #else
-    #define RLUTIL_INLINE __inline__
-  #endif
+	#ifdef _MSC_VER
+		#define RLUTIL_INLINE __inline
+	#else
+		#define RLUTIL_INLINE __inline__
+	#endif
 #endif
 
 #ifdef _WIN32
-  #include <windows.h>  // for WinAPI and Sleep()
-  #define _NO_OLDNAMES  // for MinGW compatibility
-  #include <conio.h>    // for getch() and kbhit()
-  #define getch _getch
-  #define kbhit _kbhit
+	#include <windows.h>  // for WinAPI and Sleep()
+	#define _NO_OLDNAMES  // for MinGW compatibility
+	#include <conio.h>    // for getch() and kbhit()
+	#define getch _getch
+	#define kbhit _kbhit
 #else
-  #ifdef __cplusplus
-    #include <cstdio> // for getch()
-  #else // __cplusplus
-    #include <stdio.h> // for getch()
-  #endif // __cplusplus
-  #include <termios.h> // for getch() and kbhit()
-  #include <unistd.h> // for getch(), kbhit() and (u)sleep()
-  #include <sys/ioctl.h> // for getkey()
-  #include <sys/types.h> // for kbhit()
-  #include <sys/time.h> // for kbhit()
+	#ifdef __cplusplus
+		#include <cstdio> // for getch()
+	#else // __cplusplus
+		#include <stdio.h> // for getch()
+	#endif // __cplusplus
+	#include <termios.h> // for getch() and kbhit()
+	#include <unistd.h> // for getch(), kbhit() and (u)sleep()
+	#include <sys/ioctl.h> // for getkey()
+	#include <sys/types.h> // for kbhit()
+	#include <sys/time.h> // for kbhit()
 
 /// Function: getch
 /// Get character without waiting for Return to be pressed.
 /// Windows has this in conio.h
 RLUTIL_INLINE int getch(void) {
-  // Here be magic.
-  struct termios oldt, newt;
-  int ch;
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  ch = getchar();
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  return ch;
+	// Here be magic.
+	struct termios oldt, newt;
+	int ch;
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	ch = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	return ch;
 }
 
 /// Function: kbhit
 /// Determines if keyboard has been hit.
 /// Windows has this in conio.h
 RLUTIL_INLINE int kbhit(void) {
-  // Here be dragons.
-  static struct termios oldt, newt;
-  int cnt = 0;
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag    &= ~(ICANON | ECHO);
-  newt.c_iflag     = 0; // input mode
-  newt.c_oflag     = 0; // output mode
-  newt.c_cc[VMIN]  = 1; // minimum time to wait
-  newt.c_cc[VTIME] = 1; // minimum characters to wait for
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  ioctl(0, FIONREAD, &cnt); // Read count
-  struct timeval tv;
-  tv.tv_sec  = 0;
-  tv.tv_usec = 100;
-  select(STDIN_FILENO+1, NULL, NULL, NULL, &tv); // A small time delay
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  return cnt; // Return number of characters
+	// Here be dragons.
+	static struct termios oldt, newt;
+	int cnt = 0;
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt;
+	newt.c_lflag    &= ~(ICANON | ECHO);
+	newt.c_iflag     = 0; // input mode
+	newt.c_oflag     = 0; // output mode
+	newt.c_cc[VMIN]  = 1; // minimum time to wait
+	newt.c_cc[VTIME] = 1; // minimum characters to wait for
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	ioctl(0, FIONREAD, &cnt); // Read count
+	struct timeval tv;
+	tv.tv_sec  = 0;
+	tv.tv_usec = 100;
+	select(STDIN_FILENO+1, NULL, NULL, NULL, &tv); // A small time delay
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	return cnt; // Return number of characters
 }
 #endif // _WIN32
 
@@ -123,10 +120,10 @@ RLUTIL_INLINE int kbhit(void) {
 /// Function: gotoxy
 /// Same as <rlutil.locate>.
 RLUTIL_INLINE void gotoxy(int x, int y) {
-  #ifdef __cplusplus
-  rlutil::
-  #endif
-  locate(x,y);
+	#ifdef __cplusplus
+	rlutil::
+	#endif
+	locate(x,y);
 }
 #endif // gotoxy
 
@@ -145,18 +142,18 @@ namespace rlutil {
  */
 
 #ifdef __cplusplus
-  #ifndef RLUTIL_STRING_T
-    typedef std::string RLUTIL_STRING_T;
-  #endif // RLUTIL_STRING_T
+	#ifndef RLUTIL_STRING_T
+		typedef std::string RLUTIL_STRING_T;
+	#endif // RLUTIL_STRING_T
 
-  inline void RLUTIL_PRINT(RLUTIL_STRING_T st) { std::cout << st; }
+	inline void RLUTIL_PRINT(RLUTIL_STRING_T st) { std::cout << st; }
 
 #else // __cplusplus
-  #ifndef RLUTIL_STRING_T
-    typedef char* RLUTIL_STRING_T;
-  #endif // RLUTIL_STRING_T
+	#ifndef RLUTIL_STRING_T
+		typedef char* RLUTIL_STRING_T;
+	#endif // RLUTIL_STRING_T
 
-  #define RLUTIL_PRINT(st) printf("%s", st)
+	#define RLUTIL_PRINT(st) printf("%s", st)
 #endif // __cplusplus
 
 /**
@@ -180,22 +177,22 @@ namespace rlutil {
  * WHITE - White (bright)
  */
 enum {
-  BLACK,
-  BLUE,
-  GREEN,
-  CYAN,
-  RED,
-  MAGENTA,
-  BROWN,
-  GREY,
-  DARKGREY,
-  LIGHTBLUE,
-  LIGHTGREEN,
-  LIGHTCYAN,
-  LIGHTRED,
-  LIGHTMAGENTA,
-  YELLOW,
-  WHITE,
+	BLACK,
+	BLUE,
+	GREEN,
+	CYAN,
+	RED,
+	MAGENTA,
+	BROWN,
+	GREY,
+	DARKGREY,
+	LIGHTBLUE,
+	LIGHTGREEN,
+	LIGHTCYAN,
+	LIGHTRED,
+	LIGHTMAGENTA,
+	YELLOW,
+	WHITE,
   DEFAULT
 };
 
@@ -237,7 +234,7 @@ const RLUTIL_STRING_T ANSI_LIGHTBLUE = "\033[01;34m";
 const RLUTIL_STRING_T ANSI_LIGHTMAGENTA = "\033[01;35m";
 const RLUTIL_STRING_T ANSI_LIGHTCYAN = "\033[01;36m";
 const RLUTIL_STRING_T ANSI_WHITE = "\033[01;37m";
-const RLUTIL_STRING_T ANSI_DEFAULT = "\x1b[0m";
+const RLUTIL_STRING_T ANSI_DEFAULT = "\033[00m";
 
 /**
  * Consts: Key codes for keyhit()
@@ -328,67 +325,67 @@ const int KEY_NUMPAD9 = 135;
 /// Note:
 /// Only Arrows, Esc, Enter and Space are currently working properly.
 RLUTIL_INLINE int getkey(void) {
-  #ifndef _WIN32
-  int cnt = kbhit(); // for ANSI escapes processing
-  #endif
-  int k = getch();
-  switch(k) {
-    case 0: {
-      int kk;
-      switch (kk = getch()) {
-        case 71: return KEY_NUMPAD7;
-        case 72: return KEY_NUMPAD8;
-        case 73: return KEY_NUMPAD9;
-        case 75: return KEY_NUMPAD4;
-        case 77: return KEY_NUMPAD6;
-        case 79: return KEY_NUMPAD1;
-        case 80: return KEY_NUMPAD4;
-        case 81: return KEY_NUMPAD3;
-        case 82: return KEY_NUMPAD0;
-        case 83: return KEY_NUMDEL;
-        default: return kk-59+KEY_F1; // Function keys
-      }}
-    case 224: {
-      int kk;
-      switch (kk = getch()) {
-        case 71: return KEY_HOME;
-        case 72: return KEY_UP;
-        case 73: return KEY_PGUP;
-        case 75: return KEY_LEFT;
-        case 77: return KEY_RIGHT;
-        case 79: return KEY_END;
-        case 80: return KEY_DOWN;
-        case 81: return KEY_PGDOWN;
-        case 82: return KEY_INSERT;
-        case 83: return KEY_DELETE;
-        default: return kk-123+KEY_F1; // Function keys
-      }}
-    case 13: return KEY_ENTER;
+	#ifndef _WIN32
+	int cnt = kbhit(); // for ANSI escapes processing
+	#endif
+	int k = getch();
+	switch(k) {
+		case 0: {
+			int kk;
+			switch (kk = getch()) {
+				case 71: return KEY_NUMPAD7;
+				case 72: return KEY_NUMPAD8;
+				case 73: return KEY_NUMPAD9;
+				case 75: return KEY_NUMPAD4;
+				case 77: return KEY_NUMPAD6;
+				case 79: return KEY_NUMPAD1;
+				case 80: return KEY_NUMPAD4;
+				case 81: return KEY_NUMPAD3;
+				case 82: return KEY_NUMPAD0;
+				case 83: return KEY_NUMDEL;
+				default: return kk-59+KEY_F1; // Function keys
+			}}
+		case 224: {
+			int kk;
+			switch (kk = getch()) {
+				case 71: return KEY_HOME;
+				case 72: return KEY_UP;
+				case 73: return KEY_PGUP;
+				case 75: return KEY_LEFT;
+				case 77: return KEY_RIGHT;
+				case 79: return KEY_END;
+				case 80: return KEY_DOWN;
+				case 81: return KEY_PGDOWN;
+				case 82: return KEY_INSERT;
+				case 83: return KEY_DELETE;
+				default: return kk-123+KEY_F1; // Function keys
+			}}
+		case 13: return KEY_ENTER;
 #ifdef _WIN32
-    case 27: return KEY_ESCAPE;
+		case 27: return KEY_ESCAPE;
 #else // _WIN32
-    case 155: // single-character CSI
-    case 27: {
-      // Process ANSI escape sequences
-      if (cnt >= 3 && getch() == '[') {
-        switch (k = getch()) {
-          case 'A': return KEY_UP;
-          case 'B': return KEY_DOWN;
-          case 'C': return KEY_RIGHT;
-          case 'D': return KEY_LEFT;
-        }
-      } else return KEY_ESCAPE;
-    }
+		case 155: // single-character CSI
+		case 27: {
+			// Process ANSI escape sequences
+			if (cnt >= 3 && getch() == '[') {
+				switch (k = getch()) {
+					case 'A': return KEY_UP;
+					case 'B': return KEY_DOWN;
+					case 'C': return KEY_RIGHT;
+					case 'D': return KEY_LEFT;
+				}
+			} else return KEY_ESCAPE;
+		}
 #endif // _WIN32
-    default: return k;
-  }
+		default: return k;
+	}
 }
 
 /// Function: nb_getch
 /// Non-blocking getch(). Returns 0 if no key was pressed.
 RLUTIL_INLINE int nb_getch(void) {
-  if (kbhit()) return getch();
-  else return 0;
+	if (kbhit()) return getch();
+	else return 0;
 }
 
 /// Function: getANSIColor
@@ -396,26 +393,26 @@ RLUTIL_INLINE int nb_getch(void) {
 ///
 /// See <Color Codes>
 RLUTIL_INLINE RLUTIL_STRING_T getANSIColor(const int c) {
-  switch (c) {
-    case 0 : return ANSI_BLACK;
-    case 1 : return ANSI_BLUE; // non-ANSI
-    case 2 : return ANSI_GREEN;
-    case 3 : return ANSI_CYAN; // non-ANSI
-    case 4 : return ANSI_RED; // non-ANSI
-    case 5 : return ANSI_MAGENTA;
-    case 6 : return ANSI_BROWN;
-    case 7 : return ANSI_GREY;
-    case 8 : return ANSI_DARKGREY;
-    case 9 : return ANSI_LIGHTBLUE; // non-ANSI
-    case 10: return ANSI_LIGHTGREEN;
-    case 11: return ANSI_LIGHTCYAN; // non-ANSI;
-    case 12: return ANSI_LIGHTRED; // non-ANSI;
-    case 13: return ANSI_LIGHTMAGENTA;
-    case 14: return ANSI_YELLOW; // non-ANSI
-    case 15: return ANSI_WHITE;
+	switch (c) {
+		case 0 : return ANSI_BLACK;
+		case 1 : return ANSI_BLUE; // non-ANSI
+		case 2 : return ANSI_GREEN;
+		case 3 : return ANSI_CYAN; // non-ANSI
+		case 4 : return ANSI_RED; // non-ANSI
+		case 5 : return ANSI_MAGENTA;
+		case 6 : return ANSI_BROWN;
+		case 7 : return ANSI_GREY;
+		case 8 : return ANSI_DARKGREY;
+		case 9 : return ANSI_LIGHTBLUE; // non-ANSI
+		case 10: return ANSI_LIGHTGREEN;
+		case 11: return ANSI_LIGHTCYAN; // non-ANSI;
+		case 12: return ANSI_LIGHTRED; // non-ANSI;
+		case 13: return ANSI_LIGHTMAGENTA;
+		case 14: return ANSI_YELLOW; // non-ANSI
+		case 15: return ANSI_WHITE;
     case 16: return ANSI_DEFAULT;
-    default: return "";
-  }
+		default: return "";
+	}
 }
 
 /// Function: setColor
@@ -424,10 +421,10 @@ RLUTIL_INLINE RLUTIL_STRING_T getANSIColor(const int c) {
 /// See <Color Codes>
 RLUTIL_INLINE void setColor(int c) {
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleTextAttribute(hConsole, (WORD)c);
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, (WORD)c);
 #else
-  RLUTIL_PRINT(getANSIColor(c));
+	RLUTIL_PRINT(getANSIColor(c));
 #endif
 }
 
@@ -435,10 +432,10 @@ RLUTIL_INLINE void setColor(int c) {
 /// Clears screen and moves cursor home.
 RLUTIL_INLINE void cls(void) {
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
-  // TODO: This is cheating...
-  system("cls");
+	// TODO: This is cheating...
+	system("cls");
 #else
-  RLUTIL_PRINT("\033[2J\033[H");
+	RLUTIL_PRINT("\033[2J\033[H");
 #endif
 }
 
@@ -446,20 +443,20 @@ RLUTIL_INLINE void cls(void) {
 /// Sets the cursor position to 1-based x,y.
 RLUTIL_INLINE void locate(int x, int y) {
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
-  COORD coord;
-  coord.X = (SHORT)x-1;
-  coord.Y = (SHORT)y-1; // Windows uses 0-based coordinates
-  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+	COORD coord;
+	coord.X = (SHORT)x-1;
+	coord.Y = (SHORT)y-1; // Windows uses 0-based coordinates
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 #else // _WIN32 || USE_ANSI
-  #ifdef __cplusplus
-    std::ostringstream oss;
-    oss << "\033[" << y << ";" << x << "H";
-    RLUTIL_PRINT(oss.str());
-  #else // __cplusplus
-    char buf[32];
-    sprintf(buf, "\033[%d;%df", y, x);
-    RLUTIL_PRINT(buf);
-  #endif // __cplusplus
+	#ifdef __cplusplus
+		std::ostringstream oss;
+		oss << "\033[" << y << ";" << x << "H";
+		RLUTIL_PRINT(oss.str());
+	#else // __cplusplus
+		char buf[32];
+		sprintf(buf, "\033[%d;%df", y, x);
+		RLUTIL_PRINT(buf);
+	#endif // __cplusplus
 #endif // _WIN32 || USE_ANSI
 }
 
@@ -467,14 +464,14 @@ RLUTIL_INLINE void locate(int x, int y) {
 /// Hides the cursor.
 RLUTIL_INLINE void hidecursor(void) {
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
-  HANDLE hConsoleOutput;
-  CONSOLE_CURSOR_INFO structCursorInfo;
-  hConsoleOutput = GetStdHandle( STD_OUTPUT_HANDLE );
-  GetConsoleCursorInfo( hConsoleOutput, &structCursorInfo ); // Get current cursor size
-  structCursorInfo.bVisible = FALSE;
-  SetConsoleCursorInfo( hConsoleOutput, &structCursorInfo );
+	HANDLE hConsoleOutput;
+	CONSOLE_CURSOR_INFO structCursorInfo;
+	hConsoleOutput = GetStdHandle( STD_OUTPUT_HANDLE );
+	GetConsoleCursorInfo( hConsoleOutput, &structCursorInfo ); // Get current cursor size
+	structCursorInfo.bVisible = FALSE;
+	SetConsoleCursorInfo( hConsoleOutput, &structCursorInfo );
 #else // _WIN32 || USE_ANSI
-  RLUTIL_PRINT("\033[?25l");
+	RLUTIL_PRINT("\033[?25l");
 #endif // _WIN32 || USE_ANSI
 }
 
@@ -482,14 +479,14 @@ RLUTIL_INLINE void hidecursor(void) {
 /// Shows the cursor.
 RLUTIL_INLINE void showcursor(void) {
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
-  HANDLE hConsoleOutput;
-  CONSOLE_CURSOR_INFO structCursorInfo;
-  hConsoleOutput = GetStdHandle( STD_OUTPUT_HANDLE );
-  GetConsoleCursorInfo( hConsoleOutput, &structCursorInfo ); // Get current cursor size
-  structCursorInfo.bVisible = TRUE;
-  SetConsoleCursorInfo( hConsoleOutput, &structCursorInfo );
+	HANDLE hConsoleOutput;
+	CONSOLE_CURSOR_INFO structCursorInfo;
+	hConsoleOutput = GetStdHandle( STD_OUTPUT_HANDLE );
+	GetConsoleCursorInfo( hConsoleOutput, &structCursorInfo ); // Get current cursor size
+	structCursorInfo.bVisible = TRUE;
+	SetConsoleCursorInfo( hConsoleOutput, &structCursorInfo );
 #else // _WIN32 || USE_ANSI
-  RLUTIL_PRINT("\033[?25h");
+	RLUTIL_PRINT("\033[?25h");
 #endif // _WIN32 || USE_ANSI
 }
 
@@ -497,11 +494,11 @@ RLUTIL_INLINE void showcursor(void) {
 /// Waits given number of milliseconds before continuing.
 RLUTIL_INLINE void msleep(unsigned int ms) {
 #ifdef _WIN32
-  Sleep(ms);
+	Sleep(ms);
 #else
-  // usleep argument must be under 1 000 000
-  if (ms > 1000) sleep(ms/1000000);
-  usleep((ms % 1000000) * 1000);
+	// usleep argument must be under 1 000 000
+	if (ms > 1000) sleep(ms/1000000);
+	usleep((ms % 1000000) * 1000);
 #endif
 }
 
@@ -509,23 +506,23 @@ RLUTIL_INLINE void msleep(unsigned int ms) {
 /// Get the number of rows in the terminal window or -1 on error.
 RLUTIL_INLINE int trows(void) {
 #ifdef _WIN32
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-  if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
-    return -1;
-  else
-    return csbi.srWindow.Bottom - csbi.srWindow.Top + 1; // Window height
-    // return csbi.dwSize.Y; // Buffer height
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
+		return -1;
+	else
+		return csbi.srWindow.Bottom - csbi.srWindow.Top + 1; // Window height
+		// return csbi.dwSize.Y; // Buffer height
 #else
 #ifdef TIOCGSIZE
-  struct ttysize ts;
-  ioctl(STDIN_FILENO, TIOCGSIZE, &ts);
-  return ts.ts_lines;
+	struct ttysize ts;
+	ioctl(STDIN_FILENO, TIOCGSIZE, &ts);
+	return ts.ts_lines;
 #elif defined(TIOCGWINSZ)
-  struct winsize ts;
-  ioctl(STDIN_FILENO, TIOCGWINSZ, &ts);
-  return ts.ws_row;
+	struct winsize ts;
+	ioctl(STDIN_FILENO, TIOCGWINSZ, &ts);
+	return ts.ws_row;
 #else // TIOCGSIZE
-  return -1;
+	return -1;
 #endif // TIOCGSIZE
 #endif // _WIN32
 }
@@ -534,33 +531,33 @@ RLUTIL_INLINE int trows(void) {
 /// Get the number of columns in the terminal window or -1 on error.
 RLUTIL_INLINE int tcols(void) {
 #ifdef _WIN32
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-  if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
-    return -1;
-  else
-    return csbi.srWindow.Right - csbi.srWindow.Left + 1; // Window width
-    // return csbi.dwSize.X; // Buffer width
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
+		return -1;
+	else
+		return csbi.srWindow.Right - csbi.srWindow.Left + 1; // Window width
+		// return csbi.dwSize.X; // Buffer width
 #else
 #ifdef TIOCGSIZE
-  struct ttysize ts;
-  ioctl(STDIN_FILENO, TIOCGSIZE, &ts);
-  return ts.ts_cols;
+	struct ttysize ts;
+	ioctl(STDIN_FILENO, TIOCGSIZE, &ts);
+	return ts.ts_cols;
 #elif defined(TIOCGWINSZ)
-  struct winsize ts;
-  ioctl(STDIN_FILENO, TIOCGWINSZ, &ts);
-  return ts.ws_col;
+	struct winsize ts;
+	ioctl(STDIN_FILENO, TIOCGWINSZ, &ts);
+	return ts.ws_col;
 #else // TIOCGSIZE
-  return -1;
+	return -1;
 #endif // TIOCGSIZE
 #endif // _WIN32
-} 
-  
+}	
+	
 // TODO: Allow optional message for anykey()?
 
 /// Function: anykey
 /// Waits until a key is pressed.
 RLUTIL_INLINE void anykey(void) {
-  getch();
+	getch();
 }
 
 #ifndef min
@@ -591,13 +588,18 @@ template <class T> const T& max ( const T& a, const T& b ) { return (b<a)?a:b; }
 /// Hides the cursor and shows it again
 /// when the object goes out of scope.
 struct CursorHider {
-  CursorHider() { hidecursor(); }
-  ~CursorHider() { showcursor(); }
+	CursorHider() { hidecursor(); }
+	~CursorHider() { showcursor(); }
 };
 
 } // namespace rlutil
 #endif
-/* 3: rlutil.h STOP */
+
+///////////////////////////////////////////////////////////////////////
+//Colors.hpp
+///////////////////////////////////////////////////////////////////////
+
+
 
 namespace RConsole
 {
@@ -623,12 +625,17 @@ namespace RConsole
     WHITE = rlutil::WHITE,
 
     // Add custom values
-    //DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
+    DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
     PREVIOUS_COLOR
   };
 }
-/* 2: Colors.hpp STOP */
-/* 2: Field2D.hpp START */
+
+///////////////////////////////////////////////////////////////////////
+//Field2D.hpp
+///////////////////////////////////////////////////////////////////////
+
+
+
 namespace RConsole
 {
   // Forward declare Field2D for use later.
@@ -674,13 +681,13 @@ namespace RConsole
     Field2D(unsigned int w, unsigned int h, const T& defaultVal);
     ~Field2D();
 
-    // Structure Info
-    unsigned int Width() const;
-    unsigned int Height() const;
+	  // Structure Info
+	  unsigned int Width() const;
+	  unsigned int Height() const;
+    unsigned int Length() const;
 
     // Member Functions - Complex Manipulation
     void Zero();
-    void Fill(const T &objToUse);
     void Set(const T &newItem);
     T &Get(unsigned int x, unsigned int y);
     Field2DProxy<T> operator[](unsigned int xPos);
@@ -688,6 +695,8 @@ namespace RConsole
     const T& Get(unsigned int x, unsigned int y) const;
     const T& Peek(unsigned int x, unsigned int y) const;
     const T& Peek(unsigned int index) const;
+    void Fill(const T &objToUse);
+    void Fill(const T &objToUse, unsigned int startIndex, unsigned int endIndex);
 
     // Basic Manipulation
     T &Get();
@@ -739,14 +748,20 @@ namespace RConsole
   template <typename T>
   unsigned int Field2D<T>::Width() const
   {
-    return width_;
+	  return width_;
   }
 
   // Gets the height of the Field2D
   template <typename T>
   unsigned int Field2D<T>::Height() const
   {
-    return height_;
+	  return height_;
+  }
+
+  template <typename T>
+  unsigned int Field2D<T>::Length() const
+  {
+    return width_ * height_;
   }
 
 
@@ -865,17 +880,24 @@ namespace RConsole
   template <typename T>
   void Field2D<T>::Fill(const T &objToUse)
   {
+    Fill(objToUse, 0, Length());
+  }
+  
+
+  // Fills a specific range to whatever I want, inclusive for start index and
+  // excludes end index.
+  template <typename T>
+  void Field2D<T>::Fill(const T &objToUse, unsigned int startIndex, unsigned int endIndex)
+  {
     unsigned int prevIndex = index_;
-    index_ = 0;
-    for (unsigned int i = 0; i < width_; ++i)
-      for (unsigned int j = 0; j < height_; ++j)
-      {
-        Set(objToUse);
-        IncrementX();
-      }
+    index_ = startIndex;
+    for (unsigned int i = startIndex; i < endIndex; ++i)
+    {
+      Set(objToUse);
+      IncrementX();
+    }
     index_ = prevIndex;
   }
-
 
     //////////////////////
    // Cheap operations //
@@ -943,7 +965,11 @@ namespace RConsole
     index_ = index;
   }
 }
-/* 2: Field2D.hpp STOP */
+
+///////////////////////////////////////////////////////////////////////
+//CanvasRaster.hpp
+///////////////////////////////////////////////////////////////////////
+
 
 
 namespace RConsole
@@ -971,7 +997,7 @@ namespace RConsole
 
     // Method Prototypes
     bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
-    bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
+	  bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
     const Field2D<RasterInfo>& GetRasterData() const;
     void Fill(const RasterInfo &ri);
     void Zero();
@@ -992,8 +1018,9 @@ namespace RConsole
   };
 }
 
-/* 1: CanvasRaster.hpp STOP */
-/* #include "Field2D.hpp" WAS ALREADY INCLUDED! */
+///////////////////////////////////////////////////////////////////////
+//Canvas.hpp
+///////////////////////////////////////////////////////////////////////
 
 
 namespace RConsole
@@ -1004,10 +1031,8 @@ namespace RConsole
     // Basic drawing calls
     static bool Update();
     static void FillCanvas(const RasterInfo &ri = RasterInfo(' ', WHITE));
-    static void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
     static void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
-    static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
-    static void DrawAlpha(int x, int y, Color color, float opacity);
+	  static void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
     static void DrawAlpha(float x, float y, Color color, float opacity);
     static void Shutdown();
 
@@ -1015,8 +1040,8 @@ namespace RConsole
     static void DrawPartialPoint(float x, float y, Color color);
     static void DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color);
     static void SetCursorVisible(bool isVisible);
-    static void DumpRaster(FILE * fp = stdout);
-
+    static void DumpRaster(FILE *fp = stdout);
+    static void CropRaster(FILE *fp = stdout, char toTrim = ' ');
   private:
     // Hidden Constructors- no instantiating publicly!
     Canvas() { };
@@ -1044,4 +1069,3 @@ namespace RConsole
     static Field2D<bool> modified_;
   };
 }
-/* 0: Canvas.hpp STOP */
