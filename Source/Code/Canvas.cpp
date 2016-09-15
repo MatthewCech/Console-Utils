@@ -334,41 +334,14 @@ namespace RConsole
   // print out the formatted raster.
   // Note that because of console color formatting, we use the RLUTIL coloring option when
   // we are printing to the console, or have no file output specified.
-  void Canvas::DumpRaster(FILE * fp, char toTrim)
+  void Canvas::DumpRaster(FILE * fp)
   {
-    for (unsigned int i = 0; i < r_.height_; ++i)
+    // Dump only relevant part of stream.
+    for (unsigned int i = 0; i < height_; ++i)
     {
-      // Assemble raw line.
-      std::string beingTrimmed = "";
-      for (unsigned int j = 0; j < r_.width_; ++j)
+      for (unsigned int j = 0; j < width_; ++j)
       {
-        const RasterInfo &ri = r_.GetRasterData().Get(j, i);
-        beingTrimmed += ri.Value;
-      }
-
-      // Strip trailing spaces agressively.
-      unsigned int trimmedLen = beingTrimmed.length();
-      for (;;)
-      {
-        if (beingTrimmed[trimmedLen - 1] == toTrim)
-        {
-          if (trimmedLen > 1)
-            --trimmedLen;
-          else
-          {
-            --trimmedLen;
-            break;
-          }
-        }
-        else
-          break;
-      }
-
-
-      // Construct full line with colors.
-      for (unsigned int j = 0; j < trimmedLen; ++j)
-      {
-        const RasterInfo &ri = r_.GetRasterData().Get(j, i);
+        const RasterInfo &ri = r_.GetRasterData().Peek(j, i);
         if (fp == stdout)
         {
           rlutil::setColor(ri.C);
@@ -380,11 +353,67 @@ namespace RConsole
           fprintf(fp, "%s", line.c_str());
         }
       }
-      if(trimmedLen > 0)
-        fprintf(fp, "\n");
-      if(fp == stdout)
-        rlutil::setColor(WHITE);
+
+      fprintf(fp, "\n");
     }
+
+    // Set end color to white when we're done.
+    if (fp == stdout)
+      rlutil::setColor(WHITE);
+  }
+
+
+  // Crops all of the raster
+  void Canvas::CropRaster(FILE *fp, char toTrim)
+  {
+    // Establish borders.
+    unsigned int Xmin = width_;
+    unsigned int Xmax = 0;
+    unsigned int Ymin = height_;
+    unsigned int Ymax = 0;
+
+    for (unsigned int i = 0; i < width_; ++i)
+    {
+      for (unsigned int j = 0; j < height_; ++j)
+      {
+        if (r_.GetRasterData().Peek(i, j).Value != toTrim)
+        {
+          if (i < Xmin) Xmin = i;
+          if (j < Ymin) Ymin = j;
+          if (i > Xmax) Xmax = i;
+          if (j > Ymax) Ymax = j;
+        }
+      }
+    }
+
+    // If we're trimming everything, don't even bother.
+    if (Xmin >= Xmax) return;
+    if (Ymin >= Ymax) return;
+
+    // Dump only relevant part of stream.
+    for (unsigned int j = Ymin; j <= Ymax; ++j)
+    {
+      for (unsigned int i = Xmin; i <= Xmax; ++i)
+      {
+        const RasterInfo &ri = r_.GetRasterData().Peek(i, j);
+        if (fp == stdout)
+        {
+          rlutil::setColor(ri.C);
+          fprintf(fp, "%c", ri.Value);
+        }
+        else
+        {
+          std::string line = rlutil::getANSIColor(ri.C) + ri.Value;
+          fprintf(fp, "%s", line.c_str());
+        }
+      }
+
+      fprintf(fp, "\n");
+    }
+
+    // Set end color to white when we're done.
+    if (fp == stdout)
+      rlutil::setColor(WHITE);
   }
 
 

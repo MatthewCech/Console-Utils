@@ -23,8 +23,8 @@ namespace RConsole
     static void DrawPartialPoint(float x, float y, Color color);
     static void DrawBox(char toWrite, float x1, float y1, float x2, float y2, Color color);
     static void SetCursorVisible(bool isVisible);
-    static void DumpRaster(FILE * fp = stdout, char toTrim = ' ');
-
+    static void DumpRaster(FILE *fp = stdout);
+    static void CropRaster(FILE *fp = stdout, char toTrim = ' ');
   private:
     // Hidden Constructors- no instantiating publicly!
     Canvas() { };
