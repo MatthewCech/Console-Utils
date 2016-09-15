@@ -374,8 +374,8 @@ namespace RConsole
     }
 
     // If we're trimming everything, don't even bother.
-    if (Xmin >= Xmax) return;
-    if (Ymin >= Ymax) return;
+    if (Xmin > Xmax) return;
+    if (Ymin > Ymax) return;
 
     // Dump only relevant part of stream.
     for (unsigned int j = Ymin; j <= Ymax; ++j)
