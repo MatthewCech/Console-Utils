@@ -21,9 +21,14 @@ File contains basic timekeeping class and basic exception structure.
 
 // Turns on or off an assert. If there is an assert that fails, a custom exception type is thrown. 
 // Place the following line in your project or compile with the following defined: #define RTest_ASSERT_ON
-#ifndef RTest_ASSERT_OFF                                       
-  #define RTest_ASSERT(a) do{ if(!(a)) { throw(RTest::RException("Assert Failed!")); } } while (0)                                                  
+#if defined (DEBUG) | (_DEBUG)
+  #define RTest_ASSERT_Active 1
+#else
+  #define RTest_ASSERT_Active 0
 #endif
+
+#define RTest_ASSERT(a) do{ if(RTest_ASSERT_Active){if(!(a)) { throw(RTest::RException("Assert Failed!")); }} } while (0)                                                  
+
 
 
 namespace RTest
