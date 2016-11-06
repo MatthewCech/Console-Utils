@@ -15,18 +15,33 @@
 
 namespace RConsole
 {
+  #define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
+  #define DEFAULT_HEIGHT_SIZE rlutil::trows()
+
   // Static initialization in non-guaranteed order.
-  CanvasRaster Canvas::r_        = CanvasRaster();
-  CanvasRaster Canvas::prev_     = CanvasRaster();
+  CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  CanvasRaster Canvas::prev_      = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
   bool Canvas::hasLazyInit_       = false;
   bool Canvas::isDrawing_         = true;
-  unsigned int Canvas::width_     = CONSOLE_WIDTH;
-  unsigned int Canvas::height_    = CONSOLE_HEIGHT;
-  Field2D<bool> Canvas::modified_ = Field2D<bool>(CONSOLE_WIDTH, CONSOLE_HEIGHT);
+  unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
+  unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
+  Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+
 
     /////////////////////////////
    // Public Member Functions //
   /////////////////////////////
+  // Setup with width and height. Can be re-init
+  void Canvas::ReInit(unsigned int width, unsigned int height)
+  {
+    width_ = width;
+    height_ = height;
+    r_ = CanvasRaster(width, height);
+    prev_ = CanvasRaster(width, height);
+    modified_ = Field2D<bool>(width, height);
+  }
+
+
   // Clear out the screen that the user sees.
   // Note: More expensive than clearing just the previous spaces
   // but less expensive than clearing entire buffer with command.
@@ -40,8 +55,8 @@ namespace RConsole
   {
     #ifdef RConsole_CLIP_CONSOLE
 
-    if (x > width_) return;
-    if (y > height_) return;
+    if (x >= width_) return;
+    if (y >= height_) return;
 
     #endif // RConsole_CLIP_CONSOLE
 
@@ -108,7 +123,7 @@ namespace RConsole
     memcpy(prev_.GetRasterData().GetHead(), r_.GetRasterData().GetHead(), width_ * height_ * sizeof(RasterInfo));
     r_.Zero();
 
-    rlutil::setColor(DEFAULT);
+    rlutil::setColor(WHITE);
 
     return true;
   }
@@ -193,7 +208,6 @@ namespace RConsole
   }
 
 
-
   //Set visibility of cursor to specified bool.
   void Canvas::SetCursorVisible(bool isVisible)
   {
@@ -203,6 +217,19 @@ namespace RConsole
       rlutil::showcursor();
   }
 
+
+  // Gets the width of the console
+  unsigned int Canvas::GetConsoleWidht()
+  {
+    return width_;
+  }
+
+
+  // Gets the height of the console
+  unsigned int Canvas::GetConsoleHeight()
+  {
+    return height_;
+  }
 
     //////////////////////////////
    // Private Member Functions //
@@ -334,7 +361,7 @@ namespace RConsole
         if (fp == stdout)
         {
           rlutil::setColor(ri.C);
-          fprintf(fp, "%c", ri.Value);
+          std::cout << ri.Value;//fprintf(fp, "%c", ri.Value);
         }
         else
         {
@@ -343,12 +370,13 @@ namespace RConsole
         }
       }
 
-      fprintf(fp, "\n");
+      std::cout << std::endl;
+      //fprintf(fp, "\n");
     }
 
     // Set end color to white when we're done.
     if (fp == stdout)
-      rlutil::setColor(DEFAULT);
+      rlutil::setColor(WHITE);
   }
 
 
@@ -402,7 +430,7 @@ namespace RConsole
 
     // Set end color to white when we're done.
     if (fp == stdout)
-      rlutil::setColor(DEFAULT);
+      rlutil::setColor(WHITE);
   }
 
 

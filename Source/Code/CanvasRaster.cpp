@@ -9,7 +9,8 @@ namespace RConsole
    /////////////////////////
    // Raster info object //
   ////////////////////////
-  // Default constructor, no character and just the previous color.
+  // 
+  //constructor, no character and just the previous color.
   RasterInfo::RasterInfo() : Value(0), C(Color::PREVIOUS_COLOR) 
   {  }
 
@@ -39,10 +40,10 @@ namespace RConsole
    // Console Raster object //
   ///////////////////////////
   // Default constructor for the CanvasRaster- Zeros data and gets width and height.
-  CanvasRaster::CanvasRaster()
-    : width_(CONSOLE_WIDTH)
-    , height_(CONSOLE_HEIGHT)
-    , data_(width_, height_, RasterInfo(' ', RConsole::WHITE))
+  CanvasRaster::CanvasRaster(unsigned int width, unsigned int height)
+    : width_(width)
+    , height_(height)
+    , data_(width, height, RasterInfo(' ', RConsole::WHITE))
   {  }
 
 
@@ -109,15 +110,15 @@ namespace RConsole
   
 
   // Gets console width.
-  unsigned int CanvasRaster::GetConsoleWidth() const 
+  unsigned int CanvasRaster::GetRasterWidth() const 
   { 
-    return rlutil::tcols(); 
+    return width_;
   }  
 
 
   // Get console height
-  unsigned int CanvasRaster::GetConsoleHeight() const
+  unsigned int CanvasRaster::GetRasterHeight() const
   { 
-    return rlutil::trows(); 
+    return height_;
   } 
 }

@@ -37,5 +37,3 @@
 
 #define RConsole_CLIP_CONSOLE // Define we want console clipping
 #define RConsole_NO_THREADING // Define we aren't threading- printf becomes unsafe, but faster.
-#define CONSOLE_WIDTH (rlutil::tcols() - 1)
-#define CONSOLE_HEIGHT rlutil::trows()

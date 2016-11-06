@@ -25,7 +25,7 @@ namespace RConsole
 
   public:
     // Constructors
-    CanvasRaster();
+    CanvasRaster(unsigned int width, unsigned int height);
 
     // Method Prototypes
     bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
@@ -35,8 +35,8 @@ namespace RConsole
     void Zero();
 
     // General
-    unsigned int GetConsoleWidth() const;
-    unsigned int GetConsoleHeight() const;
+    unsigned int GetRasterWidth() const;
+    unsigned int GetRasterHeight() const;
 
   private:
     // Private member functions
@@ -49,3 +49,4 @@ namespace RConsole
 
   };
 }
+

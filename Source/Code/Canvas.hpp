@@ -9,6 +9,9 @@ namespace RConsole
   class Canvas
   {
   public:
+    // Init call
+    static void ReInit(unsigned int width, unsigned int height);
+
     // Basic drawing calls
     static bool Update();
     static void FillCanvas(const RasterInfo &ri = RasterInfo(' ', WHITE));
@@ -23,6 +26,10 @@ namespace RConsole
     static void SetCursorVisible(bool isVisible);
     static void DumpRaster(FILE *fp = stdout);
     static void CropRaster(FILE *fp = stdout, char toTrim = ' ');
+
+    // Data related calls
+    static unsigned int GetConsoleWidht();
+    static unsigned int GetConsoleHeight();
   private:
     // Hidden Constructors- no instantiating publicly!
     Canvas() { };

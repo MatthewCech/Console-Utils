@@ -27,7 +27,7 @@ namespace RConsole
     WHITE = rlutil::WHITE,
 
     // Add custom values
-    DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
+    //DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
     PREVIOUS_COLOR
   };
 }

@@ -44,7 +44,9 @@ namespace RConsole
   public:
     // Constructor
     Field2D(unsigned int w, unsigned int h);
-    Field2D(unsigned int w, unsigned int h, const T& defaultVal);
+    Field2D(unsigned int w, unsigned int h, const T defaultVal);
+    Field2D &operator=(const Field2D &rhs);
+    Field2D(const Field2D &rhs);
     ~Field2D();
 
 	  // Structure Info
@@ -149,12 +151,14 @@ namespace RConsole
 
   // Sets all values to given default.
   template <typename T>
-  Field2D<T>::Field2D(unsigned int w, unsigned int h, const T& defaultVal)
+  Field2D<T>::Field2D(unsigned int w, unsigned int h, const T defaultVal)
     : index_(0)
     , width_(w)
     , height_(h)
+    , data_(nullptr)
   {
-    data_ = new T[w * h];
+    T* adsf = new T[w * h];
+    data_ = adsf;
     for (unsigned int i = 0; i < w; ++i)
       for (unsigned int j = 0; j < h; ++j)
       {
@@ -162,6 +166,42 @@ namespace RConsole
         IncrementX();
       }
     index_ = 0;
+  }
+
+
+  template <typename T>
+  Field2D<T>::Field2D(const Field2D<T> &rhs)
+  {
+    if (data_)
+      delete[] data_;
+
+    data_ = new T[rhs.width_ * rhs.height_];
+    width_ = rhs.width_;
+    height_ = rhs.height_;
+    index_ = rhs.index_;
+
+    for (unsigned int i = 0; i < width_ * height_; ++i)
+      data_[i] = rhs.data_[i];
+  }
+
+  // Assignment operator
+  template <typename T>
+  Field2D<T> & Field2D<T>::operator=(const Field2D<T> &rhs)
+  {
+    if (&rhs != this)
+    {
+      if (data_)
+        delete[] data_;
+      
+      data_ = new T[rhs.width_ * rhs.height_];
+      width_ = rhs.width_;
+      height_ = rhs.height_;
+      index_ = rhs.index_;
+
+      for (unsigned int i = 0; i < width_ * height_; ++i)
+        data_[i] = rhs.data_[i];
+    }
+    return *this;
   }
 
 
