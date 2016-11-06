@@ -187,7 +187,7 @@ namespace RConsole
     {
       for(unsigned int y = static_cast<unsigned int>(x1); y < y2; ++y)
       {
-        Draw(toWrite, x, y, color);
+        Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
       }
     }
   }
