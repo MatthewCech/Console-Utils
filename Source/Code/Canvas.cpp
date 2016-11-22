@@ -370,7 +370,7 @@ namespace RConsole
         }
       }
 
-      std::cout << std::endl;
+      std::cout << '\n';
       //fprintf(fp, "\n");
     }
 
@@ -442,7 +442,7 @@ namespace RConsole
     int height = rlutil::trows();
     rlutil::locate(0, height);
     rlutil::setColor(WHITE);
-    std::cout << std::endl;
+    std::cout << '\n';
     exit(signalNum);
   }
   void Canvas::setCloseHandler()

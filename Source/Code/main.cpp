@@ -70,7 +70,7 @@ int main(int argc, char** argv) try
     Canvas::Draw('a', 2, 2, RED);
     Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 5, 5, CYAN);
     Canvas::DumpRaster();
-    std::cout << "Test1!" << std::endl;
+    std::cout << "Test1!" << '\n';
 
     Canvas::FillCanvas();
     Canvas::ReInit(40, 30);
@@ -131,7 +131,7 @@ int main(int argc, char** argv) try
 // Catch any exceptions from main.
 catch (const RTest::RException &e)
 {
-  std::cout << e << std::endl;
+  std::cout << e << '\n';
   throw e;
 }
 
