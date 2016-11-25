@@ -21,9 +21,9 @@ int main(int argc, char** argv) try
   TestField2D();
 
   // Variables
-//  int Xstart = 0;
-//  bool flip = false;
-//  char letter = 'a';
+  int Xstart = 0;
+  bool flip = false;
+  char letter = 'a';
   bool displayFPS = false;
   if (argc == 2)
     if (strcmp(argv[1], "-fps") || strcmp(argv[1], "/fps") || strcmp(argv[1], "fps"))
@@ -43,28 +43,47 @@ int main(int argc, char** argv) try
     /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
 
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
-    //for (int i = Xstart; i < 30 + Xstart; ++i)
-    ////for (int i = 0; i < 30; ++i)
-    //  for (int j = 0; j < 20; ++j)
-    //  {
-    //    if (letter > 'z')
-    //      letter = 'a';
+    for (int i = Xstart; i < 30 + Xstart; ++i)
+    //for (int i = 0; i < 30; ++i)
+      for (int j = 0; j < 20; ++j)
+      {
+        if (letter > 'z')
+          letter = 'a';
 
-    //    int rnd = rand() % RConsole::PREVIOUS_COLOR;
-    //    //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
-    //    Canvas::Draw('a', i, j, static_cast<RConsole::Color>(rnd));
-    //  }
+        int rnd = rand() % RConsole::PREVIOUS_COLOR;
+        //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
+        Canvas::Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
+      }
 
+    // Flip if we get too far to the side.
+    if (flip)
+      Xstart--;
+    else
+      Xstart++;
+
+    // Establish going back the other direction.
+    if (Xstart >= 45 || Xstart <= 0)
+      flip = !flip;
+
+    // Clear
+    Canvas::Update();
+    /*
+      ////////////////////////////////////////////////////
+     // Testing ReInit with a bunch of different sizes //
+    ////////////////////////////////////////////////////
     Canvas::ReInit(20, 10);
     Canvas::DumpRaster();
     Canvas::DumpRaster();
     Canvas::ReInit(40, 30);
     Canvas::DumpRaster();
-    Canvas::ReInit(10, 20);
+    Canvas::ReInit(1000, 200);
+
       ////////////////////////////////////////////////
      // Testing memory exception for out of bounds //
     ////////////////////////////////////////////////
     // image 1
+    //Canvas::FillCanvas();
+    Canvas::ReInit(10, 20);
     Canvas::DrawBox('?', 0, 0, 80, 40, WHITE);
     Canvas::DrawBox(' ', 1, 1, 79, 79, WHITE);
     Canvas::Draw('a', 2, 2, RED);
@@ -80,7 +99,7 @@ int main(int argc, char** argv) try
     Canvas::Draw('b', 10, 10, BLUE);
     Canvas::DrawString("\"ANOTHER THING!\"", 5, 5, CYAN);
     Canvas::DumpRaster();
-
+    
 
 
     /*
@@ -93,21 +112,7 @@ int main(int argc, char** argv) try
     Canvas::DrawBox('X', 0, 0, 10, 10, GREEN);
     //Canvas::Draw('X', 20, 200, GREEN);
     Canvas::DumpRaster();
-    // Flip if we get too far to the side.
-    if (flip)
-      Xstart--;
-    else
-      Xstart++;
-
-    // Establish going back the other direction.
-    if (Xstart >= 45 || Xstart <= 0)
-      flip = !flip;
       */
-
-
-
-    // Clear
-    Canvas::Update();
 
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
     RTest::Timekeeper::EndFrame();
@@ -122,7 +127,9 @@ int main(int argc, char** argv) try
     //  rlutil::locate(rlutil::tcols() - 3, 2);
     //  printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
     //}
-    break;
+    //system("pause");
+
+    //break;
   }
   
   // Return success
