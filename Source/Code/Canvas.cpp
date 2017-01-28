@@ -57,6 +57,8 @@ namespace RConsole
 
     if (x >= width_) return;
     if (y >= height_) return;
+	  if (x < 0) return;
+	  if (y < 0) return;
 
     #endif // RConsole_CLIP_CONSOLE
 
@@ -77,7 +79,9 @@ namespace RConsole
     // Bounds check.
     if (xStart > width_) return;
     if (yStart > height_) return;
-
+	  if (xStart < 0) return;
+	  if (yStart < 0) return;
+	
 	  // Set the memory we are using to modified.
 	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
 	  unsigned int index = modified_.GetIndex();

@@ -50,13 +50,6 @@ namespace RConsole
   // Draws a character to the screen. Returns if it was successful or not.
   bool CanvasRaster::WriteChar(char toDraw, float x, float y, Color color)
   {
-    #ifdef RConsole_CLIP_CONSOLE
-
-    if (x > width_) return false;
-    if (y > height_) return false;
-
-    #endif // RConsole_CLIP_CONSOLE
-
     data_.GoTo(static_cast<int>(x), static_cast<int>(y));
     data_.Set(RasterInfo(toDraw, color));
   
