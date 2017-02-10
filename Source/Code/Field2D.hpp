@@ -230,7 +230,8 @@ namespace RConsole
   template <typename T>
   const T &Field2D<T>::Get(unsigned int x, unsigned int y) const
   {
-    return Get(x, y);
+    GoTo(x, y);
+    return Get();
   }
 
 
