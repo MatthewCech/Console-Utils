@@ -14,7 +14,9 @@
 bin/
 bin_*/
 make/
+make_*/
 project_*/
 documentation/
+documentation_*/
 
 
