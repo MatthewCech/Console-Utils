@@ -12,13 +12,12 @@ Not Features:
 
 - Can not walk your dog.
 - Can not do your laundry.
-- Can not mend your broken heart.
+- Can not mend a broken heart.
 - Really bad at providing cooking advice.
 
-
-###Hello World:
+###Sample Hello World:
 This uses the single header and .cpp file in the `Assembled Library` Folder
-```
+```c++
 #include "console-utils.hpp"
 
 int main(void)
