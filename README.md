@@ -14,3 +14,24 @@ Not Features:
 - Can not do your laundry.
 - Can not mend your broken heart.
 - Really bad at providing cooking advice.
+
+
+###Hello World:
+This uses the single header and .cpp file in the `Assembled Library` Folder
+```
+#include "console-utils.hpp"
+
+int main(void)
+{
+  RConsole::Canvas::ReInit(20, 10);
+  RConsole::Canvas::SetCursorVisible(false);
+  
+  while(1)
+  {
+    RConsole::Canvas::DrawString("Hello World!", 2, 5, RConsole::CYAN);
+    RConsole::Canvas::Update();
+  }
+  
+  return 0;
+}
+```
