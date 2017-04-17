@@ -9,6 +9,8 @@
 // JoShadow
 
 #define UNUSED(x) (void)(x)
+#define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
+#define DEFAULT_HEIGHT_SIZE (rlutil::trows() - 1)
 
 ///////////////////////////////////////////////////////////////////////
 //rlutil.h
@@ -1337,8 +1339,8 @@ namespace RConsole
 
 namespace RConsole
 {
-  #define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
-  #define DEFAULT_HEIGHT_SIZE rlutil::trows()
+  //#define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
+  //#define DEFAULT_HEIGHT_SIZE rlutil::trows()
 
   //// Static initialization in non-guaranteed order.
   //CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
@@ -1377,10 +1379,10 @@ namespace RConsole
   {
     #ifdef RConsole_CLIP_CONSOLE
 
-    if (x >= width_) return;
-    if (y >= height_) return;
-		if (x <= 0) return;
-		if (y <= 0) return;
+    if (x > width_) return;
+    if (y > height_) return;
+		if (x < 0) return;
+		if (y < 0) return;
 
     #endif // RConsole_CLIP_CONSOLE
 
