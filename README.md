@@ -19,10 +19,10 @@ Not Features:
 Known Issues:
 
 - Program termination via Ctrl+C in a terminal yields mixed results. Mitigated by adding delay before exiting, which admittedly is not really a solution.
-- Automatic sizing on startup is occasionally off-by-one off for window height.
+- Automatic sizing on startup is occasionally off-by-one errors for window height.
 - vs2015 Release with maximum optimizations on some systems can cause improper rendering.
 
-Did you encounter one of these issues? Please feel free to submit them under the issues section of the github repo. More information is very appreciated!
+Did you encounter one of these issues or something? Please feel free to submit them under the issues section of the github repo! More information is very appreciated!
 
 ###Sample Hello World:
 This uses the single header and .cpp file in the `Conglomerated-Source` Folder
