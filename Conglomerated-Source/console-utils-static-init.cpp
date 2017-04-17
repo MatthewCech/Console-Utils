@@ -4,8 +4,8 @@
 // console static inits
 namespace RConsole
 {
-#define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
-#define DEFAULT_HEIGHT_SIZE (rlutil::trows() - 1)
+//#define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
+//#define DEFAULT_HEIGHT_SIZE (rlutil::trows() - 1)
 
 	// Static initialization in non-guaranteed order.
 	CanvasRaster Canvas::r_ = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
