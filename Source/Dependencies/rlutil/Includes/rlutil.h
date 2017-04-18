@@ -484,14 +484,6 @@ RLUTIL_INLINE int tcols(void) {
 #endif // TIOCGSIZE
 #endif // _WIN32
 }	
-	
-// TODO: Allow optional message for anykey()?
-
-/// Function: anykey
-/// Waits until a key is pressed.
-RLUTIL_INLINE void anykey(void) {
-	getch();
-}
 
 #ifndef min
 /// Function: min
