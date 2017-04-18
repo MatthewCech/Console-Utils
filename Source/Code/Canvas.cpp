@@ -25,6 +25,8 @@ namespace RConsole
   bool Canvas::isDrawing_         = true;
   unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
   unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
+  int Canvas::xOffset_            = 0;
+  int Canvas::yOffset_            = 0;
   Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
 
 
@@ -32,10 +34,12 @@ namespace RConsole
    // Public Member Functions //
   /////////////////////////////
   // Setup with width and height. Can be re-init
-  void Canvas::ReInit(unsigned int width, unsigned int height)
+  void Canvas::ReInit(unsigned int width, unsigned int height, int xOffset, int yOffset)
   {
     width_ = width;
     height_ = height;
+    xOffset_ = xOffset;
+    yOffset_ = yOffset;
     r_ = CanvasRaster(width, height);
     prev_ = CanvasRaster(width, height);
     modified_ = Field2D<bool>(width, height);
@@ -77,15 +81,15 @@ namespace RConsole
     #ifdef RConsole_CLIP_CONSOLE
 
     // Bounds check.
-    if (xStart > width_) return;
-    if (yStart > height_) return;
+    if (xStart >= width_) return;
+    if (yStart >= height_) return;
 	  if (xStart < 0) return;
 	  if (yStart < 0) return;
 	
 	  // Set the memory we are using to modified.
 	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
 	  unsigned int index = modified_.GetIndex();
-    if (xStart > width_) return;
+    if (xStart >= width_) return;
 
     // Checks the length and adjusts if it will be past.
     int writeLen = len;
@@ -257,14 +261,27 @@ namespace RConsole
       if (!modified_.Get() && curr != prev)
       {
         // Compute X and Y location
-        unsigned int xLoc = (index % width_) + 1;
-        unsigned int yLoc = (index / width_) + 1;
+        unsigned int xLoc = (index % width_) + 1 + xOffset_;
+        unsigned int yLoc = (index / width_) + 1 + yOffset_;
+
+        #ifdef RConsole_CLIP_CONSOLE
+        // Handle X
+        if (xLoc > width_ + xOffset_)
+          goto clearPreviousLoopEnd;
+
+        // Handle Y
+        if (yLoc > height_ + yOffset_)
+          goto clearPreviousLoopEnd;
+        #endif
+
 
         // locate on screen and set color
         rlutil::locate(xLoc, yLoc);
 
         putC(' ', stdout);
       }
+
+      clearPreviousLoopEnd:
       modified_.IncrementX();
     }
 
@@ -302,18 +319,18 @@ namespace RConsole
 
       if (ri.Value != 0 && prev_.GetRasterData().Peek(index) != ri)
       {
-        unsigned int xLoc = (index % width_) + 1;
-        unsigned int yLoc = (index / width_) + 1;
+        unsigned int xLoc = (index % width_) + 1 + xOffset_;
+        unsigned int yLoc = (index / width_) + 1 + yOffset_;
 
         // Handle clipping the console if we define that tag.
       #ifdef RConsole_CLIP_CONSOLE
         // Handle X
-        if (xLoc > width_)
-          return false;
+        if (xLoc > width_ + xOffset_)
+          goto writeRasterLoopEnd;
 
         // Handle Y
-        if (yLoc > height_)
-          return false;
+        if (yLoc > height_ + yOffset_)
+          goto writeRasterLoopEnd;
       #endif
 
 
@@ -332,6 +349,8 @@ namespace RConsole
           return false;
       }
 
+      
+      writeRasterLoopEnd: // Label
       // Increment X location
       r.GetRasterData().IncrementX();
     }

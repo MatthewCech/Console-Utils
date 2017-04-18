@@ -33,7 +33,7 @@ int main(int argc, char** argv) try
   // Setup
   Canvas::SetCursorVisible(false);
   srand(0);
-
+  Canvas::ReInit(20, 10, 10, 10);
 
 
   // Main loop
@@ -53,7 +53,7 @@ int main(int argc, char** argv) try
 
         int rnd = rand() % RConsole::PREVIOUS_COLOR;
         //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
-        Canvas::Draw('a', static_cast<float>(i), static_cast<float>(j + 20), static_cast<RConsole::Color>(rnd));
+        Canvas::Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
       }
 
     // Flip if we get too far to the side.

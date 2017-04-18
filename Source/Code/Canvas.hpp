@@ -10,7 +10,7 @@ namespace RConsole
   {
   public:
     // Init call
-    static void ReInit(unsigned int width, unsigned int height);
+    static void ReInit(unsigned int width, unsigned int height, int xOffset = 0, int yOffset = 0);
 
     // Basic drawing calls
     static bool Update();
@@ -54,6 +54,8 @@ namespace RConsole
     static bool isDrawing_;
     static unsigned int width_;
     static unsigned int height_;
+    static int xOffset_;
+    static int yOffset_;
     static Field2D<bool> modified_;
   };
 }
