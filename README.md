@@ -1,5 +1,5 @@
 # Console [Drawing] Utilities
-This is a cross-platform console drawing project that only modifies relevant characters, inspired vaguely by some gif and video compression techniques. If you want to play around with the souce, it can be built, or you can find all of this compressed into a single header and cpp file combo in the Conglomerated-Source folder.
+This is a cross-platform console drawing project that only modifies relevant characters, inspired by the idea of delta compression (the way you compress gifs or online streawms). If you want to play around with the souce, it can be built using the provided premake5 config, or you can find all of this compressed into a single header and cpp file combo in the `Conglomerated-Source` folder if you just want to get going!
 
 Features:
 
