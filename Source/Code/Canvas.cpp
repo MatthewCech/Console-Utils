@@ -5,6 +5,7 @@
 #include <chrono>           // Time related info for sleeping.
 #include <thread>           // Sleep on exit to allow for update to finish.
 #include <string>           // String for parsing.
+#include <unordered_map>    // Storing Canvases
 #include "Definitions.hpp"
 #include "RFuncs.hpp"
 #include "Canvas.hpp"
@@ -15,19 +16,39 @@
 
 namespace RConsole
 {
-  #define DEFAULT_WIDTH_SIZE (rlutil::tcols() - 1)
-  #define DEFAULT_HEIGHT_SIZE rlutil::trows()
+  // Forward declaration of functions for later.
+  namespace RConsoleConfig
+  {
+    void AddObject(Canvas *c);
+    void RemoveObject(Canvas *c);
+    void SignalHandler(int signalNum);
+    void SetCloseHandler();
+  }
 
   // Static initialization in non-guaranteed order.
-  CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-  CanvasRaster Canvas::prev_      = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-  bool Canvas::hasLazyInit_       = false;
-  bool Canvas::isDrawing_         = true;
-  unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
-  unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
-  int Canvas::xOffset_            = 0;
-  int Canvas::yOffset_            = 0;
-  Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  //CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  //CanvasRaster Canvas::prev_      = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+  //bool Canvas::hasGlobalInit_       = false;
+  //bool Canvas::isDrawing_         = true;
+  //unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
+  //unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
+  //int Canvas::xOffset_            = 0;
+  //int Canvas::yOffset_            = 0;
+  //Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
+
+  Canvas::Canvas(unsigned int width, unsigned int height, int xOffset, int yOffset)
+    : r_(CanvasRaster(width, height))
+    , prev_(CanvasRaster(width, height))
+    , isDrawing_(true)
+    , width_(width)
+    , height_(height)
+    , xOffset_(xOffset)
+    , yOffset_(yOffset)
+    , modified_(Field2D<bool>(width, height))
+    , memoryId_(reinterpret_cast<unsigned long>(this))
+  {
+    RConsoleConfig::AddObject(this);
+  }
 
 
     /////////////////////////////
@@ -117,12 +138,6 @@ namespace RConsole
   bool Canvas::Update()
   {
     if (!isDrawing_) return false;
-    
-    if (!hasLazyInit_)
-    {
-      setCloseHandler();
-      hasLazyInit_ = true;
-    }
 
     clearPrevious();
     writeRaster(r_);
@@ -290,7 +305,8 @@ namespace RConsole
   }
 
 
-  // Explicitly clears every possible index. This is expensive! 
+  // Explicitly clears every possible index. 
+  // This is expensive, and wipes ALL canvases! 
   void Canvas::fullClear()
   {
     rlutil::cls();
@@ -457,20 +473,46 @@ namespace RConsole
   }
 
 
-  // Handle closing the window
-  static void signalHandler(int signalNum)
+  // Returns the location in memory of the object when it was created.
+  unsigned long Canvas::GetMemID()
   {
-    Canvas::Shutdown();
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    int height = rlutil::trows();
-    rlutil::locate(0, height);
-    rlutil::setColor(WHITE);
-    std::cout << '\n';
-    exit(signalNum);
+    return memoryId_;
   }
-  void Canvas::setCloseHandler()
+
+  namespace RConsoleConfig
   {
-    signal(SIGTERM, signalHandler);
-    signal(SIGINT, signalHandler);
+    // tracks all active canvases in a hashmap.
+    std::unordered_map<long, Canvas *> ActiveCanvases = std::unordered_map<long, Canvas *>();
+    bool HasInitializedGlobalSignals = false;
+
+    void SignalHandler(int signalNum)
+    {
+      for (auto &pair : ActiveCanvases)
+        pair.second->Shutdown();
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      int height = rlutil::trows();
+      rlutil::locate(0, height);
+      rlutil::setColor(WHITE);
+      std::cout << '\n';
+      exit(signalNum);
+    }
+
+    void SetCloseHandler()
+    {
+      signal(SIGTERM, SignalHandler);
+      signal(SIGINT, SignalHandler);
+    }
+
+    void RemoveObject(Canvas *c) { ActiveCanvases.erase(c->GetMemID()); }
+    void AddObject(Canvas *c)
+    {
+      ActiveCanvases[c->GetMemID()] = c;
+      if (!HasInitializedGlobalSignals)
+      {
+        SetCloseHandler();
+        HasInitializedGlobalSignals = true;
+      }
+    }
   }
 }

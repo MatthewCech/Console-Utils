@@ -17,7 +17,6 @@ void TestField2D();
 using namespace RConsole;
 int main(int argc, char** argv) try
 {
-	Canvas::SetCursorVisible(false);
   // Begin with tests.
   TestField2D();
 
@@ -31,9 +30,11 @@ int main(int argc, char** argv) try
       displayFPS = true;
 
   // Setup
+  Canvas canvas(10, 10, 3, 5);
+  Canvas canvas2(10, 10, 20, 5);
   Canvas::SetCursorVisible(false);
   srand(0);
-  Canvas::ReInit(20, 10, 10, 10);
+  //Canvas::ReInit(20, 10, 10, 10);
 
 
   // Main loop
@@ -53,7 +54,8 @@ int main(int argc, char** argv) try
 
         int rnd = rand() % RConsole::PREVIOUS_COLOR;
         //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
-        Canvas::Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
+        canvas.Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
+        canvas2.Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(WHITE));
       }
 
     // Flip if we get too far to the side.
@@ -67,7 +69,8 @@ int main(int argc, char** argv) try
       flip = !flip;
 
     // Clear
-    Canvas::Update();
+    canvas.Update();
+    canvas2.Update();
     /*
       ////////////////////////////////////////////////////
      // Testing ReInit with a bunch of different sizes //
