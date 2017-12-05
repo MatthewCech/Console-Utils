@@ -19,7 +19,7 @@ Not Features:
 Known Issues:
 
 - Program termination via Ctrl+C in a terminal yields mixed results. Mitigated by adding delay before exiting, which admittedly is not really a solution.
-- Automatic sizing on startup is occasionally off-by-one errors for window height.
+- Automatic sizing on startup is occasionally produces an off-by-one error for window height. This mostly has to do with the font you use in the terminal.
 - vs2015 Release with maximum optimizations on some systems can cause improper rendering.
 
 Did you encounter one of these issues or something? Please feel free to submit them under the issues section of the github repo! More information is very appreciated!
