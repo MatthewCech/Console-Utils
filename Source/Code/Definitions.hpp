@@ -36,4 +36,4 @@
 /////// CONSOLE SETTINGS /////////
 
 #define RConsole_CLIP_CONSOLE // Define we want console clipping
-#define RConsole_NO_THREADING // Define we aren't threading- printf becomes unsafe, but faster. We aren't thread safe for many reasons.
+#define RConsole_NO_THREADING // Define we aren't threading- printing becomes unsafe, but faster.

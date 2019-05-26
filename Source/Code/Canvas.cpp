@@ -25,17 +25,7 @@ namespace RConsole
     void SetCloseHandler();
   }
 
-  // Static initialization in non-guaranteed order.
-  //CanvasRaster Canvas::r_         = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-  //CanvasRaster Canvas::prev_      = CanvasRaster(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-  //bool Canvas::hasGlobalInit_       = false;
-  //bool Canvas::isDrawing_         = true;
-  //unsigned int Canvas::width_     = DEFAULT_WIDTH_SIZE;
-  //unsigned int Canvas::height_    = DEFAULT_HEIGHT_SIZE;
-  //int Canvas::xOffset_            = 0;
-  //int Canvas::yOffset_            = 0;
-  //Field2D<bool> Canvas::modified_ = Field2D<bool>(DEFAULT_WIDTH_SIZE, DEFAULT_HEIGHT_SIZE);
-
+  // Constructor
   Canvas::Canvas(unsigned int width, unsigned int height, int xOffset, int yOffset)
     : r_(CanvasRaster(width, height))
     , prev_(CanvasRaster(width, height))
@@ -49,7 +39,6 @@ namespace RConsole
   {
     RConsoleConfig::AddObject(this);
   }
-
 
     /////////////////////////////
    // Public Member Functions //
@@ -66,7 +55,6 @@ namespace RConsole
     modified_ = Field2D<bool>(width, height);
   }
 
-
   // Clear out the screen that the user sees.
   // Note: More expensive than clearing just the previous spaces
   // but less expensive than clearing entire buffer with command.
@@ -75,15 +63,21 @@ namespace RConsole
     r_.Fill(ri);
   }
 
-  // Write the specific character in a specific color to a specific location on the console.
+  // Alternate interpretation
   void Canvas::Draw(char toWrite, float x, float y, Color color)
+  {
+    Draw(toWrite, static_cast<int>(x), static_cast<int>(y), color);
+  }
+
+  // Write the specific character in a specific color to a specific location on the console.
+  void Canvas::Draw(char toWrite, int x, int y, Color color)
   {
     #ifdef RConsole_CLIP_CONSOLE
 
-    if (x >= width_) return;
-    if (y >= height_) return;
-	  if (x < 0) return;
-	  if (y < 0) return;
+    if (x < 0) return;
+    if (y < 0) return;
+    if (static_cast<unsigned int>(x) >= width_) return;
+    if (static_cast<unsigned int>(y) >= height_) return;
 
     #endif // RConsole_CLIP_CONSOLE
 
@@ -92,9 +86,13 @@ namespace RConsole
     r_.WriteChar(toWrite, x, y, color);
   }
 
-
-  // Draw a string
   void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
+  {
+    DrawString(toDraw, static_cast<int>(xStart), static_cast<int>(yStart), color);
+  }
+
+  // Draw a string at the given coordinates
+  void Canvas::DrawString(const char* toDraw, int xStart, int yStart, Color color)
   {
 	  size_t len = strlen(toDraw);
 	  if (len <= 0) return;
@@ -102,22 +100,23 @@ namespace RConsole
     #ifdef RConsole_CLIP_CONSOLE
 
     // Bounds check.
-    if (xStart >= width_) return;
-    if (yStart >= height_) return;
 	  if (xStart < 0) return;
 	  if (yStart < 0) return;
+    if (static_cast<unsigned int>(xStart) >= width_) return;
+    if (static_cast<unsigned int>(yStart) >= height_) return;
 	
 	  // Set the memory we are using to modified.
 	  modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
 	  unsigned int index = modified_.GetIndex();
-    if (xStart >= width_) return;
+    if (static_cast<unsigned int>(xStart) >= width_)
+      return;
 
     // Checks the length and adjusts if it will be past.
     int writeLen = len;
     if (writeLen + index > modified_.Length())
       writeLen = modified_.Length() - index;
 
-    // If our length plus the index we are at exceeds the end of the buffer,
+    // If our length plus the index we are at exceeds the end of the buffer, only write what we can.
     memset(modified_.GetHead() + index, true, writeLen);
 
     #else
@@ -131,7 +130,7 @@ namespace RConsole
 
 
 	  // Write string
-	  r_.WriteString(toDraw, len, xStart, yStart, color);
+	  r_.WriteString(toDraw, len, static_cast<int>(xStart), static_cast<int>(yStart), color);
   }
 
   // Updates the current raster by drawing it to the screen.
@@ -151,9 +150,9 @@ namespace RConsole
     return true;
   }
 
-
   // Draws a point with ASCII to attempt to represent alpha values in 4 steps.
-  void Canvas::DrawAlpha(float x, float y, Color color, float opacity)
+  // Tends to work with windows only...
+  void Canvas::DrawAlpha(int x, int y, Color color, float opacity)
   {
     // All characters use represent alt-codes. 
     if (opacity < .25)
@@ -166,6 +165,10 @@ namespace RConsole
       Draw(static_cast<unsigned char>(219), x, y, color);
   }
 
+  void Canvas::DrawAlpha(float x, float y, Color color, float opacity)
+  {
+    Canvas::DrawAlpha(static_cast<int>(x), static_cast<int>(y), color, opacity);
+  }
 
   // Stops the update loop.
   void Canvas::Shutdown()

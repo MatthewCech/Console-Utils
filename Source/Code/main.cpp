@@ -21,8 +21,8 @@ int main(int argc, char** argv) try
   TestField2D();
 
   // Variables
-  int Xstart = 0;
-  bool flip = false;
+  //int Xstart = 0;
+  //bool flip = false;
   char letter = 'a';
   bool displayFPS = false;
   if (argc == 2)
@@ -30,7 +30,7 @@ int main(int argc, char** argv) try
       displayFPS = true;
 
   // Setup
-  Canvas canvas(10, 10, 3, 5);
+  Canvas canvas(50, 20, 3, 5);
   Canvas canvas2(10, 10, 20, 5);
   Canvas::SetCursorVisible(false);
   srand(0);
@@ -46,17 +46,18 @@ int main(int argc, char** argv) try
 
     for (int i = 0; i < 50; ++i)
     {
-      for (int j = 0; j < 30; ++j)
+      for (int j = 0; j < 20; ++j)
       {
         if (++letter > 'z')
           letter = 'a';
 
-        int rnd = rand() % ConsoleLite::LIGHTRED;
+        int rnd = rand() % RConsole::PREVIOUS_COLOR;
 
-        canvas.Draw(letter, i, j, static_cast<RConsole::Color>(rnd));
+        canvas.Draw(letter, static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
       }
     }
 
+    canvas.Update();
     /*
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
     for (int i = Xstart; i < 30 + Xstart; ++i)
@@ -140,10 +141,10 @@ int main(int argc, char** argv) try
     //if (displayFPS)
     //{
     //  rlutil::locate(rlutil::tcols() - 3, 1);
-    //  rlutil::setColor(rlutil::MAGENTA);
+      rlutil::setColor(rlutil::MAGENTA);
     //  printf("%3i", RTest::Timekeeper::GetLastTimeMS());
-    //  rlutil::locate(rlutil::tcols() - 3, 2);
-    //  printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
+      rlutil::locate(rlutil::tcols() - 3, 1);
+      printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
     //}
     //system("pause");
 

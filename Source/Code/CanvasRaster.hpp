@@ -28,8 +28,8 @@ namespace RConsole
     CanvasRaster(unsigned int width, unsigned int height);
 
     // Method Prototypes
-    bool WriteChar(char toDraw, float x, float y, Color color = PREVIOUS_COLOR);
-	  bool WriteString(const char *toWrite, size_t len, float x, float y, Color color = PREVIOUS_COLOR);
+    bool WriteChar(char toDraw, unsigned int x, unsigned int y, Color color = PREVIOUS_COLOR);
+	  bool WriteString(const char *toWrite, size_t len, unsigned int x, unsigned int y, Color color = PREVIOUS_COLOR);
     const Field2D<RasterInfo>& GetRasterData() const;
     void Fill(const RasterInfo &ri);
     void Zero();

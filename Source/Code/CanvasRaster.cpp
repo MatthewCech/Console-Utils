@@ -48,7 +48,7 @@ namespace RConsole
 
 
   // Draws a character to the screen. Returns if it was successful or not.
-  bool CanvasRaster::WriteChar(char toDraw, float x, float y, Color color)
+  bool CanvasRaster::WriteChar(char toDraw, unsigned int x, unsigned int y, Color color)
   {
     data_.GoTo(static_cast<int>(x), static_cast<int>(y));
     data_.Set(RasterInfo(toDraw, color));
@@ -59,7 +59,7 @@ namespace RConsole
 
 
   // Writes a string to the field
-  bool CanvasRaster::WriteString(const char *toWrite, size_t len, float x, float y, Color color)
+  bool CanvasRaster::WriteString(const char *toWrite, size_t len, unsigned int x, unsigned int y, Color color)
   {
 	  //Establish and check for a string of a usable size.
 	  data_.GoTo(static_cast<int>(x), static_cast<int>(y));

@@ -22,8 +22,11 @@ namespace RConsole
     // Basic drawing calls
     bool Update();
     void FillCanvas(const RasterInfo &ri = RasterInfo(' ', WHITE));
+    void Draw(char toWrite, int x, int y, Color color = PREVIOUS_COLOR);
     void Draw(char toWrite, float x, float y, Color color = PREVIOUS_COLOR);
+    void DrawString(const char* toDraw, int xStart, int yStart, Color color);
 	  void DrawString(const char* toDraw, float xStart, float yStart, Color color = PREVIOUS_COLOR);
+    void DrawAlpha(int x, int y, Color color, float opacity);
     void DrawAlpha(float x, float y, Color color, float opacity);
     void Shutdown();
 
