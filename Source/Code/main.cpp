@@ -44,6 +44,20 @@ int main(int argc, char** argv) try
     RTest::Timekeeper::StartFrame();
     /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
 
+    for (int i = 0; i < 50; ++i)
+    {
+      for (int j = 0; j < 30; ++j)
+      {
+        if (++letter > 'z')
+          letter = 'a';
+
+        int rnd = rand() % ConsoleLite::LIGHTRED;
+
+        canvas.Draw(letter, i, j, static_cast<RConsole::Color>(rnd));
+      }
+    }
+
+    /*
     //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
     for (int i = Xstart; i < 30 + Xstart; ++i)
     //for (int i = 0; i < 30; ++i)
