@@ -224,7 +224,7 @@ namespace ConsoleLite
           ss << "\n";
       }
 
-      std::cout << ss.rdbuf();
+      printf(ss.str().c_str());
     }
 
     // Variables
@@ -305,10 +305,11 @@ namespace ConsoleLite
     {
       //printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 #if _WIN32
+      //printf("\x1B[2J\033[0m");
       system("echo.");
 #else
       printf("\033[2J\033[H");
-#endif
+#endif   
       PositionCursor(0, 0);
       raster.Render();
       //std::cout << std::fflush;
