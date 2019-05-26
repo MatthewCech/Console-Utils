@@ -75,6 +75,11 @@ namespace RConsole
     r_.Fill(ri);
   }
 
+  void Canvas::Draw(char toWrite, int x, int y, Color color)
+  {
+    Draw(toWrite, static_cast<float>(x), static_cast<float>(y), color);
+  }
+
   // Write the specific character in a specific color to a specific location on the console.
   void Canvas::Draw(char toWrite, float x, float y, Color color)
   {
