@@ -8,7 +8,6 @@ namespace RConsole
   template <typename T>
   class Field2D;
 
-
   // A proxy class for the [] operator, allowing you to use the [] operator
   template <typename T>
   class Field2DProxy
@@ -31,8 +30,8 @@ namespace RConsole
 
 
   // A 2D way to represent a 1D line of continuous memory.
-  // The 2D Field keeps track of the current index you are at in memory, allowing really
-  // cheap O(K) reading if you have the spot selected, with a single add.
+  // The 2D Field keeps track of the current index you are at in memory,
+  // allowing cheap reading if you have the spot selected, with a single add.
   // Note that this is not guarded- if you reach the "end" of the width, it will
   // let you freely step onto the next row of the 2D array you have set up.
   template <typename T>

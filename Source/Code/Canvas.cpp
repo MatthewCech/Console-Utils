@@ -128,7 +128,6 @@ namespace RConsole
 
     #endif
 
-
 	  // Write string
 	  r_.WriteString(toDraw, len, static_cast<int>(xStart), static_cast<int>(yStart), color);
   }
@@ -190,7 +189,7 @@ namespace RConsole
 
 
     //If Y is closer to a border, use it for placement.
-    if (RFuncs::Abs(50 - static_cast<int>(x)) < RFuncs::Abs(50 - static_cast<int>(y)))
+    if (abs(50 - static_cast<int>(x)) < abs(50 - static_cast<int>(y)))
     {
       if (x > 50)
         return Draw(static_cast<unsigned char>(222), x, y, color);
@@ -260,6 +259,14 @@ namespace RConsole
     //////////////////////////////
    // Private Member Functions //
   //////////////////////////////
+  int Canvas::abs(int x)
+  {
+    if (x < 0)
+      return -x;
+
+    return x;
+  }
+
   // Clears out the screen based on the previous items written. Clear character is a space.
   void Canvas::clearPrevious()
   {

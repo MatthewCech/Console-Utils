@@ -45,13 +45,15 @@ namespace RConsole
     static void SetCursorVisible(bool isVisible);
   private:
     // Hidden Constructors- no instantiating publicly!
-    //Canvas(const Canvas &rhs) { *this = rhs; }
+    //Canvas(const Canvas &rhs);
     
     // Private methods.
     void clearPrevious();
     void setColor(const Color &color);
     bool writeRaster(CanvasRaster &r);
+    int  abs(int x);
     int  putC(int character, FILE * stream );
+    // Absolute value of int.
 
     // static information
     static void fullClear();

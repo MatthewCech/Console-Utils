@@ -1,17 +1,6 @@
-/*!***************************************************************************
-@file    RTest.cpp
-@author  Reverie Wisp
-@par     Contact: reveriewisp@gmail.com
-@date    6/4/2016
-
-@brief
-Super casual testing and debug tools to just throw in a project and use.
-File contains implementation for basic timekeeping class and basic exception 
-structure, along with some functions to help with testing.
-*****************************************************************************/
+// Test and debug tools
 #include "RTest.hpp"
 #include <chrono>
-
 
 
 namespace RTest

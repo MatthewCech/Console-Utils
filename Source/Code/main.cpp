@@ -15,26 +15,18 @@ void TestField2D();
 
 // Awesome.
 using namespace RConsole;
-int main(int argc, char** argv) try
+int main(int, char**) try
 {
   // Begin with tests.
   TestField2D();
 
   // Variables
-  //int Xstart = 0;
-  //bool flip = false;
   char letter = 'a';
-  bool displayFPS = false;
-  if (argc == 2)
-    if (strcmp(argv[1], "-fps") || strcmp(argv[1], "/fps") || strcmp(argv[1], "fps"))
-      displayFPS = true;
 
   // Setup
   Canvas canvas(50, 20, 3, 5);
-  Canvas canvas2(10, 10, 20, 5);
   Canvas::SetCursorVisible(false);
   srand(0);
-  //Canvas::ReInit(20, 10, 10, 10);
 
 
   // Main loop
@@ -52,103 +44,19 @@ int main(int argc, char** argv) try
           letter = 'a';
 
         int rnd = rand() % RConsole::PREVIOUS_COLOR;
-
         canvas.Draw(letter, static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
       }
     }
 
     canvas.Update();
-    /*
-    //RConsole::DrawAlphaPoint(prev2X, prev2Y, RConsole::WHITE, .3);
-    for (int i = Xstart; i < 30 + Xstart; ++i)
-    //for (int i = 0; i < 30; ++i)
-      for (int j = 0; j < 20; ++j)
-      {
-        if (letter > 'z')
-          letter = 'a';
-
-        int rnd = rand() % RConsole::PREVIOUS_COLOR;
-        //Console::Draw('@', i, j, static_cast<RConsole::Color>(rnd));
-        canvas.Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(rnd));
-        canvas2.Draw('a', static_cast<float>(i), static_cast<float>(j), static_cast<RConsole::Color>(WHITE));
-      }
-
-    // Flip if we get too far to the side.
-    if (flip)
-      Xstart--;
-    else
-      Xstart++;
-
-    // Establish going back the other direction.
-    if (Xstart >= 45 || Xstart <= 0)
-      flip = !flip;
-
-    // Clear
-    canvas.Update();
-    canvas2.Update();
-    /*
-      ////////////////////////////////////////////////////
-     // Testing ReInit with a bunch of different sizes //
-    ////////////////////////////////////////////////////
-    Canvas::ReInit(20, 10);
-    Canvas::DumpRaster();
-    Canvas::DumpRaster();
-    Canvas::ReInit(40, 30);
-    Canvas::DumpRaster();
-    Canvas::ReInit(1000, 200);
-
-      ////////////////////////////////////////////////
-     // Testing memory exception for out of bounds //
-    ////////////////////////////////////////////////
-    // image 1
-    //Canvas::FillCanvas();
-    Canvas::ReInit(10, 20);
-    Canvas::DrawBox('?', 0, 0, 80, 40, WHITE);
-    Canvas::DrawBox(' ', 1, 1, 79, 79, WHITE);
-    Canvas::Draw('a', 2, 2, RED);
-    Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 5, 5, CYAN);
-    Canvas::DumpRaster();
-    std::cout << "Test1!" << '\n';
-
-    Canvas::FillCanvas();
-    Canvas::ReInit(40, 30);
-    // image 2
-    Canvas::DrawBox('?', 0, 0, 80, 40, GREEN);
-    Canvas::DrawBox(' ', 1, 1, 79, 79, WHITE);
-    Canvas::Draw('b', 10, 10, BLUE);
-    Canvas::DrawString("\"ANOTHER THING!\"", 5, 5, CYAN);
-    Canvas::DumpRaster();
-    
-
-
-    /*
-	  // Console text.
-    //Canvas::DrawString("\"Do not do a frighten- it is the OK.\" - Smol Snek", 15, 10, RConsole::CYAN);
-    Canvas::DrawBox('a', 0, 0, 20, 20, WHITE);
-    Canvas::Draw('a', 20000, 200, WHITE);
-    Canvas::DumpRaster();
-    Canvas::FillCanvas();
-    Canvas::DrawBox('X', 0, 0, 10, 10, GREEN);
-    //Canvas::Draw('X', 20, 200, GREEN);
-    Canvas::DumpRaster();
-      */
 
     ///////////////////////////////////  [ END BLOCK ]  ///////////////////////////////////
     RTest::Timekeeper::EndFrame();
     ///////////////////////////////////////////////////////////////////////////////////////
-    // Print cycle time in MS.
-    // If you use CTRL-C, you will get a block of garbage if this is running.
-    //if (displayFPS)
-    //{
-    //  rlutil::locate(rlutil::tcols() - 3, 1);
-      rlutil::setColor(rlutil::MAGENTA);
-    //  printf("%3i", RTest::Timekeeper::GetLastTimeMS());
-      rlutil::locate(rlutil::tcols() - 3, 1);
-      printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
-    //}
-    //system("pause");
 
-    //break;
+    rlutil::setColor(rlutil::MAGENTA);
+    rlutil::locate(rlutil::tcols() - 3, 1);
+    printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
   }
   
   // Return success
