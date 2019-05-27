@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <ostream>
-#include "Canvas.hpp"
-#include "Field2D.hpp"
 #include <rlutil.h>
 #include <chrono>
 #include <thread>
 #include <csignal>
-#include "Definitions.hpp"
 #include <string>
+#include "Field2D.hpp"
+#include "Canvas.hpp"
 
 
 
@@ -24,8 +23,6 @@
 #endif
 
 #define RTest_ASSERT(a) do{ if(RTest_ASSERT_Active){if(!(a)) { throw(RTest::RException("Assert Failed!")); }} } while (0)                                                  
-
-
 
 namespace RTest
 {
@@ -52,7 +49,6 @@ namespace RTest
     static unsigned int maxFrameSamples_;
   };
 
-
     //////////////////////
    // Timekeeper Class //
   //////////////////////
@@ -64,14 +60,12 @@ namespace RTest
   long long Timekeeper::lastTime_ = 0;
   unsigned int Timekeeper::maxFrameSamples_ = 50;
 
-
   // Start frame marker. Should be called at the start of a single cycle of the program.
   void Timekeeper::StartFrame()
   {
     startTime_ = std::chrono::duration_cast<std::chrono::milliseconds>(
       std::chrono::high_resolution_clock::now().time_since_epoch());
   }
-
 
   // End frame marker. Should be called at the end of a single cycle of the program.
   void Timekeeper::EndFrame()
@@ -85,13 +79,11 @@ namespace RTest
       frameSamples_ += 1;
   }
 
-
   // Get the last frame time in MS as an int.
   int Timekeeper::GetLastTimeMS()
   {
     return static_cast<int>(lastTime_);
   }
-
 
   // Returns the average frame time that has been calculated.
   int Timekeeper::GetAvgTimeMS()
@@ -147,10 +139,10 @@ int main(int, char**)
     ///////////////////////////////////////////////////////////////////////////////////////
 
     rlutil::setColor(rlutil::MAGENTA);
-    rlutil::locate(rlutil::tcols() - 3, 1);
-    printf("%3i", RTest::Timekeeper::GetAvgTimeMS());
-    rlutil::locate(rlutil::tcols() - 3, 2);
-    printf("c%2i", cycles);
+    rlutil::locate(rlutil::tcols() - 6, 1);
+    printf("ms: %3i", RTest::Timekeeper::GetAvgTimeMS());
+    rlutil::locate(rlutil::tcols() - 5, 2);
+    printf("c: %2i", cycles);
   }
   
   // Return success

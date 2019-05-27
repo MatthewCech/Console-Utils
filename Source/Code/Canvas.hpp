@@ -1,12 +1,71 @@
 #pragma once
 #include "Field2D.hpp"
-#include "Colors.hpp"
+#include <rlutil.h>
+
+// For strict unused variable warnings.
+#define UNUSED(x) (void)(x)
+
+/////// OS DEFINES /////////
+// Windows
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#define OS_WINDOWS
+#endif
+
+// MacOSX
+#if defined(__APPLE__)
+#define OS_MACOSX
+#endif
+
+// Linux
+#if defined(__linux__)
+#define OS_LINUX
+#endif
+
+// Define POSIX
+#if defined(OS_MACOSX) || defined(OS_LINUX)
+#define OS_POSIX
+#endif
+
+/////// COMPILER DEFINES /////////
+#if defined(_MSC_VER)
+#define COMPILER_VS
+#endif
+
+/////// CONSOLE SETTINGS /////////
+#define RConsole_CLIP_CONSOLE // Define we want console clipping
+#define RConsole_NO_THREADING // Define we aren't threading- printing becomes unsafe, but faster.
 
 namespace RConsole
 {
-  #define DEFAULT_WIDTH (rlutil::tcols() - 1)
-  #define DEFAULT_HEIGHT rlutil::trows()
+#define DEFAULT_WIDTH (rlutil::tcols() - 1)
+#define DEFAULT_HEIGHT rlutil::trows()
 
+  //Colors!
+  enum Color
+  {
+    //Acquire rlutil info where possible--
+    BLACK = rlutil::BLACK,
+    BLUE = rlutil::BLUE,
+    GREEN = rlutil::GREEN,
+    CYAN = rlutil::CYAN,
+    RED = rlutil::RED,
+    MAGENTA = rlutil::MAGENTA,
+    BROWN = rlutil::BROWN,
+    GREY = rlutil::GREY,
+    DARKGREY = rlutil::DARKGREY,
+    LIGHTBLUE = rlutil::LIGHTBLUE,
+    LIGHTGREEN = rlutil::LIGHTGREEN,
+    LIGHTCYAN = rlutil::LIGHTCYAN,
+    LIGHTRED = rlutil::LIGHTRED,
+    LIGHTMAGENTA = rlutil::LIGHTMAGENTA,
+    YELLOW = rlutil::YELLOW,
+    WHITE = rlutil::WHITE,
+
+    // Add custom values
+    //DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
+    PREVIOUS_COLOR
+  };
+ 
   // The raster info struct, holds info on what is to be drawn at a location and the color.
   struct RasterInfo
   {

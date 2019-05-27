@@ -6,9 +6,7 @@
 #include <thread>           // Sleep on exit to allow for update to finish.
 #include <string>           // String for parsing.
 #include <unordered_map>    // Storing Canvases
-#include "Definitions.hpp"
 #include "Canvas.hpp"
-#include "Definitions.hpp"
 
 
 
