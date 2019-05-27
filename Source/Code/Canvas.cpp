@@ -6,7 +6,7 @@
 #include <thread>           // Sleep on exit to allow for update to finish.
 #include <string>           // String for parsing.
 #include <unordered_map>    // Storing Canvases
-#include "Canvas.hpp"
+#include "Canvas.hpp"       // Canvas declaration
 
 
 
@@ -165,20 +165,17 @@ namespace RConsole
   // Write the specific character in a specific color to a specific location on the console.
   void Canvas::Draw(char toWrite, int x, int y, Color color)
   {
-    #ifdef RConsole_CLIP_CONSOLE
-
     if (x < 0) return;
     if (y < 0) return;
     if (static_cast<unsigned int>(x) >= width_) return;
     if (static_cast<unsigned int>(y) >= height_) return;
-
-    #endif // RConsole_CLIP_CONSOLE
 
     modified_.GoTo(static_cast<int>(x), static_cast<int>(y));
     modified_.Set(true);
     r_.WriteChar(toWrite, x, y, color);
   }
 
+  // Draw a string with alternate arguments
   void Canvas::DrawString(const char* toDraw, float xStart, float yStart, Color color)
   {
     DrawString(toDraw, static_cast<int>(xStart), static_cast<int>(yStart), color);
@@ -189,8 +186,6 @@ namespace RConsole
   {
 	  size_t len = strlen(toDraw);
 	  if (len <= 0) return;
-
-    #ifdef RConsole_CLIP_CONSOLE
 
     // Bounds check.
 	  if (xStart < 0) return;
@@ -211,15 +206,6 @@ namespace RConsole
 
     // If our length plus the index we are at exceeds the end of the buffer, only write what we can.
     memset(modified_.GetHead() + index, true, writeLen);
-
-    #else
-
-    // Just blindly set modified for the length.
-    modified_.GoTo(static_cast<int>(xStart), static_cast<int>(yStart));
-    unsigned int index = modified_.GetIndex();
-	  memset(modified_.GetHead() + index, true, len);
-
-    #endif
 
 	  // Write string
 	  r_.WriteString(toDraw, len, static_cast<int>(xStart), static_cast<int>(yStart), color);
@@ -276,10 +262,8 @@ namespace RConsole
     int xDec = static_cast<int>(x * 100) % 100;
     int yDec = static_cast<int>(x * 100) % 100;
 
-
     UNUSED(xDec);
     UNUSED(yDec);
-
 
     //If Y is closer to a border, use it for placement.
     if (abs(50 - static_cast<int>(x)) < abs(50 - static_cast<int>(y)))
@@ -325,7 +309,6 @@ namespace RConsole
     }
   }
 
-
   //Set visibility of cursor to specified bool.
   void Canvas::SetCursorVisible(bool isVisible)
   {
@@ -335,13 +318,11 @@ namespace RConsole
       rlutil::showcursor();
   }
 
-
   // Gets the width of the console
   unsigned int Canvas::GetConsoleWidht()
   {
     return width_;
   }
-
 
   // Gets the height of the console
   unsigned int Canvas::GetConsoleHeight()
@@ -365,9 +346,10 @@ namespace RConsole
   {
     // Walk through, write over only what was modified.
     modified_.SetIndex(0);
-    unsigned int maxIndex = width_ * height_;
+    unsigned int maxIndex = modified_.Length();
     unsigned int index = 0;
-    while (index < maxIndex)
+
+    while (true)
     {
       index = modified_.GetIndex();
       const RasterInfo &curr = r_.GetRasterData().Peek(index);
@@ -382,24 +364,18 @@ namespace RConsole
         unsigned int xLoc = (index % width_) + 1 + xOffset_;
         unsigned int yLoc = (index / width_) + 1 + yOffset_;
 
-        #ifdef RConsole_CLIP_CONSOLE
-        // Handle X
-        if (xLoc > width_ + xOffset_)
-          goto clearPreviousLoopEnd;
+        if ((yLoc > height_ + yOffset_) == false && (xLoc > width_ + xOffset_) == false)
+        {
+          // locate on screen and set color
+          rlutil::locate(xLoc, yLoc);
 
-        // Handle Y
-        if (yLoc > height_ + yOffset_)
-          goto clearPreviousLoopEnd;
-        #endif
-
-
-        // locate on screen and set color
-        rlutil::locate(xLoc, yLoc);
-
-        putC(' ', stdout);
+          putC(' ', stdout);
+        }
       }
 
-      clearPreviousLoopEnd:
+      if (index + 1 >= maxIndex)
+        break;
+      
       modified_.IncrementX();
     }
 
@@ -428,50 +404,44 @@ namespace RConsole
   bool Canvas::writeRaster(CanvasRaster &r)
   {
     // Set initial position.
-    unsigned int maxIndex = width_ * height_;
-    r.GetRasterData().SetIndex(0);
+    Field2D<RConsole::RasterInfo> &data = r.GetRasterData();
+    unsigned int maxIndex = data.Length();
     unsigned int index = 0;
-    while(index < maxIndex)
+    data.SetIndex(0);
+
+    while(true)
     {
-      index = r.GetRasterData().GetIndex();
-      const RasterInfo& ri = r.GetRasterData().Get();
+      index = data.GetIndex();
+      const RasterInfo& ri = data.Get();
 
       if (ri.Value != 0 && prev_.GetRasterData().Peek(index) != ri)
       {
         unsigned int xLoc = (index % width_) + 1 + xOffset_;
         unsigned int yLoc = (index / width_) + 1 + yOffset_;
 
-        // Handle clipping the console if we define that tag.
-      #ifdef RConsole_CLIP_CONSOLE
         // Handle X
-        if (xLoc > width_ + xOffset_)
-          goto writeRasterLoopEnd;
+        if ((xLoc > width_ + xOffset_) == false && (yLoc > height_ + yOffset_) == false)
+        {
+          // locate on screen and set color
+          rlutil::locate(xLoc, yLoc);
 
-        // Handle Y
-        if (yLoc > height_ + yOffset_)
-          goto writeRasterLoopEnd;
-      #endif
+          // Set color of cursor
+          setColor(ri.C);
 
+          // Print out to the console in the preferred fashion
+          int retVal = 0;
 
-        // locate on screen and set color
-        rlutil::locate(xLoc, yLoc);
+          retVal = putC(ri.Value, stdout);
 
-        // Set color of cursor
-        setColor(ri.C);
-
-        // Print out to the console in the preferred fashion
-        int retVal = 0;
-
-        retVal = putC(ri.Value, stdout);
-
-        if (!retVal)
-          return false;
+          if (!retVal)
+            return false;
+        }
       }
 
+      if (index + 1 >= maxIndex)
+        break;
       
-      writeRasterLoopEnd: // Label
-      // Increment X location
-      r.GetRasterData().IncrementX();
+      data.IncrementX();
     }
 
     // Return we successfully printed the raster!

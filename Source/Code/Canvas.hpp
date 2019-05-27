@@ -32,7 +32,6 @@
 #endif
 
 /////// CONSOLE SETTINGS /////////
-#define RConsole_CLIP_CONSOLE // Define we want console clipping
 #define RConsole_NO_THREADING // Define we aren't threading- printing becomes unsafe, but faster.
 
 namespace RConsole
@@ -65,7 +64,7 @@ namespace RConsole
     //DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
     PREVIOUS_COLOR
   };
- 
+
   // The raster info struct, holds info on what is to be drawn at a location and the color.
   struct RasterInfo
   {

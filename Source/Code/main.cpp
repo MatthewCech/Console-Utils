@@ -108,19 +108,19 @@ int main(int, char**)
   char letter = 'a';
 
   // Setup
-  RConsole::Canvas canvas(50, 20, 3, 5);
+  RConsole::Canvas canvas(100, 20, 3, 5);
   RConsole::Canvas::SetCursorVisible(false);
   srand(0);
 
   // Main loop
-  int cycles = 50;
-  while (--cycles > 0)
+  int cycles = 5;
+  while (cycles --> 0)
   {
     ///////////////////////////////////////////////////////////////////////////////////////
     RTest::Timekeeper::StartFrame();
     /////////////////////////////////// [ TIMED BLOCK ] ///////////////////////////////////
 
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       for (int j = 0; j < 20; ++j)
       {
