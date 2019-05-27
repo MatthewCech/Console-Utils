@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <ostream>
-#include <rlutil.h>
 #include <chrono>
 #include <thread>
 #include <csignal>
 #include <string>
 #include "Canvas.hpp"
-
 
 
 // Defines for asserts doing floating point math
@@ -137,10 +135,10 @@ int main(int, char**)
     RTest::Timekeeper::EndFrame();
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    rlutil::setColor(rlutil::MAGENTA);
-    rlutil::locate(rlutil::tcols() - 6, 1);
+    RConsole::_rlutil_internal::setColor(RConsole::_rlutil_internal::MAGENTA);
+    RConsole::_rlutil_internal::locate(RConsole::_rlutil_internal::tcols() - 6, 1);
     printf("ms: %3i", RTest::Timekeeper::GetAvgTimeMS());
-    rlutil::locate(rlutil::tcols() - 5, 2);
+    RConsole::_rlutil_internal::locate(RConsole::_rlutil_internal::tcols() - 5, 2);
     printf("c: %2i", cycles);
   }
   

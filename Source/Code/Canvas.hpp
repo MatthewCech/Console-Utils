@@ -15,7 +15,7 @@
 #ifdef _WIN32
 #include <windows.h>  // for WinAPI and Sleep()
 #define _NO_OLDNAMES  // for MinGW compatibility
-#endif // _WIN32
+#endif 
 
 // For strict unused variable warnings.
 #define UNUSED(x) (void)(x)
@@ -54,10 +54,10 @@
 namespace RConsole
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Start namespace rlutil //////////////////////////////////////////////////////////////////////////////////
+   // Start namespace _rlutil_internal //////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /**
-  * Namespace: rlutil
+  * Namespace: _rlutil_internal
   *
   * About: Description
   * This file provides some useful utilities for console mode
@@ -68,65 +68,46 @@ namespace RConsole
   * About: Copyright
   * (C) 2010 Tapio Vierros
   *
-  * About: Under a "Do whatever TF you want" Licence for this header file.
+  * About: Under a "Do whatever TF you want" Licence for this namespace/section
   */
 
-  /// Define: RLUTIL_USE_ANSI
+  /// Define: _rlutil_internal_USE_ANSI
   /// Define this to use ANSI escape sequences also on Windows
   /// (defaults to using WinAPI instead).
 #if 0
-#define RLUTIL_USE_ANSI
+#define _rlutil_internal_USE_ANSI
 #endif
-
-#ifdef __cplusplus
-/// Common C++ headers
 
 /// Namespace forward declarations
-  namespace rlutil {
+  namespace _rlutil_internal {
     void locate(int x, int y);
   }
-#else
-  void locate(int x, int y); // Forward declare for C to avoid warnings
-#endif // __cplusplus
 
-
-
-#ifndef RLUTIL_INLINE
+#ifndef _rlutil_internal_INLINE
 #ifdef _MSC_VER
-#define RLUTIL_INLINE __inline
+#define _rlutil_internal_INLINE __inline
 #else
-#define RLUTIL_INLINE __inline__
+#define _rlutil_internal_INLINE __inline__
 #endif
 #endif
 
-#ifdef __cplusplus
-  /// Namespace: rlutil
+  /// Namespace: _rlutil_internal
   /// In C++ all functions except <getch>, <kbhit> and <gotoxy> are arranged
-  /// under namespace rlutil. That is because some platforms have them defined
-  /// outside of rlutil.
-  namespace rlutil {
-#endif
+  /// under namespace _rlutil_internal. That is because some platforms have them defined
+  /// outside of _rlutil_internal.
+  namespace _rlutil_internal {
 
     /**
     * Defs: Internal typedefs and macros
-    * RLUTIL_STRING_T - String type depending on which one of C or C++ is used
-    * RLUTIL_PRINT(str) - Printing macro independent of C/C++
+    * _rlutil_internal_STRING_T - String type depending on which one of C or C++ is used
+    * _rlutil_internal_PRINT(str) - Printing macro independent of C/C++
     */
 
-#ifdef __cplusplus
-#ifndef RLUTIL_STRING_T
-    typedef std::string RLUTIL_STRING_T;
-#endif // RLUTIL_STRING_T
+#ifndef _rlutil_internal_STRING_T
+    typedef std::string _rlutil_internal_STRING_T;
+#endif
 
-    inline void RLUTIL_PRINT(RLUTIL_STRING_T st) { std::cout << st; }
-
-#else // __cplusplus
-#ifndef RLUTIL_STRING_T
-    typedef char* RLUTIL_STRING_T;
-#endif // RLUTIL_STRING_T
-
-#define RLUTIL_PRINT(st) printf("%s", st)
-#endif // __cplusplus
+    inline void _rlutil_internal_PRINT(_rlutil_internal_STRING_T st) { std::cout << st; }
 
     /**
     * Enums: Color codes
@@ -188,30 +169,29 @@ namespace RConsole
     * ANSI_LIGHTCYAN - Light cyan
     * ANSI_WHITE - White (bright)
     */
-    const RLUTIL_STRING_T ANSI_CLS = "\033[2J";
-    const RLUTIL_STRING_T ANSI_BLACK = "\033[22;30m";
-    const RLUTIL_STRING_T ANSI_RED = "\033[22;31m";
-    const RLUTIL_STRING_T ANSI_GREEN = "\033[22;32m";
-    const RLUTIL_STRING_T ANSI_BROWN = "\033[22;33m";
-    const RLUTIL_STRING_T ANSI_BLUE = "\033[22;34m";
-    const RLUTIL_STRING_T ANSI_MAGENTA = "\033[22;35m";
-    const RLUTIL_STRING_T ANSI_CYAN = "\033[22;36m";
-    const RLUTIL_STRING_T ANSI_GREY = "\033[22;37m";
-    const RLUTIL_STRING_T ANSI_DARKGREY = "\033[01;30m";
-    const RLUTIL_STRING_T ANSI_LIGHTRED = "\033[01;31m";
-    const RLUTIL_STRING_T ANSI_LIGHTGREEN = "\033[01;32m";
-    const RLUTIL_STRING_T ANSI_YELLOW = "\033[01;33m";
-    const RLUTIL_STRING_T ANSI_LIGHTBLUE = "\033[01;34m";
-    const RLUTIL_STRING_T ANSI_LIGHTMAGENTA = "\033[01;35m";
-    const RLUTIL_STRING_T ANSI_LIGHTCYAN = "\033[01;36m";
-    const RLUTIL_STRING_T ANSI_WHITE = "\033[01;37m";
-
+    const _rlutil_internal_STRING_T ANSI_CLS = "\033[2J";
+    const _rlutil_internal_STRING_T ANSI_BLACK = "\033[22;30m";
+    const _rlutil_internal_STRING_T ANSI_RED = "\033[22;31m";
+    const _rlutil_internal_STRING_T ANSI_GREEN = "\033[22;32m";
+    const _rlutil_internal_STRING_T ANSI_BROWN = "\033[22;33m";
+    const _rlutil_internal_STRING_T ANSI_BLUE = "\033[22;34m";
+    const _rlutil_internal_STRING_T ANSI_MAGENTA = "\033[22;35m";
+    const _rlutil_internal_STRING_T ANSI_CYAN = "\033[22;36m";
+    const _rlutil_internal_STRING_T ANSI_GREY = "\033[22;37m";
+    const _rlutil_internal_STRING_T ANSI_DARKGREY = "\033[01;30m";
+    const _rlutil_internal_STRING_T ANSI_LIGHTRED = "\033[01;31m";
+    const _rlutil_internal_STRING_T ANSI_LIGHTGREEN = "\033[01;32m";
+    const _rlutil_internal_STRING_T ANSI_YELLOW = "\033[01;33m";
+    const _rlutil_internal_STRING_T ANSI_LIGHTBLUE = "\033[01;34m";
+    const _rlutil_internal_STRING_T ANSI_LIGHTMAGENTA = "\033[01;35m";
+    const _rlutil_internal_STRING_T ANSI_LIGHTCYAN = "\033[01;36m";
+    const _rlutil_internal_STRING_T ANSI_WHITE = "\033[01;37m";
 
     /// Function: getANSIColor
     /// Return ANSI color escape sequence for specified number 0-15.
     ///
     /// See <Color Codes>
-    RLUTIL_INLINE RLUTIL_STRING_T getANSIColor(const int c) {
+    _rlutil_internal_INLINE _rlutil_internal_STRING_T getANSIColor(const int c) {
       switch (c) {
       case 0: return ANSI_BLACK;
       case 1: return ANSI_BLUE; // non-ANSI
@@ -237,51 +217,45 @@ namespace RConsole
     /// Change color specified by number (Windows / QBasic colors).
     ///
     /// See <Color Codes>
-    RLUTIL_INLINE void setColor(int c) {
-#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
+    _rlutil_internal_INLINE void setColor(int c) {
+#if defined(_WIN32) && !defined(_rlutil_internal_USE_ANSI)
       HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
       SetConsoleTextAttribute(hConsole, (WORD)c);
 #else
-      RLUTIL_PRINT(getANSIColor(c));
+      _rlutil_internal_PRINT(getANSIColor(c));
 #endif
     }
 
     /// Function: cls
     /// Clears screen and moves cursor home.
-    RLUTIL_INLINE void cls(void) {
-#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
+    _rlutil_internal_INLINE void cls(void) {
+#if defined(_WIN32) && !defined(_rlutil_internal_USE_ANSI)
       // TODO: This is cheating...
       system("cls");
 #else
-      RLUTIL_PRINT("\033[2J\033[H");
+      _rlutil_internal_PRINT("\033[2J\033[H");
 #endif
     }
 
     /// Function: locate
     /// Sets the cursor position to 1-based x,y.
-    RLUTIL_INLINE void locate(int x, int y) {
-#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
+    _rlutil_internal_INLINE void locate(int x, int y) {
+#if defined(_WIN32) && !defined(_rlutil_internal_USE_ANSI)
       COORD coord;
       coord.X = (SHORT)x - 1;
       coord.Y = (SHORT)y - 1; // Windows uses 0-based coordinates
       SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 #else // _WIN32 || USE_ANSI
-#ifdef __cplusplus
       std::ostringstream oss;
       oss << "\033[" << y << ";" << x << "H";
-      RLUTIL_PRINT(oss.str());
-#else // __cplusplus
-      char buf[32];
-      sprintf(buf, "\033[%d;%df", y, x);
-      RLUTIL_PRINT(buf);
-#endif // __cplusplus
+      _rlutil_internal_PRINT(oss.str());
 #endif // _WIN32 || USE_ANSI
     }
 
     /// Function: hidecursor
     /// Hides the cursor.
-    RLUTIL_INLINE void hidecursor(void) {
-#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
+    _rlutil_internal_INLINE void hidecursor(void) {
+#if defined(_WIN32) && !defined(_rlutil_internal_USE_ANSI)
       HANDLE hConsoleOutput;
       CONSOLE_CURSOR_INFO structCursorInfo;
       hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -289,14 +263,14 @@ namespace RConsole
       structCursorInfo.bVisible = FALSE;
       SetConsoleCursorInfo(hConsoleOutput, &structCursorInfo);
 #else // _WIN32 || USE_ANSI
-      RLUTIL_PRINT("\033[?25l");
+      _rlutil_internal_PRINT("\033[?25l");
 #endif // _WIN32 || USE_ANSI
     }
 
     /// Function: showcursor
     /// Shows the cursor.
-    RLUTIL_INLINE void showcursor(void) {
-#if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
+    _rlutil_internal_INLINE void showcursor(void) {
+#if defined(_WIN32) && !defined(_rlutil_internal_USE_ANSI)
       HANDLE hConsoleOutput;
       CONSOLE_CURSOR_INFO structCursorInfo;
       hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -304,13 +278,13 @@ namespace RConsole
       structCursorInfo.bVisible = TRUE;
       SetConsoleCursorInfo(hConsoleOutput, &structCursorInfo);
 #else // _WIN32 || USE_ANSI
-      RLUTIL_PRINT("\033[?25h");
+      _rlutil_internal_PRINT("\033[?25h");
 #endif // _WIN32 || USE_ANSI
     }
 
     /// Function: trows
     /// Get the number of rows in the terminal window or -1 on error.
-    RLUTIL_INLINE int trows(void) {
+    _rlutil_internal_INLINE int trows(void) {
 #ifdef _WIN32
       CONSOLE_SCREEN_BUFFER_INFO csbi;
       if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
@@ -335,7 +309,7 @@ namespace RConsole
 
     /// Function: tcols
     /// Get the number of columns in the terminal window or -1 on error.
-    RLUTIL_INLINE int tcols(void) {
+    _rlutil_internal_INLINE int tcols(void) {
 #ifdef _WIN32
       CONSOLE_SCREEN_BUFFER_INFO csbi;
       if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
@@ -361,29 +335,21 @@ namespace RConsole
 #ifndef min
     /// Function: min
     /// Returns the lesser of the two arguments.
-#ifdef __cplusplus
     template <class T> const T& min(const T& a, const T& b) { return (a < b) ? a : b; }
-#else
-#define min(a,b) (((a)<(b))?(a):(b))
-#endif // __cplusplus
-#endif // min
+#endif
 
 #ifndef max
-  /// Function: max
-  /// Returns the greater of the two arguments.
-#ifdef __cplusplus
+    /// Function: max
+    /// Returns the greater of the two arguments.
     template <class T> const T& max(const T& a, const T& b) { return (b < a) ? a : b; }
-#else
-#define max(a,b) (((b)<(a))?(a):(b))
-#endif // __cplusplus
-#endif // max
+#endif
 
-  // Classes are here at the end so that documentation is pretty.
+    // Classes are here at the end so that documentation is pretty.
 
-  /// Class: CursorHider
-  /// RAII OOP wrapper for <rlutil.hidecursor>.
-  /// Hides the cursor and shows it again
-  /// when the object goes out of scope.
+    /// Class: CursorHider
+    /// RAII OOP wrapper for <_rlutil_internal.hidecursor>.
+    /// Hides the cursor and shows it again
+    /// when the object goes out of scope.
     struct CursorHider {
       CursorHider() { hidecursor(); }
       ~CursorHider() { showcursor(); }
@@ -393,7 +359,7 @@ namespace RConsole
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
- // End namespace rlutil ////////////////////////////////////////////////////////////////////////////////////
+ // End namespace _rlutil_internal ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -747,32 +713,32 @@ namespace RConsole
 
 namespace RConsole
 {
-#define DEFAULT_WIDTH (rlutil::tcols() - 1)
-#define DEFAULT_HEIGHT rlutil::trows()
+#define DEFAULT_WIDTH (_rlutil_internal::tcols() - 1)
+#define DEFAULT_HEIGHT _rlutil_internal::trows()
 
   //Colors!
   enum Color
   {
-    //Acquire rlutil info where possible--
-    BLACK = rlutil::BLACK,
-    BLUE = rlutil::BLUE,
-    GREEN = rlutil::GREEN,
-    CYAN = rlutil::CYAN,
-    RED = rlutil::RED,
-    MAGENTA = rlutil::MAGENTA,
-    BROWN = rlutil::BROWN,
-    GREY = rlutil::GREY,
-    DARKGREY = rlutil::DARKGREY,
-    LIGHTBLUE = rlutil::LIGHTBLUE,
-    LIGHTGREEN = rlutil::LIGHTGREEN,
-    LIGHTCYAN = rlutil::LIGHTCYAN,
-    LIGHTRED = rlutil::LIGHTRED,
-    LIGHTMAGENTA = rlutil::LIGHTMAGENTA,
-    YELLOW = rlutil::YELLOW,
-    WHITE = rlutil::WHITE,
+    //Acquire _rlutil_internal info where possible--
+    BLACK = _rlutil_internal::BLACK,
+    BLUE = _rlutil_internal::BLUE,
+    GREEN = _rlutil_internal::GREEN,
+    CYAN = _rlutil_internal::CYAN,
+    RED = _rlutil_internal::RED,
+    MAGENTA = _rlutil_internal::MAGENTA,
+    BROWN = _rlutil_internal::BROWN,
+    GREY = _rlutil_internal::GREY,
+    DARKGREY = _rlutil_internal::DARKGREY,
+    LIGHTBLUE = _rlutil_internal::LIGHTBLUE,
+    LIGHTGREEN = _rlutil_internal::LIGHTGREEN,
+    LIGHTCYAN = _rlutil_internal::LIGHTCYAN,
+    LIGHTRED = _rlutil_internal::LIGHTRED,
+    LIGHTMAGENTA = _rlutil_internal::LIGHTMAGENTA,
+    YELLOW = _rlutil_internal::YELLOW,
+    WHITE = _rlutil_internal::WHITE,
 
     // Add custom values
-    //DEFAULT = rlutil::DEFAULT, // BROKEN //Added custom to the rlutil header.
+    //DEFAULT = _rlutil_internal::DEFAULT, // BROKEN //Added custom to the _rlutil_internal header.
     PREVIOUS_COLOR
   };
 
@@ -852,8 +818,9 @@ namespace RConsole
 
     // Global Settings
     static void SetCursorVisible(bool isVisible);
+
   private:
-    // Hidden Constructors- no instantiating publicly!
+    // Hidden Constructors
     //Canvas(const Canvas &rhs);
     
     // Private methods.
@@ -1103,7 +1070,7 @@ namespace RConsole
     memcpy(prev_.GetRasterData().GetHead(), r_.GetRasterData().GetHead(), width_ * height_ * sizeof(RasterInfo));
     r_.Zero();
 
-    rlutil::setColor(WHITE);
+    _rlutil_internal::setColor(WHITE);
 
     return true;
   }
@@ -1193,9 +1160,9 @@ namespace RConsole
   void Canvas::SetCursorVisible(bool isVisible)
   {
     if (!isVisible)
-      rlutil::hidecursor();
+      _rlutil_internal::hidecursor();
     else
-      rlutil::showcursor();
+      _rlutil_internal::showcursor();
   }
 
   // Gets the width of the console
@@ -1247,7 +1214,7 @@ namespace RConsole
         if ((yLoc > height_ + yOffset_) == false && (xLoc > width_ + xOffset_) == false)
         {
           // locate on screen and set color
-          rlutil::locate(xLoc, yLoc);
+          _rlutil_internal::locate(xLoc, yLoc);
 
           putC(' ', stdout);
         }
@@ -1268,7 +1235,7 @@ namespace RConsole
   // This is expensive, and wipes ALL canvases! 
   void Canvas::fullClear()
   {
-    rlutil::cls();
+    _rlutil_internal::cls();
   }
 
 
@@ -1276,7 +1243,7 @@ namespace RConsole
   void Canvas::setColor(const Color &color)
   {
     if (color != PREVIOUS_COLOR)
-      rlutil::setColor(color);
+      _rlutil_internal::setColor(color);
   }
 
 
@@ -1303,7 +1270,7 @@ namespace RConsole
         if ((xLoc > width_ + xOffset_) == false && (yLoc > height_ + yOffset_) == false)
         {
           // locate on screen and set color
-          rlutil::locate(xLoc, yLoc);
+          _rlutil_internal::locate(xLoc, yLoc);
 
           // Set color of cursor
           setColor(ri.C);
@@ -1340,7 +1307,7 @@ namespace RConsole
 
 
   // print out the formatted raster.
-  // Note that because of console color formatting, we use the RLUTIL coloring option when
+  // Note that because of console color formatting, we use the _rlutil_internal coloring option when
   // we are printing to the console, or have no file output specified.
   void Canvas::DumpRaster(FILE * fp)
   {
@@ -1352,12 +1319,12 @@ namespace RConsole
         const RasterInfo &ri = r_.GetRasterData().Peek(j, i);
         if (fp == stdout)
         {
-          rlutil::setColor(ri.C);
+          _rlutil_internal::setColor(ri.C);
           std::cout << ri.Value;//fprintf(fp, "%c", ri.Value);
         }
         else
         {
-          std::string line = rlutil::getANSIColor(ri.C) + ri.Value;
+          std::string line = _rlutil_internal::getANSIColor(ri.C) + ri.Value;
           fprintf(fp, "%s", line.c_str());
         }
       }
@@ -1368,7 +1335,7 @@ namespace RConsole
 
     // Set end color to white when we're done.
     if (fp == stdout)
-      rlutil::setColor(WHITE);
+      _rlutil_internal::setColor(WHITE);
   }
 
 
@@ -1407,12 +1374,12 @@ namespace RConsole
         const RasterInfo &ri = r_.GetRasterData().Peek(i, j);
         if (fp == stdout)
         {
-          rlutil::setColor(ri.C);
+          _rlutil_internal::setColor(ri.C);
           fprintf(fp, "%c", ri.Value);
         }
         else
         {
-          std::string line = rlutil::getANSIColor(ri.C) + ri.Value;
+          std::string line = _rlutil_internal::getANSIColor(ri.C) + ri.Value;
           fprintf(fp, "%s", line.c_str());
         }
       }
@@ -1422,7 +1389,7 @@ namespace RConsole
 
     // Set end color to white when we're done.
     if (fp == stdout)
-      rlutil::setColor(WHITE);
+      _rlutil_internal::setColor(WHITE);
   }
 
 
@@ -1444,9 +1411,9 @@ namespace RConsole
         pair.second->Shutdown();
 
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
-      int height = rlutil::trows();
-      rlutil::locate(0, height);
-      rlutil::setColor(WHITE);
+      int height = _rlutil_internal::trows();
+      _rlutil_internal::locate(0, height);
+      _rlutil_internal::setColor(WHITE);
       std::cout << '\n';
       exit(signalNum);
     }
